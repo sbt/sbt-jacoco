@@ -8,7 +8,7 @@ object JacocoPlugin extends Plugin {
 
   lazy val jacocoConfig = config("jacoco") hide
 
-  lazy val jacocoDependencies = Seq(
+  val jacocoDependencies = Seq(
     "org.jacoco" % "org.jacoco.agent" % "0.5.3.201107060350" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar")),
     "org.jacoco" % "org.jacoco.core" % "0.5.3.201107060350" % "jacoco" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
     "org.jacoco" % "org.jacoco.report" % "0.5.3.201107060350" % "jacoco" artifacts(Artifact("org.jacoco.report", "jar", "jar")))
