@@ -22,18 +22,12 @@ object JacocoPlugin extends Plugin {
 
   lazy val jacocoClasspath = TaskKey[Classpath]("jacoco-classpath")
 
-  lazy val dummySetting = TaskKey[String]("dummy")
-
   override val settings = Seq(
     commands += cmd,
     ivyConfigurations += jacocoConfig,
     libraryDependencies ++= jacocoDependencies,
     jacocoClasspath <<= (classpathTypes, update) map { Classpaths managedJars (jacocoConfig, _, _) },
-    unpackJacocoAgent <<= (managedDirectory in jacocoConfig, jacocoClasspath) map unpackJacocoAgentAction,
-    dummySetting <<= (unpackJacocoAgent) map { (_:File).getName }
-//    ,
-//    javaOptions <+= unpackJacocoAgent map { agent => "-javagent:" + agent.getAbsolutePath }
-  )
+    unpackJacocoAgent <<= (managedDirectory in jacocoConfig, jacocoClasspath) map unpackJacocoAgentAction)
 
   private lazy val Instrument = "instrument"
   private lazy val Uninstrument = "uninstrument"
@@ -50,8 +44,7 @@ object JacocoPlugin extends Plugin {
       val agentFile = extractedState.evalTask(unpackJacocoAgent, state)
 
       addSettings(Seq(
-          fork in run := true,
-          javaOptions += "-Djavaagent:%s" format agentFile.getAbsolutePath))
+          javaOptions in run += "-Djavaagent:%s" format agentFile.getAbsolutePath))
 
     } else {
       println("uninstrumenting... (todo)")
