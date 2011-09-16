@@ -42,9 +42,10 @@ object JacocoPlugin extends Plugin {
     if (arguments === Instrument) {
       println("instrumenting...")
       val agentFile = extractedState.evalTask(unpackJacocoAgent, state)
+      val agentJavaOption = "-javaagent:%s=output=file,destfile=./jacoco.exec" format agentFile.getAbsolutePath
 
       addSettings(Seq(
-          javaOptions in run += "-Djavaagent:%s" format agentFile.getAbsolutePath))
+          javaOptions in run += agentJavaOption))
 
     } else {
       println("uninstrumenting... (todo)")
