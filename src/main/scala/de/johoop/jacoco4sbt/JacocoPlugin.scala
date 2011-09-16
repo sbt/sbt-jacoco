@@ -4,7 +4,6 @@ import sbt._
 import Keys._
 
 object JacocoPlugin extends Plugin with Commands {
-
   object jacoco extends Commands {
   
     val dependencies = Seq(
