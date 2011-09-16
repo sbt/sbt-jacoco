@@ -49,8 +49,10 @@ object JacocoPlugin extends Plugin {
             javaOptions in run += agentJavaOption))
   
       } else {
-        println("uninstrumenting... (todo)")
-        state
+        println("uninstrumenting...")
+        
+        addSettings(Seq(
+            javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } ))
       }
     }
   
