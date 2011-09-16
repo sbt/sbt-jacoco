@@ -20,6 +20,3 @@ libraryDependencies ++= Seq(
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
-fork in run := true
-
-javaOptions in run += "-javaagent:/Users/acer/.ivy2/cache/org.jacoco/org.jacoco.agent/jars/org.jacoco.agent-0.5.3.201107060350.jar=destfile=/jacoco.exec"
