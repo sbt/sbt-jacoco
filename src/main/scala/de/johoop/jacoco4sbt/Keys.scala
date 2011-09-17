@@ -7,6 +7,7 @@ trait Keys {
   lazy val Config = config("jacoco") hide
   
   lazy val jacocoClasspath = TaskKey[Classpath]("jacoco-classpath")
+  lazy val jacocoReport = TaskKey[Unit]("jacoco-report")
   
   lazy val unpackAgent = TaskKey[File]("unpack-jacoco-agent", "Unpacks the Jacoco Agent JAR")
 }
