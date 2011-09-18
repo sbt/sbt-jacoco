@@ -12,10 +12,16 @@ publishTo := Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/r
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
-libraryDependencies ++= Seq(
-    "org.jacoco" % "org.jacoco.core" % "0.5.3.201107060350" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
-    "org.jacoco" % "org.jacoco.report" % "0.5.3.201107060350" artifacts(Artifact("org.jacoco.report", "jar", "jar")),
-    "org.scalaz" %% "scalaz-core" % "6.0.3")
+ivyXML := 
+  <dependencies>
+    <dependency org="org.jacoco" name="org.jacoco.core" rev="0.5.3.201107060350" >
+        <artifact name="org.jacoco.core" type="jar" />
+    </dependency>
+    <dependency org="org.jacoco" name="org.jacoco.report" rev="0.5.3.201107060350" >
+        <artifact name="org.jacoco.report" type="jar" />
+    </dependency>
+  </dependencies>
+   
+libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "6.0.3")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
-
