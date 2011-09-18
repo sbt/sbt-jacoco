@@ -50,7 +50,7 @@ object JacocoPlugin extends Plugin {
       libraryDependencies ++= dependencies,
       
       targetDirectory <<= (crossTarget) { _ / "jacoco" },
-      reportType := ReportType.XML,
+      reportType := ReportType.HTML,
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
       reportEncoding := "utf-8",
