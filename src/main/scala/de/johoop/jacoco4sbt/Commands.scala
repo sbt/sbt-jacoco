@@ -40,7 +40,7 @@ trait Commands extends Keys {
   def report(implicit buildState: State) = {
     println("generating html report...")
 
-    // TODO call jacoco-report task
+    Project.evaluateTask(jacocoReport in Config, buildState)
 
     buildState
   }
