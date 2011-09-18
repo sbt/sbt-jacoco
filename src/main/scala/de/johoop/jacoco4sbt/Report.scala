@@ -1,21 +1,36 @@
+/*
+ * This file is part of jacoco4sbt.
+ * 
+ * Copyright (c) 2011 Joachim Hofer
+ * All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package de.johoop.jacoco4sbt
+
+import ReportType._
 
 import org.jacoco.core.data._
 import org.jacoco.core.analysis._
 import org.jacoco.report._
 import html.HTMLFormatter
 
+
 import java.io.File
 import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
-    sourceEncoding: String, outputEncoding: String, reportDirectory: File, title: String, tabWidth: Int) {
+    sourceEncoding: String, outputEncoding: String, reportType: ReportType, reportDirectory: File, 
+    title: String, tabWidth: Int) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
 
-    createReport(new HTMLFormatter, bundleCoverage, executionDataStore, sessionInfoStore)
+    createReport(reportType, bundleCoverage, executionDataStore, sessionInfoStore)
   }
 
   private def loadExecutionData = {
@@ -46,20 +61,15 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
     coverageBuilder getBundle title
   }
 
-  private def createReport(formatter: ReportFormatter, bundleCoverage: IBundleCoverage, 
+  private def createReport(reportType: ReportType, bundleCoverage: IBundleCoverage, 
       executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
 
-    formatter setOutputEncoding outputEncoding
-    val visitor = formatter createVisitor new FileMultiReportOutput(reportDirectory)
-
+    val visitor = reportVisitor(reportType, outputEncoding, reportDirectory)
+    
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
 
     visitor.visitEnd()
   }
 
-  type ReportFormatter = {
-    def setOutputEncoding(encoding: String) : Unit
-    def createVisitor(output: IMultiReportOutput) : IReportVisitor
-  }
 }
