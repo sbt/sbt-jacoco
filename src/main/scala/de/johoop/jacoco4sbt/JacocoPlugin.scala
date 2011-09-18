@@ -32,14 +32,14 @@ object JacocoPlugin extends Plugin {
       ivyConfigurations += Config,
       libraryDependencies ++= dependencies,
       
-      jacocoTargetDirectory <<= (crossTarget) { _ / "jacoco" },
-      jacocoSourceTabWidth := 2,
+      targetDirectory <<= (crossTarget) { _ / "jacoco" },
+      sourceTabWidth := 2,
       
       jacocoClasspath in Config <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
       unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
       
       jacocoReport in Config <<= 
           (sourceDirectories in Compile, classDirectory in Compile, 
-              jacocoSourceTabWidth, jacocoTargetDirectory) map reportAction)
+              sourceTabWidth, targetDirectory) map reportAction)
   }
 }

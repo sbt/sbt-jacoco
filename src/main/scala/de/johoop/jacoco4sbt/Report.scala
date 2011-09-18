@@ -16,7 +16,7 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
 
-    createReport(bundleCoverage, executionDataStore, sessionInfoStore)
+    createReport(new HTMLFormatter, bundleCoverage, executionDataStore, sessionInfoStore)
   }
 
   private def loadExecutionData = {
@@ -47,9 +47,15 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
     coverageBuilder getBundle title
   }
 
-  private def createReport(bundleCoverage: IBundleCoverage, executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
-    val htmlFormatter = new HTMLFormatter
-    val visitor = htmlFormatter createVisitor new FileMultiReportOutput(reportDirectory)
+  type ReportFormatter = {
+    def setOutputEncoding(encoding: String) : Unit
+    def createVisitor(output: IMultiReportOutput) : IReportVisitor
+  }
+
+  private def createReport(formatter: ReportFormatter, bundleCoverage: IBundleCoverage, 
+      executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
+    
+    val visitor = formatter createVisitor new FileMultiReportOutput(reportDirectory)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 

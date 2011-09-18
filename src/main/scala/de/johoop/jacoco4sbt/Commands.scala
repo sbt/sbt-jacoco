@@ -26,7 +26,7 @@ trait Commands extends Keys {
   def instrument(implicit buildState: State) = {
     logger(buildState) info "Instrumenting the run tasks."
 
-    val jacocoDirectory = jacocoTargetDirectory in (extractedState.currentRef, Config) get extractedSettings
+    val jacocoDirectory = targetDirectory in (extractedState.currentRef, Config) get extractedSettings
     logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
     jacocoDirectory match {
       case Some(jacocoDirectory) => {
