@@ -3,6 +3,7 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 import complete.Parsers._
+import CommandSupport.logger
 
 trait Commands extends Keys {
   private lazy val Instrument = "instrument"
@@ -23,22 +24,24 @@ trait Commands extends Keys {
   }
 
   def instrument(implicit buildState: State) = {
-    println("instrumenting...")
+    logger(buildState).info("Instrumenting the run tasks.")
+
     val agentFile = extractedState.evalTask(unpackAgent, buildState)
     val agentJavaOption = "-javaagent:%s=output=file,destfile=./jacoco.exec" format agentFile.getAbsolutePath
 
     addSettings(Seq(
         javaOptions in run += agentJavaOption))
+    
   }
 
   def uninstrument(implicit buildState: State) = {
-    println("uninstrumenting...")
+    logger(buildState).info("Uninstrumenting the run tasks.")
 
     addSettings(Seq(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } ))
   }
 
   def report(implicit buildState: State) = {
-    println("generating html report...")
+    logger(buildState).info("Generating JaCoCo coverage report.")
 
     Project.evaluateTask(jacocoReport in Config, buildState)
 
