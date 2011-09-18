@@ -22,6 +22,4 @@ ivyXML :=
     </dependency>
   </dependencies>
    
-libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "6.0.3")
-
 scalacOptions ++= Seq("-unchecked", "-deprecation")
