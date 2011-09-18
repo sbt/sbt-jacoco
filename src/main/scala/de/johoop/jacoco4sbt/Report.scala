@@ -8,8 +8,9 @@ import html.HTMLFormatter
 import java.io.File
 import java.io.FileInputStream
 
-class Report(executionDataFile: File, classesDirectory: File, sourceDirectory: File,
-    sourceEncoding: String = "utf-8", reportDirectory: File, title: String, tabWidth: Int = 2) {
+class Report(executionDataFile: File, classesDirectory: File, sourceDirectories: Seq[File],
+    sourceEncoding: String = "utf-8", reportDirectory: File, title: String = "JaCoCo Coverage Report", 
+    tabWidth: Int = 2) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
@@ -51,7 +52,7 @@ class Report(executionDataFile: File, classesDirectory: File, sourceDirectory: F
     val visitor = htmlFormatter createVisitor new FileMultiReportOutput(reportDirectory)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
-    visitor.visitBundle(bundleCoverage, new DirectorySourceFileLocator(sourceDirectory, sourceEncoding, tabWidth))
+    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
 
     visitor.visitEnd()
   }

@@ -21,9 +21,8 @@ object JacocoPlugin extends Plugin {
       val report = new Report(
           executionDataFile = jacocoDirectory / "jacoco.exec",
           classesDirectory = new File("target/scala-2.9.1/classes"),
-          sourceDirectory = new File("src/main/scala"),
-          reportDirectory = jacocoDirectory / "report",
-          title = "JaCoCo Coverage Report")
+          sourceDirectories = Seq(new File("src/main/java"), new File("src/main/scala")),
+          reportDirectory = jacocoDirectory / "report")
       
       report.generate
     }
