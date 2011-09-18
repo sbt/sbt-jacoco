@@ -10,7 +10,7 @@ import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
     sourceEncoding: String = "utf-8", reportDirectory: File, title: String = "JaCoCo Coverage Report", 
-    tabWidth: Int = 2) {
+    tabWidth: Int) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
