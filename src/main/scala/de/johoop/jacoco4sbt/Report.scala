@@ -9,8 +9,7 @@ import java.io.File
 import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
-    sourceEncoding: String = "utf-8", reportDirectory: File, title: String = "JaCoCo Coverage Report", 
-    tabWidth: Int) {
+    sourceEncoding: String, outputEncoding: String, reportDirectory: File, title: String, tabWidth: Int) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
@@ -47,19 +46,20 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
     coverageBuilder getBundle title
   }
 
-  type ReportFormatter = {
-    def setOutputEncoding(encoding: String) : Unit
-    def createVisitor(output: IMultiReportOutput) : IReportVisitor
-  }
-
   private def createReport(formatter: ReportFormatter, bundleCoverage: IBundleCoverage, 
       executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
-    
+
+    formatter setOutputEncoding outputEncoding
     val visitor = formatter createVisitor new FileMultiReportOutput(reportDirectory)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
 
     visitor.visitEnd()
+  }
+
+  type ReportFormatter = {
+    def setOutputEncoding(encoding: String) : Unit
+    def createVisitor(output: IMultiReportOutput) : IReportVisitor
   }
 }
