@@ -8,7 +8,7 @@ import html.HTMLFormatter
 import java.io.File
 import java.io.FileInputStream
 
-class Report(executionDataFile: File, classesDirectory: File, sourceDirectories: Seq[File],
+class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
     sourceEncoding: String = "utf-8", reportDirectory: File, title: String = "JaCoCo Coverage Report", 
     tabWidth: Int = 2) {
 
@@ -42,7 +42,7 @@ class Report(executionDataFile: File, classesDirectory: File, sourceDirectories:
     val coverageBuilder = new CoverageBuilder
     val analyzer = new Analyzer(executionDataStore, coverageBuilder)
 
-    analyzer analyzeAll classesDirectory
+    analyzer analyzeAll classDirectory
 
     coverageBuilder getBundle title
   }
