@@ -24,24 +24,36 @@ trait Commands extends Keys {
   }
 
   def instrument(implicit buildState: State) = {
-    logger(buildState).info("Instrumenting the run tasks.")
+    logger(buildState) info "Instrumenting the run tasks."
 
-    val agentFile = extractedState.evalTask(unpackAgent, buildState)
-    val agentJavaOption = "-javaagent:%s=output=file,destfile=./jacoco.exec" format agentFile.getAbsolutePath
-
-    addSettings(Seq(
-        javaOptions in run += agentJavaOption))
+    val jacocoDirectory = jacocoTargetDirectory in (extractedState.currentRef, Config) get extractedSettings
+    logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
+    jacocoDirectory match {
+      case Some(jacocoDirectory) => {
+        val agentFilePath = extractedState.evalTask(unpackJacocoAgent, buildState).getAbsolutePath
+        val executionDataPath = (jacocoDirectory / "jacoco.exec").getAbsolutePath
+        val agentJavaOption = "-javaagent:%s=output=file,destfile=%s" format (agentFilePath, executionDataPath)
+    
+        addSettings(Seq(
+            javaOptions in run += agentJavaOption))
+      }
+      
+      case None => {
+        logger(buildState) error "JaCoCo target directory undefined."
+        buildState.fail
+      }
+    }
     
   }
 
   def uninstrument(implicit buildState: State) = {
-    logger(buildState).info("Uninstrumenting the run tasks.")
+    logger(buildState) info "Uninstrumenting the run tasks."
 
     addSettings(Seq(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } ))
   }
 
   def report(implicit buildState: State) = {
-    logger(buildState).info("Generating JaCoCo coverage report.")
+    logger(buildState) info "Generating JaCoCo coverage report."
 
     Project.evaluateTask(jacocoReport in Config, buildState)
 

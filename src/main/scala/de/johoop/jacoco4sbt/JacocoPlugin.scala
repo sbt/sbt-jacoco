@@ -14,14 +14,15 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def reportAction = {
+    def reportAction(jacocoDirectory: File) = {
+      
       // TODO different report kinds
       // TODO retrieve and fill in all the parameters
       val report = new Report(
-          executionDataFile = new File("jacoco.exec"),
+          executionDataFile = jacocoDirectory / "jacoco.exec",
           classesDirectory = new File("target/scala-2.9.1/classes"),
           sourceDirectory = new File("src/main/scala"),
-          reportDirectory = new File("target/scala-2.9.1/report"),
+          reportDirectory = jacocoDirectory / "report",
           title = "JaCoCo Coverage Report")
       
       report.generate
@@ -31,8 +32,12 @@ object JacocoPlugin extends Plugin {
       commands += jacocoCommand,
       ivyConfigurations += Config,
       libraryDependencies ++= dependencies,
+      
+      jacocoTargetDirectory <<= (crossTarget) { _ / "jacoco" },
+      
       jacocoClasspath in Config <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
-      unpackAgent in Config <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
-      jacocoReport in Config := reportAction)
+      unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
+      
+      jacocoReport in Config <<= (jacocoTargetDirectory) map reportAction)
   }
 }
