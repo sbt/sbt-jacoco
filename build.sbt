@@ -6,7 +6,7 @@ name := "jacoco4sbt"
 
 organization := "de.johoop"
 
-version := "1.0.0"
+version := "1.0.1-SNAPSHOT"
 
 publishTo := Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/")
 
@@ -23,3 +23,5 @@ ivyXML :=
   </dependencies>
    
 scalacOptions ++= Seq("-unchecked", "-deprecation")
+
+seq(ScriptedPlugin.scriptedSettings: _*)

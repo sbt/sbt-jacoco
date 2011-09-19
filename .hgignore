@@ -11,5 +11,6 @@ syntax: regexp
 ^lib/
 ^project/boot$
 ^project/target$
+^project/project$
 ^project/plugins/project$
 ^project/plugins/target$
