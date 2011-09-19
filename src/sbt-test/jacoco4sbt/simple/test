@@ -1,0 +1,2 @@
+# check if the commands are available
+> jacoco instrument
