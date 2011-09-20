@@ -11,8 +11,6 @@
  */
 package de.johoop.jacoco4sbt
 
-import ReportFormat._
-
 import org.jacoco.core.data._
 import org.jacoco.core.analysis._
 import org.jacoco.report._
@@ -22,8 +20,7 @@ import java.io.File
 import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
-    sourceEncoding: String, outputEncoding: String, reportFormat: ReportFormat, reportDirectory: File, 
-    title: String, tabWidth: Int) {
+    sourceEncoding: String, tabWidth: Int, reportFormat: FormattedReport, reportDirectory: File) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
@@ -57,13 +54,13 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
 
     analyzer analyzeAll classDirectory
 
-    coverageBuilder getBundle title
+    coverageBuilder getBundle reportFormat.title
   }
 
-  private def createReport(reportFormat: ReportFormat, bundleCoverage: IBundleCoverage, 
+  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage, 
       executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
 
-    val visitor = reportVisitor(reportFormat, outputEncoding, reportDirectory)
+    val visitor = reportFormat.visitor(reportDirectory)
     
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 

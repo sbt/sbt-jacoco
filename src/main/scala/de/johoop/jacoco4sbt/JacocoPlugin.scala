@@ -11,8 +11,6 @@
  */
 package de.johoop.jacoco4sbt
 
-import ReportFormat._
-
 import sbt._
 import Keys._
 
@@ -27,19 +25,17 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def reportAction(reportFormat: ReportFormat, sourceDirectories: Seq[File], classDirectory: File, 
-        sourceEncoding: String, reportEncoding: String, tabWidth: Int, reportTitle: String, jacocoDirectory: File) = {
+    def reportAction(jacocoDirectory: File, reportFormat: FormattedReport, sourceDirectories: Seq[File], 
+        classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
       
       val report = new Report(
+          reportDirectory = jacocoDirectory,
           executionDataFile = jacocoDirectory / "jacoco.exec",
           reportFormat = reportFormat,
           classDirectory = classDirectory,
           sourceDirectories = sourceDirectories,
-          reportDirectory = jacocoDirectory,
           tabWidth = tabWidth,
-          sourceEncoding = sourceEncoding,
-          outputEncoding = reportEncoding,
-          title = reportTitle)
+          sourceEncoding = sourceEncoding)
       
       report.generate
     }
@@ -50,17 +46,15 @@ object JacocoPlugin extends Plugin {
       libraryDependencies ++= dependencies,
       
       targetDirectory <<= (crossTarget) { _ / "jacoco" },
-      reportFormat := ReportFormat.HTML,
+      reportFormat := HTMLReport(),
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
-      reportEncoding := "utf-8",
-      reportTitle := "JaCoCo Coverage Report",
       
       jacocoClasspath in Config <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
       unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
       
       jacocoReport in Config <<= 
-          (reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding, reportEncoding,
-              sourceTabWidth, reportTitle, targetDirectory) map reportAction)
+          (targetDirectory, reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding,
+              sourceTabWidth) map reportAction)
   }
 }
