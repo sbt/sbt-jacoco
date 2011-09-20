@@ -43,18 +43,17 @@ object JacocoPlugin extends Plugin {
     val settings : Seq[Setting[_]] = Seq(
       commands += jacocoCommand,
       ivyConfigurations += Config,
-      libraryDependencies ++= dependencies,
-      
-      targetDirectory <<= (crossTarget) { _ / "jacoco" },
-      reportFormat := HTMLReport(),
-      sourceTabWidth := 2,
-      sourceEncoding := "utf-8",
-      
-      jacocoClasspath in Config <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
-      unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
-      
-      jacocoReport in Config <<= 
-          (targetDirectory, reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding,
-              sourceTabWidth) map reportAction)
+      libraryDependencies ++= dependencies) ++ inConfig(Config)(Seq(
+        outputDirectory <<= (crossTarget) { _ / "jacoco" },
+        reportFormat := HTMLReport(),
+        sourceTabWidth := 2,
+        sourceEncoding := "utf-8",
+        
+        jacocoClasspath <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
+        unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
+        
+        jacocoReport <<= 
+            (outputDirectory, reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding,
+                sourceTabWidth) map reportAction))
   }
 }

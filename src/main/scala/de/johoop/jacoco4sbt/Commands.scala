@@ -74,7 +74,7 @@ trait Commands extends Keys {
   }
   
   def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
-    val jacocoDirectory = targetDirectory in (extractedState.currentRef, Config) get extractedSettings
+    val jacocoDirectory = outputDirectory in (extractedState.currentRef, Config) get extractedSettings
     logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
     jacocoDirectory match {
       case Some(jacocoDirectory) => op(jacocoDirectory)

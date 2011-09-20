@@ -17,13 +17,13 @@ import Keys._
 trait Keys {
   lazy val Config = config("jacoco") hide
 
-  lazy val targetDirectory = SettingKey[File]("jacoco-target-directory", "Where JaCoCo should store its execution data and reports.")
-  lazy val reportFormat = SettingKey[FormattedReport]("jacoco-report-format", "Format (XML, CSV, HTML) of JaCoCo report to generate.")
-  lazy val sourceTabWidth = SettingKey[Int]("jacoco-source-tab-width", "Tab width of the sources to display in the JaCoCo report.")
-  lazy val sourceEncoding = SettingKey[String]("jacoco-source-encoding", "Encoding of the source files (for JaCoCo reporting).")
+  lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
+  lazy val reportFormat = SettingKey[FormattedReport]("report-format", "Format (XML, CSV, HTML) of JaCoCo report to generate.")
+  lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo report.")
+  lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
   
-  lazy val jacocoClasspath = TaskKey[Classpath]("jacoco-classpath", "Internal JaCoCo classpath.")
-  lazy val jacocoReport = TaskKey[Unit]("jacoco-report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
+  lazy val jacocoClasspath = TaskKey[Classpath]("classpath", "Internal JaCoCo classpath.")
+  lazy val jacocoReport = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 
   lazy val unpackJacocoAgent = TaskKey[File]("unpack-jacoco-agent", "Unpacks the Jacoco Agent JAR")
 }
