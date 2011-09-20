@@ -11,26 +11,25 @@
  */
 package de.johoop.jacoco4sbt
 
-import ReportType._
+import ReportFormat._
 
 import org.jacoco.core.data._
 import org.jacoco.core.analysis._
 import org.jacoco.report._
 import html.HTMLFormatter
 
-
 import java.io.File
 import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
-    sourceEncoding: String, outputEncoding: String, reportType: ReportType, reportDirectory: File, 
+    sourceEncoding: String, outputEncoding: String, reportFormat: ReportFormat, reportDirectory: File, 
     title: String, tabWidth: Int) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
 
-    createReport(reportType, bundleCoverage, executionDataStore, sessionInfoStore)
+    createReport(reportFormat, bundleCoverage, executionDataStore, sessionInfoStore)
   }
 
   private def loadExecutionData = {
@@ -61,10 +60,10 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
     coverageBuilder getBundle title
   }
 
-  private def createReport(reportType: ReportType, bundleCoverage: IBundleCoverage, 
+  private def createReport(reportFormat: ReportFormat, bundleCoverage: IBundleCoverage, 
       executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
 
-    val visitor = reportVisitor(reportType, outputEncoding, reportDirectory)
+    val visitor = reportVisitor(reportFormat, outputEncoding, reportDirectory)
     
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 

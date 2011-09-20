@@ -20,13 +20,13 @@ import org.jacoco.report.csv.CSVFormatter
 import java.io.File
 import java.io.FileOutputStream
 
-object ReportType extends Enumeration {
+object ReportFormat extends Enumeration {
   
-  type ReportType = Value
+  type ReportFormat = Value
   
   val XML, HTML, CSV = Value
   
-  private[jacoco4sbt] def reportVisitor(reportType: ReportType, encoding: String, dir: File) = reportType match {
+  private[jacoco4sbt] def reportVisitor(reportType: ReportFormat, encoding: String, dir: File) = reportType match {
     case HTML => {
       val formatter = new HTMLFormatter
       formatter setOutputEncoding encoding

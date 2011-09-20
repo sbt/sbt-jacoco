@@ -11,7 +11,7 @@
  */
 package de.johoop.jacoco4sbt
 
-import ReportType._
+import ReportFormat._
 
 import sbt._
 import Keys._
@@ -27,12 +27,12 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def reportAction(reportType: ReportType, sourceDirectories: Seq[File], classDirectory: File, 
+    def reportAction(reportFormat: ReportFormat, sourceDirectories: Seq[File], classDirectory: File, 
         sourceEncoding: String, reportEncoding: String, tabWidth: Int, reportTitle: String, jacocoDirectory: File) = {
       
       val report = new Report(
           executionDataFile = jacocoDirectory / "jacoco.exec",
-          reportType = reportType,
+          reportFormat = reportFormat,
           classDirectory = classDirectory,
           sourceDirectories = sourceDirectories,
           reportDirectory = jacocoDirectory,
@@ -50,7 +50,7 @@ object JacocoPlugin extends Plugin {
       libraryDependencies ++= dependencies,
       
       targetDirectory <<= (crossTarget) { _ / "jacoco" },
-      reportType := ReportType.HTML,
+      reportFormat := ReportFormat.HTML,
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
       reportEncoding := "utf-8",
@@ -60,7 +60,7 @@ object JacocoPlugin extends Plugin {
       unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
       
       jacocoReport in Config <<= 
-          (reportType, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding, reportEncoding,
+          (reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding, reportEncoding,
               sourceTabWidth, reportTitle, targetDirectory) map reportAction)
   }
 }

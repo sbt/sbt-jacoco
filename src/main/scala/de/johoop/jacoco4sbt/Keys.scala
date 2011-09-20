@@ -11,7 +11,7 @@
  */
 package de.johoop.jacoco4sbt
 
-import ReportType._
+import ReportFormat._
 
 import sbt._
 import Keys._
@@ -20,7 +20,7 @@ trait Keys {
   lazy val Config = config("jacoco") hide
 
   lazy val targetDirectory = SettingKey[File]("jacoco-target-directory", "Where JaCoCo should store its execution data and reports.")
-  lazy val reportType = SettingKey[ReportType]("jacoco-report-type", "Type of JaCoCo report to generate.")
+  lazy val reportFormat = SettingKey[ReportFormat]("jacoco-report-format", "Format (XML, CSV, HTML) of JaCoCo report to generate.")
   lazy val sourceTabWidth = SettingKey[Int]("jacoco-source-tab-width", "Tab width of the sources to display in the JaCoCo report.")
   lazy val sourceEncoding = SettingKey[String]("jacoco-source-encoding", "Encoding of the source files (for JaCoCo reporting).")
   lazy val reportEncoding = SettingKey[String]("jacoco-report-encoding", "Encoding of the JaCoCo report.")
