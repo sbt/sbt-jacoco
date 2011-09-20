@@ -19,14 +19,15 @@ import html.HTMLFormatter
 import java.io.File
 import java.io.FileInputStream
 
-class Report(executionDataFile: File, classDirectory: File, sourceDirectories: Seq[File],
-    sourceEncoding: String, tabWidth: Int, reportFormat: FormattedReport, reportDirectory: File) {
+class Report(executionDataFile: File, classDirectory: File, 
+    sourceDirectories: Seq[File], sourceEncoding: String, tabWidth: Int, 
+    reportFormats: Set[FormattedReport], reportTitle: String, reportDirectory: File) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
-
-    createReport(reportFormat, bundleCoverage, executionDataStore, sessionInfoStore)
+    
+    reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
   }
 
   private def loadExecutionData = {
@@ -54,7 +55,7 @@ class Report(executionDataFile: File, classDirectory: File, sourceDirectories: S
 
     analyzer analyzeAll classDirectory
 
-    coverageBuilder getBundle reportFormat.title
+    coverageBuilder getBundle reportTitle
   }
 
   private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage, 

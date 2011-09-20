@@ -25,13 +25,14 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def reportAction(jacocoDirectory: File, reportFormat: FormattedReport, sourceDirectories: Seq[File], 
-        classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
+    def reportAction(jacocoDirectory: File, reportFormats: Set[FormattedReport], reportTitle: String,
+        sourceDirectories: Seq[File], classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
       
       val report = new Report(
           reportDirectory = jacocoDirectory,
           executionDataFile = jacocoDirectory / "jacoco.exec",
-          reportFormat = reportFormat,
+          reportFormats = reportFormats,
+          reportTitle = reportTitle,
           classDirectory = classDirectory,
           sourceDirectories = sourceDirectories,
           tabWidth = tabWidth,
@@ -45,7 +46,8 @@ object JacocoPlugin extends Plugin {
       ivyConfigurations += Config,
       libraryDependencies ++= dependencies) ++ inConfig(Config)(Seq(
         outputDirectory <<= (crossTarget) { _ / "jacoco" },
-        reportFormat := HTMLReport(),
+        reportFormats := Set(HTMLReport()),
+        reportTitle := "Jacoco Coverage Report",
         sourceTabWidth := 2,
         sourceEncoding := "utf-8",
         
@@ -53,7 +55,7 @@ object JacocoPlugin extends Plugin {
         unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
         
         jacocoReport <<= 
-            (outputDirectory, reportFormat, sourceDirectories in Compile, classDirectory in Compile, sourceEncoding,
-                sourceTabWidth) map reportAction))
+            (outputDirectory, reportFormats, reportTitle, sourceDirectories in Compile, classDirectory in Compile, 
+                sourceEncoding, sourceTabWidth) map reportAction))
   }
 }

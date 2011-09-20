@@ -22,11 +22,10 @@ import java.io.FileOutputStream
 
 sealed abstract class FormattedReport {
   val encoding : String
-  val title : String
   def visitor(directory: File) : IReportVisitor
 }
 
-case class HTMLReport(encoding: String = "utf-8", title: String = "JaCoCo Coverage Report") extends FormattedReport {
+case class HTMLReport(encoding: String = "utf-8") extends FormattedReport {
   def visitor(directory: File) = {
     val formatter = new HTMLFormatter
     formatter setOutputEncoding encoding
@@ -34,7 +33,7 @@ case class HTMLReport(encoding: String = "utf-8", title: String = "JaCoCo Covera
   }
 }
 
-case class XMLReport(encoding: String = "utf-8", title: String = "JaCoCo Coverage") extends FormattedReport {
+case class XMLReport(encoding: String = "utf-8") extends FormattedReport {
   def visitor(directory: File) = {
     val formatter = new XMLFormatter
     formatter setOutputEncoding encoding
@@ -42,7 +41,7 @@ case class XMLReport(encoding: String = "utf-8", title: String = "JaCoCo Coverag
   }
 }
 
-case class CSVReport(encoding: String = "utf-8", title: String = "JaCoCo Coverage") extends FormattedReport {
+case class CSVReport(encoding: String = "utf-8") extends FormattedReport {
   def visitor(directory: File) = {
     val formatter = new CSVFormatter
     formatter setOutputEncoding encoding

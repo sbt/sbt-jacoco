@@ -18,8 +18,9 @@ trait Keys {
   lazy val Config = config("jacoco") hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
-  lazy val reportFormat = SettingKey[FormattedReport]("report-format", "Format (XML, CSV, HTML) of JaCoCo report to generate.")
-  lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo report.")
+  lazy val reportTitle = SettingKey[String]("report-title", "Title of the JacoCo report to generate.")
+  lazy val reportFormats = SettingKey[Set[FormattedReport]]("report-formats", "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
+  lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo reports.")
   lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
   
   lazy val jacocoClasspath = TaskKey[Classpath]("classpath", "Internal JaCoCo classpath.")
