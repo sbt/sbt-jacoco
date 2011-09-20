@@ -16,15 +16,28 @@ import Keys._
 import CommandSupport.logger
 
 trait Commands extends Keys with CommandGrammar {
-  private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => grammar) { (buildState, arguments) =>
+  private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => Grammar) { (buildState, arguments) =>
 
     implicit val implicitState = buildState
 
     arguments match {
-      case Instrument => instrument 
-      case Uninstrument => uninstrument
-      case Clean => cleanUp
-      case Report => report
+      case "instrument" => instrument 
+      case "uninstrument" => uninstrument
+      case "clean" => cleanUp
+      
+      case formats : ReportFormatResult => {
+        val reportFormatsToGenerate = for {
+          formatTuple <- formats
+          (format, maybeEncoding) = formatTuple
+          encoding = maybeEncoding map (_.mkString) getOrElse "utf-8"
+          reportFormat = FormattedReport(format, encoding) 
+        } yield reportFormat
+        
+        val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
+        report(temporaryBuildStateForReports)
+        
+        buildState
+      }
     }
   }
 
@@ -32,19 +45,18 @@ trait Commands extends Keys with CommandGrammar {
     logger(buildState) info "Instrumenting the run tasks."
 
     doInJacocoDirectory { jacocoDirectory =>
-      val agentFilePath = extractedState.evalTask(unpackJacocoAgent, buildState).getAbsolutePath
+      val agentFilePath = extractedState.evalTask(unpackJacocoAgent in Config, buildState).getAbsolutePath
       val executionDataPath = (jacocoDirectory / "jacoco.exec").getAbsolutePath
       val agentJavaOption = "-javaagent:%s=output=file,destfile=%s" format (agentFilePath, executionDataPath)
   
-      addSettings(Seq(
-          javaOptions in run += agentJavaOption))
+      addSetting(javaOptions in run += agentJavaOption)
     }
   }
 
   def uninstrument(implicit buildState: State) = {
     logger(buildState) info "Uninstrumenting the run tasks."
 
-    addSettings(Seq(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } ))
+    addSetting(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } )
   }
 
   def cleanUp(implicit buildState: State) = {
@@ -56,12 +68,10 @@ trait Commands extends Keys with CommandGrammar {
     }
   }
   
-  def report(implicit buildState: State) = {
+  def report(buildState: State) = {
     logger(buildState) info "Generating JaCoCo coverage report(s)."
 
     Project.evaluateTask(jacocoReport in Config, buildState)
-
-    buildState
   }
   
   def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
@@ -78,6 +88,6 @@ trait Commands extends Keys with CommandGrammar {
   
   def extractedState(implicit state: State) = Project extract state
   def extractedSettings(implicit state: State) = extractedState.structure.data
-  def addSettings(settings: Seq[Project.Setting[_]])(implicit state: State) = extractedState.append(settings, state)
+  def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
 
 }

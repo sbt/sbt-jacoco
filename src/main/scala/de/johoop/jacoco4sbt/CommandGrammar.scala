@@ -5,18 +5,20 @@ import complete.Parser
 import complete.DefaultParsers._ 
 
 trait CommandGrammar {
-  lazy val grammar = Space ~> (Instrument | Uninstrument | Clean | reportGrammar) 
-  lazy val reportGrammar = Report ~ (Space ~> reportFormat).*
-  lazy val reportFormat = (Html | Xml | Csv ) ~ Encoding.?
+  type ReportFormatResult = List[Tuple2[String, Option[Seq[Char]]]]
   
-  lazy val Clean : Parser[String] = "clean"
-  lazy val Instrument : Parser[String] = "instrument"
-  lazy val Uninstrument : Parser[String] = "uninstrument"
-  lazy val Report : Parser[String] = "report"
+  lazy val Grammar = Space ~> (Instrument | Uninstrument | Clean | ReportGrammar) 
+  lazy val ReportGrammar = Report ~> (Space ~> ReportFormat).*
+  lazy val ReportFormat = (Html | Xml | Csv ) ~ Encoding.?
+  
+  lazy val Clean = token("clean")
+  lazy val Instrument = token("instrument")
+  lazy val Uninstrument = token("uninstrument")
+  lazy val Report = token("report")
     
-  lazy val Html : Parser[String] = "html"
-  lazy val Xml : Parser[String]  = "xml"
-  lazy val Csv : Parser[String]  = "csv"
+  lazy val Html = token("html")
+  lazy val Xml = token("xml")
+  lazy val Csv = token("csv")
     
   lazy val Encoding : Parser[Seq[Char]] = '(' ~> charClass( _ != ')', "encoding").+ <~ ')'
 }

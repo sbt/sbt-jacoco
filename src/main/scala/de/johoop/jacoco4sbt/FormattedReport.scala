@@ -20,6 +20,14 @@ import org.jacoco.report.csv.CSVFormatter
 import java.io.File
 import java.io.FileOutputStream
 
+object FormattedReport {
+  def apply(format: String, encoding: String) = format match {
+    case "html" => HTMLReport(encoding)
+    case "xml" => XMLReport(encoding)
+    case "csv" => CSVReport(encoding)
+  }
+}
+
 sealed abstract class FormattedReport {
   val encoding : String
   def visitor(directory: File) : IReportVisitor
