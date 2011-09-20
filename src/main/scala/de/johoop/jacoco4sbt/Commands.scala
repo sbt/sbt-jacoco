@@ -33,8 +33,11 @@ trait Commands extends Keys with CommandGrammar {
           reportFormat = FormattedReport(format, encoding) 
         } yield reportFormat
         
-        val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
-        report(temporaryBuildStateForReports)
+        if (reportFormatsToGenerate.isEmpty) report
+        else {
+          val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
+          report(temporaryBuildStateForReports)
+        }
         
         buildState
       }
@@ -68,14 +71,15 @@ trait Commands extends Keys with CommandGrammar {
     }
   }
   
-  def report(buildState: State) = {
+  def report(implicit buildState: State) = {
     logger(buildState) info "Generating JaCoCo coverage report(s)."
+    logger(buildState) debug ("jacoco report formats: " + getSetting(reportFormats))
 
     Project.evaluateTask(jacocoReport in Config, buildState)
   }
   
   def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
-    val jacocoDirectory = outputDirectory in (extractedState.currentRef, Config) get extractedSettings
+    val jacocoDirectory = getSetting(outputDirectory)
     logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
     jacocoDirectory match {
       case Some(jacocoDirectory) => op(jacocoDirectory)
@@ -89,5 +93,6 @@ trait Commands extends Keys with CommandGrammar {
   def extractedState(implicit state: State) = Project extract state
   def extractedSettings(implicit state: State) = extractedState.structure.data
   def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
-
+  def getSetting[T](setting: SettingKey[T])(implicit state: State) = 
+    setting in (extractedState.currentRef, Config) get extractedSettings
 }
