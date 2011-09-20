@@ -13,18 +13,9 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
-import complete.Parsers._
 import CommandSupport.logger
 
-trait Commands extends Keys {
-  private lazy val Clean = "clean"
-  private lazy val Instrument = "instrument"
-  private lazy val Uninstrument = "uninstrument"
-  private lazy val Report = "report"
-
-  private lazy val grammar = 
-    Space ~> Instrument | Space ~> Uninstrument | Space ~> Clean | Space ~> Report
-
+trait Commands extends Keys with CommandGrammar {
   private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => grammar) { (buildState, arguments) =>
 
     implicit val implicitState = buildState
