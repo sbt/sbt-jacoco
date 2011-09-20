@@ -25,7 +25,7 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def reportAction(jacocoDirectory: File, reportFormats: Set[FormattedReport], reportTitle: String,
+    def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
         sourceDirectories: Seq[File], classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
       
       val report = new Report(
@@ -46,7 +46,7 @@ object JacocoPlugin extends Plugin {
       ivyConfigurations += Config,
       libraryDependencies ++= dependencies) ++ inConfig(Config)(Seq(
         outputDirectory <<= (crossTarget) { _ / "jacoco" },
-        reportFormats := Set(HTMLReport()),
+        reportFormats := Seq(HTMLReport()),
         reportTitle := "Jacoco Coverage Report",
         sourceTabWidth := 2,
         sourceEncoding := "utf-8",

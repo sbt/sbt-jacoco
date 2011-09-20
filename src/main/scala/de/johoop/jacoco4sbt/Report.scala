@@ -21,7 +21,7 @@ import java.io.FileInputStream
 
 class Report(executionDataFile: File, classDirectory: File, 
     sourceDirectories: Seq[File], sourceEncoding: String, tabWidth: Int, 
-    reportFormats: Set[FormattedReport], reportTitle: String, reportDirectory: File) {
+    reportFormats: Seq[FormattedReport], reportTitle: String, reportDirectory: File) {
 
   def generate : Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
