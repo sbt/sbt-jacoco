@@ -66,7 +66,7 @@ trait Commands extends Keys {
   }
   
   def report(implicit buildState: State) = {
-    logger(buildState) info "Generating JaCoCo coverage report."
+    logger(buildState) info "Generating JaCoCo coverage report(s)."
 
     Project.evaluateTask(jacocoReport in Config, buildState)
 
