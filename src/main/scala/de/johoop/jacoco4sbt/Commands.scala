@@ -21,8 +21,9 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     implicit val implicitState = buildState
 
     arguments match {
-      case "instrument" => instrument 
-      case "uninstrument" => dumpCoverageData
+      case "instrument" => instrument
+      case "persist" => persistCoverageData
+      case "uninstrument" => uninstrument
       case "clean" => cleanUp
       
       case formats : ReportFormatResult => {
@@ -44,23 +45,22 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     }
   }
 
-  def dumpCoverageData(implicit buildState: State) = {
+  def persistCoverageData(implicit buildState: State) = {
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
 
-    val jacocoRuntime = getSetting(runtime).get.get
+    val jacocoRuntime = getSetting(runtime).get
     doInJacocoDirectory { jacocoDirectory =>
       IO createDirectory jacocoDirectory
       val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
       try {
-        println("writing execution data to " + jacocoDirectory / "jacoco.exec")
+        logger(buildState) info "writing execution data to " + jacocoDirectory / "jacoco.exec"
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
         jacocoRuntime.collect(executionDataWriter, null, true)
         executionDataStream.flush()
       } finally {
         executionDataStream.close()
       }
-      println("done writing")
       jacocoRuntime.shutdown()
 
       buildState
@@ -71,6 +71,8 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     logger(buildState) info "Uninstrumenting the run tasks."
 
     // TODO delete instrumented class files, remove settings
+    
+    buildState
   }
 
   def cleanUp(implicit buildState: State) = {

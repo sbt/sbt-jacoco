@@ -24,17 +24,15 @@ trait Instrumentation extends Utils with Keys {
     logger(buildState) info "Instrumenting class files."
 
     val classes = Project.evaluateTask(classDirectories in Config, buildState).get.toEither.right.get // TODO error handling?
-    val jacocoRuntime = getSetting(runtime).get getOrElse new LoggerRuntime
-    
+    val jacocoRuntime = getSetting(runtime).get
     jacocoRuntime.reset()
-    val withRuntime = addSetting(runtime in Config := Some(jacocoRuntime))
     
     doInJacocoDirectory { jacocoDirectory =>
       val instrumenter = new Instrumenter(jacocoRuntime)
 
       for {
         baseDirectory <- classes
-        rebaseClassFiles = Path.rebase(baseDirectory, jacocoDirectory / "instrumented-classes" )
+        rebaseClassFiles = Path.rebase(baseDirectory, jacocoDirectory / baseDirectory.getName )
         classFile <- (baseDirectory ** "*.class").get
         _ = logger(buildState).debug("instrumenting " + classFile)
         classStream = new FileInputStream(classFile)
@@ -43,7 +41,7 @@ trait Instrumentation extends Utils with Keys {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
       }
       
-      withRuntime
+      buildState
     }
   }
 }

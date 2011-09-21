@@ -13,6 +13,7 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
+import org.jacoco.core.runtime.LoggerRuntime
 
 object JacocoPlugin extends Plugin {
   object jacoco extends Commands with Keys {
@@ -42,7 +43,7 @@ object JacocoPlugin extends Plugin {
         sourceTabWidth := 2,
         sourceEncoding := "utf-8",
         
-        runtime := None,
+        runtime := new LoggerRuntime,
         
         classDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
         jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
