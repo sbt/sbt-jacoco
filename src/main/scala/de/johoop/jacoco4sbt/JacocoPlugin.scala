@@ -13,6 +13,7 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
+import java.io.FileInputStream
 
 object JacocoPlugin extends Plugin {
   object jacoco extends Commands with Keys {
@@ -25,15 +26,30 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
+    def instrumentAction(jacocoDirectory: File, classDirectories: Seq[File]) = {
+      import org.jacoco.core.runtime.LoggerRuntime
+      import org.jacoco.core.instr.Instrumenter
+      import PathFinder._
+      
+      val runtime = new LoggerRuntime
+      val instrumenter = new Instrumenter(runtime)
+      
+      (PathFinder(classDirectories) ** "*.class").get foreach { file =>
+        println(file)
+        val classStream = new FileInputStream(file)
+        try instrumenter.instrument(classStream) finally classStream.close()
+      }
+    }
+    
     def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-        sourceDirectories: Seq[File], classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
+        sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int) = {
       
       val report = new Report(
           reportDirectory = jacocoDirectory,
           executionDataFile = jacocoDirectory / "jacoco.exec",
           reportFormats = reportFormats,
           reportTitle = reportTitle,
-          classDirectory = classDirectory,
+          classDirectories = classDirectories,
           sourceDirectories = sourceDirectories,
           tabWidth = tabWidth,
           sourceEncoding = sourceEncoding)
@@ -51,11 +67,16 @@ object JacocoPlugin extends Plugin {
         sourceTabWidth := 2,
         sourceEncoding := "utf-8",
         
+        classDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
+        jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
+          
         jacocoClasspath <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
         unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
         
+        jacocoInstrument <<= (outputDirectory, classDirectories) map instrumentAction,
+        
         jacocoReport <<= 
-            (outputDirectory, reportFormats, reportTitle, sourceDirectories in Compile, classDirectory in Compile, 
-                sourceEncoding, sourceTabWidth) map reportAction))
+            (outputDirectory, reportFormats, reportTitle, 
+                jacocoSources, classDirectories, sourceEncoding, sourceTabWidth) map reportAction))
   }
 }
