@@ -42,6 +42,8 @@ object JacocoPlugin extends Plugin {
         sourceTabWidth := 2,
         sourceEncoding := "utf-8",
         
+        runtime := None,
+        
         classDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
         jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
           

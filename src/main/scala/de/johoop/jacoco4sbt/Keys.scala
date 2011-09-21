@@ -27,7 +27,7 @@ trait Keys {
   lazy val classDirectories = TaskKey[Seq[File]]("class-directories", "Class directories for both compile and test configurations.")
   lazy val jacocoSources = TaskKey[Seq[File]]("sources", "Source directories for both compile and test configurations.")
   
-  lazy val runtime = SettingKey[IRuntime]("runtime", "Runtime of JaCoCo.")
+  lazy val runtime = SettingKey[Option[IRuntime]]("runtime", "Runtime of JaCoCo.")
   
   lazy val jacocoReport = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 }

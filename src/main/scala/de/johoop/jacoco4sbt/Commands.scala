@@ -15,14 +15,14 @@ import sbt._
 import Keys._
 import CommandSupport.logger
 
-trait Commands extends Keys with CommandGrammar {
+trait Commands extends Keys with CommandGrammar with Instrumentation with Utils {
   private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => Grammar) { (buildState, arguments) =>
 
     implicit val implicitState = buildState
 
     arguments match {
       case "instrument" => instrument 
-      case "uninstrument" => uninstrument
+      case "uninstrument" => dumpCoverageData
       case "clean" => cleanUp
       
       case formats : ReportFormatResult => {
@@ -44,54 +44,33 @@ trait Commands extends Keys with CommandGrammar {
     }
   }
 
-  def instrument(implicit buildState: State) = {
-    import org.jacoco.core.runtime.LoggerRuntime
-    import org.jacoco.core.instr.Instrumenter
-    import java.io.FileInputStream
-    
-    logger(buildState) info "Instrumenting the classes."
+  def dumpCoverageData(implicit buildState: State) = {
+    import java.io.FileOutputStream
+    import org.jacoco.core.data.ExecutionDataWriter
 
-    val classes = Project.evaluateTask(classDirectories in Config, buildState).get.toEither.right.get // TODO error handling?
-    val jacocoRuntime = new LoggerRuntime
-    val withRuntime = addSetting(runtime := jacocoRuntime)
-    
+    val jacocoRuntime = getSetting(runtime).get.get
     doInJacocoDirectory { jacocoDirectory =>
-      val instrumenter = new Instrumenter(jacocoRuntime)
-
-      for {
-        baseDirectory <- classes
-        rebaseClassFiles = Path.rebase(baseDirectory, jacocoDirectory / "instrumented-classes" )
-        classFile <- (baseDirectory ** "*.class").get
-        _ = logger(buildState).debug("instrumenting " + classFile)
-        classStream = new FileInputStream(classFile)
-        instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
-      } {
-        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+      IO createDirectory jacocoDirectory
+      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
+      try {
+        println("writing execution data to " + jacocoDirectory / "jacoco.exec")
+        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
+        jacocoRuntime.collect(executionDataWriter, null, true)
+        executionDataStream.flush()
+      } finally {
+        executionDataStream.close()
       }
-      
-      withRuntime
+      println("done writing")
+      jacocoRuntime.shutdown()
+
+      buildState
     }
   }
-
-// after run/ test, before reporting:
-//
-//      IO createDirectory jacocoDirectory
-//      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
-//      try {
-//        println("writing execution data to " + jacocoDirectory / "jacoco.exec")
-//        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
-//        runtime.collect(executionDataWriter, null, true)
-//        executionDataStream.flush()
-//      } finally {
-//        executionDataStream.close()
-//      }
-//      println("done writing")
-//      runtime.shutdown()
   
   def uninstrument(implicit buildState: State) = {
     logger(buildState) info "Uninstrumenting the run tasks."
 
-    addSetting(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } )
+    // TODO delete instrumented class files, remove settings
   }
 
   def cleanUp(implicit buildState: State) = {
@@ -109,24 +88,4 @@ trait Commands extends Keys with CommandGrammar {
 
     Project.evaluateTask(jacocoReport in Config, buildState)
   }
-  
-  def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
-    val jacocoDirectory = getSetting(outputDirectory)
-    logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
-    jacocoDirectory match {
-      case Some(jacocoDirectory) => op(jacocoDirectory)
-      case None => {
-        logger(buildState) error "JaCoCo target directory undefined."
-        buildState.fail
-      }
-    }
-  }
-  
-  def extractedState(implicit state: State) = Project extract state
-  def extractedSettings(implicit state: State) = extractedState.structure.data
-  def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
-  def getSetting[T](setting: SettingKey[T])(implicit state: State) = 
-    setting in (extractedState.currentRef, Config) get extractedSettings
-  def getTask[T](setting: TaskKey[T])(implicit state: State) = 
-    setting in (extractedState.currentRef, Config) get extractedSettings
 }
