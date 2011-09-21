@@ -26,18 +26,21 @@ object JacocoPlugin extends Plugin {
       IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
     }
 
-    def instrumentAction(jacocoDirectory: File, classDirectories: Seq[File]) = {
+    def instrumentAction(jacocoDirectory: File, classDirectories: Seq[File], streams: TaskStreams) = {
       import org.jacoco.core.runtime.LoggerRuntime
       import org.jacoco.core.instr.Instrumenter
       import PathFinder._
       
       val runtime = new LoggerRuntime
       val instrumenter = new Instrumenter(runtime)
-      
-      (PathFinder(classDirectories) ** "*.class").get foreach { file =>
-        println(file)
-        val classStream = new FileInputStream(file)
-        try instrumenter.instrument(classStream) finally classStream.close()
+
+      for {
+        classFile <- (PathFinder(classDirectories) ** "*.class").get
+        _ = streams.log.debug("instrumenting " + classFile)
+        classStream = new FileInputStream(classFile)
+        instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
+      } {
+        IO.write(classFile, instrumentedClass)
       }
     }
     
@@ -73,7 +76,7 @@ object JacocoPlugin extends Plugin {
         jacocoClasspath <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
         unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
         
-        jacocoInstrument <<= (outputDirectory, classDirectories) map instrumentAction,
+        jacocoInstrument <<= (outputDirectory, classDirectories, streams) map instrumentAction,
         
         jacocoReport <<= 
             (outputDirectory, reportFormats, reportTitle, 
