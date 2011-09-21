@@ -13,6 +13,7 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
+import org.jacoco.core.runtime.IRuntime
 
 trait Keys {
   lazy val Config = config("jacoco") hide
@@ -26,9 +27,7 @@ trait Keys {
   lazy val classDirectories = TaskKey[Seq[File]]("class-directories", "Class directories for both compile and test configurations.")
   lazy val jacocoSources = TaskKey[Seq[File]]("sources", "Source directories for both compile and test configurations.")
   
-  lazy val jacocoClasspath = TaskKey[Classpath]("classpath", "Internal JaCoCo classpath.")
+  lazy val runtime = SettingKey[IRuntime]("runtime", "Runtime of JaCoCo.")
+  
   lazy val jacocoReport = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
-  lazy val jacocoInstrument = TaskKey[Unit]("instrument", "Instruments the class file for JaCoCo Coverage.")
-
-  lazy val unpackJacocoAgent = TaskKey[File]("unpack-jacoco-agent", "Unpacks the Jacoco Agent JAR")
 }

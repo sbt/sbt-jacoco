@@ -45,17 +45,49 @@ trait Commands extends Keys with CommandGrammar {
   }
 
   def instrument(implicit buildState: State) = {
-    logger(buildState) info "Instrumenting the run tasks."
+    import org.jacoco.core.runtime.LoggerRuntime
+    import org.jacoco.core.instr.Instrumenter
+    import java.io.FileInputStream
+    
+    logger(buildState) info "Instrumenting the classes."
 
+    val classes = Project.evaluateTask(classDirectories in Config, buildState).get.toEither.right.get // TODO error handling?
+    val jacocoRuntime = new LoggerRuntime
+    val withRuntime = addSetting(runtime := jacocoRuntime)
+    
     doInJacocoDirectory { jacocoDirectory =>
-      val agentFilePath = extractedState.evalTask(unpackJacocoAgent in Config, buildState).getAbsolutePath
-      val executionDataPath = (jacocoDirectory / "jacoco.exec").getAbsolutePath
-      val agentJavaOption = "-javaagent:%s=output=file,destfile=%s" format (agentFilePath, executionDataPath)
-  
-      addSetting(javaOptions in run += agentJavaOption)
+      val instrumenter = new Instrumenter(jacocoRuntime)
+
+      for {
+        baseDirectory <- classes
+        rebaseClassFiles = Path.rebase(baseDirectory, jacocoDirectory / "instrumented-classes" )
+        classFile <- (baseDirectory ** "*.class").get
+        _ = logger(buildState).debug("instrumenting " + classFile)
+        classStream = new FileInputStream(classFile)
+        instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
+      } {
+        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+      }
+      
+      withRuntime
     }
   }
 
+// after run/ test, before reporting:
+//
+//      IO createDirectory jacocoDirectory
+//      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
+//      try {
+//        println("writing execution data to " + jacocoDirectory / "jacoco.exec")
+//        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
+//        runtime.collect(executionDataWriter, null, true)
+//        executionDataStream.flush()
+//      } finally {
+//        executionDataStream.close()
+//      }
+//      println("done writing")
+//      runtime.shutdown()
+  
   def uninstrument(implicit buildState: State) = {
     logger(buildState) info "Uninstrumenting the run tasks."
 
@@ -94,5 +126,7 @@ trait Commands extends Keys with CommandGrammar {
   def extractedSettings(implicit state: State) = extractedState.structure.data
   def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
   def getSetting[T](setting: SettingKey[T])(implicit state: State) = 
+    setting in (extractedState.currentRef, Config) get extractedSettings
+  def getTask[T](setting: TaskKey[T])(implicit state: State) = 
     setting in (extractedState.currentRef, Config) get extractedSettings
 }

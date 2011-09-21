@@ -53,7 +53,7 @@ class Report(executionDataFile: File, classDirectories: Seq[File],
     val coverageBuilder = new CoverageBuilder
     val analyzer = new Analyzer(executionDataStore, coverageBuilder)
 
-    classDirectories foreach { analyzer analyzeAll _ } 
+    classDirectories foreach { analyzer analyzeAll _ }
 
     coverageBuilder getBundle reportTitle
   }
