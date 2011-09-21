@@ -1,3 +1,7 @@
+resolvers += Resolver.url("Typesafe repository - Snapshots", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-snapshots/"))(Patterns(false, "[organisation]/[module]/[revision]/jars/[artifact].[ext]"))
+
+resolvers += Resolver.url("Typesafe repository - Releases", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Patterns(false, "[organisation]/[module]/[revision]/jars/[artifact].[ext]"))
+
 sbtPlugin := true
 
 publishMavenStyle := false
@@ -6,7 +10,7 @@ name := "jacoco4sbt"
 
 organization := "de.johoop"
 
-version := "1.0.2"
+version := "1.0.2-SNAPSHOT"
 
 publishTo := Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/")
 
@@ -24,4 +28,4 @@ ivyXML :=
    
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
-//seq(ScriptedPlugin.scriptedSettings: _*)
+// seq(ScriptedPlugin.scriptedSettings: _*)
