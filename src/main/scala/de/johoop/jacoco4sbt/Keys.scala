@@ -23,11 +23,10 @@ trait Keys {
   lazy val reportFormats = SettingKey[Seq[FormattedReport]]("report-formats", "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
   lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo reports.")
   lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
-  
-  lazy val classDirectories = TaskKey[Seq[File]]("class-directories", "Class directories for both compile and test configurations.")
+
+  lazy val combinedClassDirectories = TaskKey[Seq[File]]("combined-class-directories", "Combined Compile and Test class directories.")
+  lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
   lazy val jacocoSources = TaskKey[Seq[File]]("sources", "Source directories for both compile and test configurations.")
-  
-  lazy val runtime = SettingKey[IRuntime]("runtime", "Runtime of JaCoCo.")
   
   lazy val jacocoReport = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 }

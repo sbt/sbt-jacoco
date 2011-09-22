@@ -36,20 +36,22 @@ object JacocoPlugin extends Plugin {
 
     val settings : Seq[Setting[_]] = Seq(
       commands += jacocoCommand,
-      ivyConfigurations += Config) ++ inConfig(Config)(Seq(
-        outputDirectory <<= (crossTarget) { _ / "jacoco" },
-        reportFormats := Seq(HTMLReport()),
-        reportTitle := "Jacoco Coverage Report",
-        sourceTabWidth := 2,
-        sourceEncoding := "utf-8",
+      ivyConfigurations += Config,
+      instrumentedClassDirectory in Compile <<= (outputDirectory in Config, classDirectory in Compile) (_ / _.getName),
+      instrumentedClassDirectory in Test <<= (outputDirectory in Config, classDirectory in Test) (_ / _.getName)
+    ) ++ 
+    inConfig(Config)(Seq(
+      outputDirectory <<= (crossTarget) { _ / "jacoco" },
+      reportFormats := Seq(HTMLReport()),
+      reportTitle := "Jacoco Coverage Report",
+      sourceTabWidth := 2,
+      sourceEncoding := "utf-8",
+      
+      combinedClassDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
+      jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
         
-        runtime := new LoggerRuntime,
-        
-        classDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
-        jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
-          
-        jacocoReport <<= 
-            (outputDirectory, reportFormats, reportTitle, 
-                jacocoSources, classDirectories, sourceEncoding, sourceTabWidth) map reportAction))
+      jacocoReport <<= 
+          (outputDirectory, reportFormats, reportTitle, 
+              jacocoSources, combinedClassDirectories, sourceEncoding, sourceTabWidth) map reportAction))
   }
 }

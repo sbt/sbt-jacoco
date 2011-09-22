@@ -15,33 +15,44 @@ import sbt._
 import Keys._
 import CommandSupport.logger
 
+import org.jacoco.core.runtime.LoggerRuntime
+import org.jacoco.core.instr.Instrumenter
+
+import java.io.FileInputStream
+
 trait Instrumentation extends Utils with Keys {
+
   def instrument(implicit buildState: State) = {
-    import org.jacoco.core.runtime.LoggerRuntime
-    import org.jacoco.core.instr.Instrumenter
-    import java.io.FileInputStream
-    
     logger(buildState) info "Instrumenting class files."
 
-    val classes = Project.evaluateTask(classDirectories in Config, buildState).get.toEither.right.get // TODO error handling?
-    val jacocoRuntime = getSetting(runtime).get
-    jacocoRuntime.reset()
+    runtime.shutdown()
+    runtime.startup()
+    val instrumenter = new Instrumenter(runtime)
     
-    doInJacocoDirectory { jacocoDirectory =>
-      val instrumenter = new Instrumenter(jacocoRuntime)
+    val instrumentedProducts = Seq(Compile, Test, Runtime) map { 
+      config => instrumentClasses(instrumenter, config)
+    }
 
-      for {
-        baseDirectory <- classes
-        rebaseClassFiles = Path.rebase(baseDirectory, jacocoDirectory / baseDirectory.getName )
-        classFile <- (baseDirectory ** "*.class").get
-        _ = logger(buildState).debug("instrumenting " + classFile)
+    addSettings(instrumentedProducts)
+  }
+  
+  def instrumentClasses(instrumenter: Instrumenter, config: Configuration)(implicit buildState: State) = {
+    products in config ~= { original =>
+      logger(buildState).info("instrumenting: products in " + config + ": " + original)
+      
+      val instrumented = getSetting(instrumentedClassDirectory, config).get
+      val rebaseClassFiles = Path.rebase(original, instrumented)
+      
+      for { 
+        classFile <- (PathFinder(original) ** "*.class").get
+        _ = logger(buildState).info("instrumenting " + classFile)
         classStream = new FileInputStream(classFile)
         instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
       } {
-        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+          IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
       }
       
-      buildState
+      Seq(instrumented)
     }
   }
 }

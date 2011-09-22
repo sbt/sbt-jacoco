@@ -14,8 +14,11 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 import CommandSupport.logger
+import org.jacoco.core.runtime.LoggerRuntime
 
 trait Utils extends Keys {
+  
+  val runtime = new LoggerRuntime
   
   def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
     val jacocoDirectory = getSetting(outputDirectory)
@@ -31,7 +34,10 @@ trait Utils extends Keys {
   
   def extractedState(implicit state: State) = Project extract state
   def extractedSettings(implicit state: State) = extractedState.structure.data
-  def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
-  def getSetting[T](setting: SettingKey[T])(implicit state: State) = 
-    setting in (extractedState.currentRef, Config) get extractedSettings
+  
+  def addSetting(setting: Project.Setting[_])(implicit state: State) = addSettings(Seq(setting))
+  def addSettings(settings: Seq[Project.Setting[_]])(implicit state: State) = extractedState.append(settings, state)
+  
+  def getSetting[T](setting: SettingKey[T], config: Configuration = Config)(implicit state: State) = 
+    setting in (extractedState.currentRef, config) get extractedSettings
 }

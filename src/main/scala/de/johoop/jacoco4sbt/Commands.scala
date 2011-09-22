@@ -49,19 +49,17 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
 
-    val jacocoRuntime = getSetting(runtime).get
     doInJacocoDirectory { jacocoDirectory =>
       IO createDirectory jacocoDirectory
       val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
       try {
         logger(buildState) info "writing execution data to " + jacocoDirectory / "jacoco.exec"
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
-        jacocoRuntime.collect(executionDataWriter, null, true)
+        runtime.collect(executionDataWriter, null, true)
         executionDataStream.flush()
       } finally {
         executionDataStream.close()
       }
-      jacocoRuntime.shutdown()
 
       buildState
     }
@@ -71,6 +69,7 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     logger(buildState) info "Uninstrumenting the run tasks."
 
     // TODO delete instrumented class files, remove settings
+    runtime.shutdown()
     
     buildState
   }
