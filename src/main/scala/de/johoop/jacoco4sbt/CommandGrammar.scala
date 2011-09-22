@@ -25,6 +25,7 @@ trait CommandGrammar {
   lazy val Clean = token("clean")
   lazy val Instrument = token("instrument")
   lazy val Persist = token("persist")
+  lazy val Reset = token("reset")
   lazy val Uninstrument = token("uninstrument")
   lazy val Report = token("report")
     

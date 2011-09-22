@@ -24,6 +24,7 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
       case "instrument" => instrument
       case "persist" => persistCoverageData
       case "uninstrument" => uninstrument
+      case "reset" => reset
       case "clean" => cleanUp
       
       case formats : ReportFormatResult => {
@@ -72,6 +73,13 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
       IO delete jacocoDirectory
       buildState
     }
+  }
+  
+  def reset(implicit buildState: State) = {
+    logger(buildState) info "Resetting the collected coverage data."
+    runtime.reset()
+    
+    buildState
   }
   
   def report(implicit buildState: State) = {
