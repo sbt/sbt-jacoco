@@ -65,15 +65,6 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     }
   }
   
-  def uninstrument(implicit buildState: State) = {
-    logger(buildState) info "Uninstrumenting the run tasks."
-
-    // TODO delete instrumented class files, remove settings
-    runtime.shutdown()
-    
-    buildState
-  }
-
   def cleanUp(implicit buildState: State) = {
     logger(buildState) info "Cleaning JaCoCo directory."
     

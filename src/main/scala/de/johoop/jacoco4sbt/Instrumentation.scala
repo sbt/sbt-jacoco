@@ -27,32 +27,34 @@ trait Instrumentation extends Utils with Keys {
 
     runtime.shutdown()
     runtime.startup()
-    val instrumenter = new Instrumenter(runtime)
     
-    val instrumentedProducts = Seq(Compile, Test, Runtime) map { 
-      config => instrumentClasses(instrumenter, config)
-    }
+    addSettings(isInstrumented := true)
+  }
 
-    addSettings(instrumentedProducts)
+  def uninstrument(implicit buildState: State) = {
+    logger(buildState) info "Uninstrumenting test/compile/runtime products."
+    addSettings(isInstrumented := false)
   }
   
-  def instrumentClasses(instrumenter: Instrumenter, config: Configuration)(implicit buildState: State) = {
-    products in config ~= { original =>
-      logger(buildState).debug("instrumenting: products in " + config + ": " + original)
-      
-      val instrumented = getSetting(instrumentedClassDirectory, config).get
-      val rebaseClassFiles = Path.rebase(original, instrumented)
+  def instrumentAction(originalProducts: Seq[File], instrumentedClassDirectory: File, shouldInstrument: Boolean, 
+      streams: TaskStreams) = {
+
+    if (shouldInstrument) {
+      streams.log.debug("instrumenting products: " + originalProducts)
+  
+      val instrumenter = new Instrumenter(runtime)
+      val rebaseClassFiles = Path.rebase(originalProducts, instrumentedClassDirectory)
       
       for { 
-        classFile <- (PathFinder(original) ** "*.class").get
-        _ = logger(buildState).debug("instrumenting " + classFile)
+        classFile <- (PathFinder(originalProducts) ** "*.class").get
+        _ = streams.log.debug("instrumenting " + classFile)
         classStream = new FileInputStream(classFile)
         instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
       } {
           IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
       }
+      Seq(instrumentedClassDirectory)
       
-      Seq(instrumented)
-    }
+    } else originalProducts
   }
 }

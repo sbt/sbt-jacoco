@@ -34,24 +34,28 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
-    val settings : Seq[Setting[_]] = Seq(
+    val instrumentationHooks = Seq(Compile, Runtime, Test) flatMap { config =>
+      Seq(instrumentedClassDirectory in config <<= (outputDirectory, classDirectory in config) (_ / _.getName),
+          products in config <<= (products in config, instrumentedClassDirectory in config, isInstrumented, streams) map { 
+            instrumentAction(_, _, _, _) }) 
+    }
+    
+    val settings : Seq[Setting[_]] = instrumentationHooks ++ Seq(
       commands += jacocoCommand,
       ivyConfigurations += Config,
-      instrumentedClassDirectory in Compile <<= (outputDirectory in Config, classDirectory in Compile) (_ / _.getName),
-      instrumentedClassDirectory in Test <<= (outputDirectory in Config, classDirectory in Test) (_ / _.getName)
-    ) ++ 
-    inConfig(Config)(Seq(
+      
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
       reportTitle := "Jacoco Coverage Report",
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
       
+      isInstrumented := false,
+
       combinedClassDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
       jacocoSources <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
-        
-      jacocoReport <<= 
-          (outputDirectory, reportFormats, reportTitle, 
-              jacocoSources, combinedClassDirectories, sourceEncoding, sourceTabWidth) map reportAction))
+      
+      jacocoReport <<= (outputDirectory, reportFormats, reportTitle, jacocoSources, combinedClassDirectories, 
+          sourceEncoding, sourceTabWidth) map reportAction)       
   }
 }
