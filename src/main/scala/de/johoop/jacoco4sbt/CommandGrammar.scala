@@ -18,7 +18,8 @@ import complete.DefaultParsers._
 trait CommandGrammar {
   type ReportFormatResult = List[Tuple2[String, Option[Seq[Char]]]]
   
-  lazy val Grammar = Space ~> (Instrument | Uninstrument | Clean | Persist | ReportGrammar) 
+  lazy val Grammar = Space ~> (Instrument | Uninstrument | Clean | Reset | Persist | ReportGrammar)
+  
   lazy val ReportGrammar = Report ~> (Space ~> ReportFormat).*
   lazy val ReportFormat = (Html | Xml | Csv ) ~ Encoding.?
   

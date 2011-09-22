@@ -27,7 +27,7 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
       case "reset" => reset
       case "clean" => cleanUp
       
-      case formats : ReportFormatResult => {
+      case formats: ReportFormatResult => {
         val reportFormatsToGenerate = for {
           formatTuple <- formats
           (format, maybeEncoding) = formatTuple
