@@ -23,7 +23,7 @@ import java.io.FileInputStream
 trait Instrumentation extends Utils with Keys {
 
   def instrument(implicit buildState: State) = {
-    logger(buildState) info "Instrumenting class files."
+    logger(buildState) info "Instrumenting test/compile/runtime products."
 
     runtime.shutdown()
     runtime.startup()
@@ -38,14 +38,14 @@ trait Instrumentation extends Utils with Keys {
   
   def instrumentClasses(instrumenter: Instrumenter, config: Configuration)(implicit buildState: State) = {
     products in config ~= { original =>
-      logger(buildState).info("instrumenting: products in " + config + ": " + original)
+      logger(buildState).debug("instrumenting: products in " + config + ": " + original)
       
       val instrumented = getSetting(instrumentedClassDirectory, config).get
       val rebaseClassFiles = Path.rebase(original, instrumented)
       
       for { 
         classFile <- (PathFinder(original) ** "*.class").get
-        _ = logger(buildState).info("instrumenting " + classFile)
+        _ = logger(buildState).debug("instrumenting " + classFile)
         classStream = new FileInputStream(classFile)
         instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
       } {
