@@ -28,7 +28,6 @@ trait Keys {
   
   lazy val combinedClassDirectories = TaskKey[Seq[File]]("jacoco-combined-class-directories", "Combined Compile and Test class directories.")
   lazy val instrumentedClassDirectory = SettingKey[File]("jacoco-instrumented-class-directory", "Directory containing the instrumented classes.")
-  lazy val jacocoSources = TaskKey[Seq[File]]("jacoco-sources", "Source directories for both compile and test configurations.")
   
-  lazy val jacocoReport = TaskKey[Unit]("jacoco-report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
+  lazy val report = TaskKey[Unit]("jacoco-report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 }

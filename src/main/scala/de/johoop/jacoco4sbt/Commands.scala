@@ -35,10 +35,10 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
           reportFormat = FormattedReport(format, encoding) 
         } yield reportFormat
         
-        if (reportFormatsToGenerate.isEmpty) report
+        if (reportFormatsToGenerate.isEmpty) createReport
         else {
           val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
-          report(temporaryBuildStateForReports)
+          createReport(temporaryBuildStateForReports)
         }
         
         buildState
@@ -82,10 +82,10 @@ trait Commands extends Keys with CommandGrammar with Instrumentation with Utils 
     buildState
   }
   
-  def report(implicit buildState: State) = {
+  def createReport(implicit buildState: State) = {
     logger(buildState) info "Generating JaCoCo coverage report(s)."
     logger(buildState) debug ("jacoco report formats: " + getSetting(reportFormats))
 
-    Project.evaluateTask(jacocoReport in Config, buildState)
+    Project.evaluateTask(report in Config, buildState)
   }
 }
