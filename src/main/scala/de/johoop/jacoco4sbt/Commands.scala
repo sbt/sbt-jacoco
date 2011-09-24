@@ -15,17 +15,19 @@ import sbt._
 import Keys._
 import CommandSupport.logger
 
-trait Commands extends Keys with CommandGrammar {
+trait Commands extends Keys with CommandGrammar with Instrumentation with Utils {
   private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => Grammar) { (buildState, arguments) =>
 
     implicit val implicitState = buildState
 
     arguments match {
-      case "instrument" => instrument 
+      case "instrument" => instrument
+      case "persist" => persistCoverageData
       case "uninstrument" => uninstrument
+      case "reset" => reset
       case "clean" => cleanUp
       
-      case formats : ReportFormatResult => {
+      case formats: ReportFormatResult => {
         val reportFormatsToGenerate = for {
           formatTuple <- formats
           (format, maybeEncoding) = formatTuple
@@ -33,10 +35,10 @@ trait Commands extends Keys with CommandGrammar {
           reportFormat = FormattedReport(format, encoding) 
         } yield reportFormat
         
-        if (reportFormatsToGenerate.isEmpty) report
+        if (reportFormatsToGenerate.isEmpty) createReport
         else {
           val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
-          report(temporaryBuildStateForReports)
+          createReport(temporaryBuildStateForReports)
         }
         
         buildState
@@ -44,24 +46,26 @@ trait Commands extends Keys with CommandGrammar {
     }
   }
 
-  def instrument(implicit buildState: State) = {
-    logger(buildState) info "Instrumenting the run tasks."
+  def persistCoverageData(implicit buildState: State) = {
+    import java.io.FileOutputStream
+    import org.jacoco.core.data.ExecutionDataWriter
 
     doInJacocoDirectory { jacocoDirectory =>
-      val agentFilePath = extractedState.evalTask(unpackJacocoAgent in Config, buildState).getAbsolutePath
-      val executionDataPath = (jacocoDirectory / "jacoco.exec").getAbsolutePath
-      val agentJavaOption = "-javaagent:%s=output=file,destfile=%s" format (agentFilePath, executionDataPath)
-  
-      addSetting(javaOptions in run += agentJavaOption)
+      IO createDirectory jacocoDirectory
+      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
+      try {
+        logger(buildState) info "writing execution data to " + jacocoDirectory / "jacoco.exec"
+        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
+        runtime.collect(executionDataWriter, null, true)
+        executionDataStream.flush()
+      } finally {
+        executionDataStream.close()
+      }
+
+      buildState
     }
   }
-
-  def uninstrument(implicit buildState: State) = {
-    logger(buildState) info "Uninstrumenting the run tasks."
-
-    addSetting(javaOptions in run <<= (javaOptions) { _ filter (_.contains("-javaagent:")) } )
-  }
-
+  
   def cleanUp(implicit buildState: State) = {
     logger(buildState) info "Cleaning JaCoCo directory."
     
@@ -71,28 +75,17 @@ trait Commands extends Keys with CommandGrammar {
     }
   }
   
-  def report(implicit buildState: State) = {
+  def reset(implicit buildState: State) = {
+    logger(buildState) info "Resetting the collected coverage data."
+    runtime.reset()
+    
+    buildState
+  }
+  
+  def createReport(implicit buildState: State) = {
     logger(buildState) info "Generating JaCoCo coverage report(s)."
     logger(buildState) debug ("jacoco report formats: " + getSetting(reportFormats))
 
-    Project.evaluateTask(jacocoReport in Config, buildState)
+    Project.evaluateTask(report in Config, buildState)
   }
-  
-  def doInJacocoDirectory(op: File => State)(implicit buildState: State) = {
-    val jacocoDirectory = getSetting(outputDirectory)
-    logger(buildState) debug ("jacoco target directory: " + jacocoDirectory)
-    jacocoDirectory match {
-      case Some(jacocoDirectory) => op(jacocoDirectory)
-      case None => {
-        logger(buildState) error "JaCoCo target directory undefined."
-        buildState.fail
-      }
-    }
-  }
-  
-  def extractedState(implicit state: State) = Project extract state
-  def extractedSettings(implicit state: State) = extractedState.structure.data
-  def addSetting(setting: Project.Setting[_])(implicit state: State) = extractedState.append(Seq(setting), state)
-  def getSetting[T](setting: SettingKey[T])(implicit state: State) = 
-    setting in (extractedState.currentRef, Config) get extractedSettings
 }

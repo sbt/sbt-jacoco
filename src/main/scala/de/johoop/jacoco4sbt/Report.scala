@@ -19,7 +19,7 @@ import html.HTMLFormatter
 import java.io.File
 import java.io.FileInputStream
 
-class Report(executionDataFile: File, classDirectory: File, 
+class Report(executionDataFile: File, classDirectories: Seq[File], 
     sourceDirectories: Seq[File], sourceEncoding: String, tabWidth: Int, 
     reportFormats: Seq[FormattedReport], reportTitle: String, reportDirectory: File) {
 
@@ -53,7 +53,7 @@ class Report(executionDataFile: File, classDirectory: File,
     val coverageBuilder = new CoverageBuilder
     val analyzer = new Analyzer(executionDataStore, coverageBuilder)
 
-    analyzer analyzeAll classDirectory
+    classDirectories foreach { analyzer analyzeAll _ }
 
     coverageBuilder getBundle reportTitle
   }

@@ -13,27 +13,20 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
+import org.jacoco.core.runtime.LoggerRuntime
 
 object JacocoPlugin extends Plugin {
   object jacoco extends Commands with Keys {
 
-    val dependencies = Seq(
-      "org.jacoco" % "org.jacoco.agent" % "0.5.3.201107060350" % "jacoco->default" artifacts(Artifact("org.jacoco.agent", "jar", "jar")))
-
-    def unpackAgentAction(libManagedJacoco: File, classpath: Classpath) = {
-      val outerAgentJar = classpath.files find (_.getName contains "agent")
-      IO.unzip(outerAgentJar.get, libManagedJacoco, "*.jar").head
-    }
-
     def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-        sourceDirectories: Seq[File], classDirectory: File, sourceEncoding: String, tabWidth: Int) = {
-      
+        sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int) = {
+
       val report = new Report(
           reportDirectory = jacocoDirectory,
           executionDataFile = jacocoDirectory / "jacoco.exec",
           reportFormats = reportFormats,
           reportTitle = reportTitle,
-          classDirectory = classDirectory,
+          classDirectories = classDirectories,
           sourceDirectories = sourceDirectories,
           tabWidth = tabWidth,
           sourceEncoding = sourceEncoding)
@@ -41,21 +34,28 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
-    val settings : Seq[Setting[_]] = Seq(
+    val instrumentationHooks = Seq(Compile, Runtime, Test) flatMap { config =>
+      Seq(instrumentedClassDirectory in config <<= (outputDirectory, classDirectory in config) (_ / _.getName),
+          products in config <<= (products in config, instrumentedClassDirectory in config, isInstrumented, streams) map { 
+            instrumentAction(_, _, _, _) }) 
+    }
+    
+    val settings : Seq[Setting[_]] = instrumentationHooks ++ Seq(
       commands += jacocoCommand,
       ivyConfigurations += Config,
-      libraryDependencies ++= dependencies) ++ inConfig(Config)(Seq(
-        outputDirectory <<= (crossTarget) { _ / "jacoco" },
-        reportFormats := Seq(HTMLReport()),
-        reportTitle := "Jacoco Coverage Report",
-        sourceTabWidth := 2,
-        sourceEncoding := "utf-8",
-        
-        jacocoClasspath <<= (classpathTypes, update) map { Classpaths managedJars (Config, _, _) },
-        unpackJacocoAgent <<= (managedDirectory in Config, jacocoClasspath in Config) map unpackAgentAction,
-        
-        jacocoReport <<= 
-            (outputDirectory, reportFormats, reportTitle, sourceDirectories in Compile, classDirectory in Compile, 
-                sourceEncoding, sourceTabWidth) map reportAction))
+      
+      outputDirectory <<= (crossTarget) { _ / "jacoco" },
+      reportFormats := Seq(HTMLReport()),
+      reportTitle := "Jacoco Coverage Report",
+      sourceTabWidth := 2,
+      sourceEncoding := "utf-8",
+      
+      isInstrumented := false,
+
+      combinedClassDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
+      sources in Config <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
+      
+      report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, combinedClassDirectories, 
+          sourceEncoding, sourceTabWidth) map reportAction)       
   }
 }
