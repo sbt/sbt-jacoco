@@ -10,7 +10,7 @@ name := "jacoco4sbt"
 
 organization := "de.johoop"
 
-version := "1.1.0"
+version := "1.1.1-SNAPSHOT"
 
 publishTo := Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/")
 

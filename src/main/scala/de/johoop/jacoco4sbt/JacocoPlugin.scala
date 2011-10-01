@@ -52,7 +52,7 @@ object JacocoPlugin extends Plugin {
       
       isInstrumented := false,
 
-      combinedClassDirectories <<= (classDirectory in Compile, classDirectory in Test) map (Seq(_, _)),
+      combinedClassDirectories <<= (classDirectory in Compile) map (Seq(_)),
       sources in Config <<= (sourceDirectories in Compile, sourceDirectories in Test) map (_++_),
       
       report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, combinedClassDirectories, 
