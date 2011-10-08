@@ -26,9 +26,10 @@ object JacocoPlugin extends Plugin {
       import org.jacoco.core.data.ExecutionDataWriter
 
       IO createDirectory jacocoDirectory
-      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
+      val jacocoFile = jacocoDirectory / "jacoco.exec"
+      val executionDataStream = new FileOutputStream(jacocoFile)
       try {
-        streams.log.info("writing execution data to " + jacocoDirectory / "jacoco.exec")
+        streams.log.info("writing execution data to " + jacocoFile)
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
         runtime.collect(executionDataWriter, null, true)
         executionDataStream.flush()
@@ -60,6 +61,7 @@ object JacocoPlugin extends Plugin {
       
       classesToCover <<= (classDirectory in Compile) map (Seq(_)),
       coveredSources <<= (sourceDirectories in Compile) map identity,
+      
       instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
 
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover, 
