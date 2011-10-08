@@ -50,6 +50,10 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
+    def testAction(unused: Unit, streams: TaskStreams) = {
+      streams.log.info("tested successfully")
+    }
+    
     val settings = Seq(ivyConfigurations += Config) ++
       inConfig(Config)(Defaults.testTasks ++ Seq( 
 
@@ -68,6 +72,7 @@ object JacocoPlugin extends Plugin {
           sourceEncoding, sourceTabWidth, streams) map reportAction,
 
       definedTests <<= definedTests in Test,
-      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction))
+      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
+      cover <<= report.dependsOn(test)))
   }
 }

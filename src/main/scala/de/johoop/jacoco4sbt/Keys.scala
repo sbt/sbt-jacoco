@@ -30,5 +30,5 @@ trait Keys {
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
   
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
-  
+  lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")
 }
