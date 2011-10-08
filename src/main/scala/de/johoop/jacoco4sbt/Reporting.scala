@@ -17,7 +17,7 @@ trait Reporting extends JaCoCoRuntime {
     val jacocoFile = jacocoDirectory / "jacoco.exec"
     val executionDataStream = new FileOutputStream(jacocoFile)
     try {
-      streams.log.info("writing execution data to " + jacocoFile)
+      streams.log.debug("writing execution data to " + jacocoFile)
       val executionDataWriter = new ExecutionDataWriter(executionDataStream)
       runtime.collect(executionDataWriter, null, true)
       executionDataStream.flush()

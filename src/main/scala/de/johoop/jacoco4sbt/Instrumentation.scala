@@ -24,7 +24,7 @@ trait Instrumentation extends JaCoCoRuntime {
   def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
       streams: TaskStreams) = {
     
-    streams.log.info("instrumenting products: " + compileProducts)
+    streams.log.debug("instrumenting products: " + compileProducts)
 
     runtime.shutdown()
     runtime.startup()
@@ -34,7 +34,7 @@ trait Instrumentation extends JaCoCoRuntime {
     
     for { 
       classFile <- (PathFinder(compileProducts) ** "*.class").get
-      _ = streams.log.info("instrumenting " + classFile)
+      _ = streams.log.debug("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
       instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
     } {
