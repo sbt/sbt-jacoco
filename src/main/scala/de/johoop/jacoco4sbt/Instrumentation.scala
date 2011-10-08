@@ -22,8 +22,10 @@ import java.io.FileInputStream
 
 trait Instrumentation extends Utils with Keys {
 
-  def instrumentAction(compileProducts: Seq[File], testProducts: Seq[File], instrumentedClassDirectory: File, streams: TaskStreams) = {
-    streams.log.info("instrumenting products: " + testProducts)
+  def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
+      streams: TaskStreams) = {
+    
+    streams.log.info("instrumenting products: " + compileProducts)
 
     runtime.shutdown()
     runtime.startup()
@@ -39,6 +41,7 @@ trait Instrumentation extends Utils with Keys {
     } {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
-    Seq(instrumentedClassDirectory) ++ testProducts
+    
+    Attributed.blank(instrumentedClassDirectory) +: fullClasspath 
   }
 }

@@ -16,7 +16,7 @@ import Keys._
 import org.jacoco.core.runtime.IRuntime
 
 trait Keys {
-  lazy val Config = config("jacoco") hide
+  lazy val Config = config("jacoco") extend(Test) hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
   lazy val reportTitle = SettingKey[String]("report-title", "Title of the JacoCo report to generate.")
@@ -24,9 +24,11 @@ trait Keys {
   lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo reports.")
   lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
 
-  lazy val classesToCover = TaskKey[Seq[File]]("classesToCover", "Combined Compile and Test class directories.")
+  lazy val coveredSources = TaskKey[Seq[File]]("covered-sources", "Covered Sources.")
+  lazy val classesToCover = TaskKey[Seq[File]]("classes-to-cover", "Combined Compile and Test class directories.")
 
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
   
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
+  
 }

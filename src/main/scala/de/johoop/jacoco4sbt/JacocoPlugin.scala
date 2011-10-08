@@ -49,13 +49,8 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
-    def testAction(jacocoDirectory: File, streams: TaskStreams) = {
-      
-      streams.log.info("successfully executed covered test")      
-    }
-    
     val settings = Seq(ivyConfigurations += Config) ++
-      inConfig(Config)(Defaults.testSettings ++ Seq( 
+      inConfig(Config)(Defaults.testTasks ++ Seq( 
 
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
@@ -64,14 +59,13 @@ object JacocoPlugin extends Plugin {
       sourceEncoding := "utf-8",
       
       classesToCover <<= (classDirectory in Compile) map (Seq(_)),
-      sources <<= (sourceDirectories in Compile) map identity,
+      coveredSources <<= (sourceDirectories in Compile) map identity,
       instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
 
-      test <<= (test in Test, outputDirectory, streams) map ((_, out, streams) => testAction(out, streams)),
-      
-      report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, classesToCover, 
-          sourceEncoding, sourceTabWidth, streams) map reportAction)) ++ Seq(
-              
-      products in Test <<= (products in Compile, products in Test, instrumentedClassDirectory in Config, streams) map instrumentAction)
+      report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover, 
+          sourceEncoding, sourceTabWidth, streams) map reportAction,
+
+      definedTests <<= definedTests in Test,
+      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction))
   }
 }
