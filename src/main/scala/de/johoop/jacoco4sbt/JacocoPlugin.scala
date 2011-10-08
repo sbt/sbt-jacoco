@@ -34,28 +34,27 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
-    val instrumentationHooks = Seq(Compile, Runtime, Test) flatMap { config =>
-      Seq(instrumentedClassDirectory in config <<= (outputDirectory, classDirectory in config) (_ / _.getName),
-          products in config <<= (products in config, instrumentedClassDirectory in config, isInstrumented, streams) map { 
-            instrumentAction(_, _, _, _) }) 
+    def testAction(streams: TaskStreams) = {
+      streams.log.debug("successfully executed covered test")      
     }
     
-    val settings : Seq[Setting[_]] = instrumentationHooks ++ Seq(
-      commands += jacocoCommand,
-      ivyConfigurations += Config,
-      
+    val settings = Seq(ivyConfigurations += Config) ++
+      inConfig(Config)(Defaults.testSettings ++ Seq( 
+
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
       reportTitle := "Jacoco Coverage Report",
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
       
-      isInstrumented := false,
+      classesToCover <<= (classDirectory in Compile) map (Seq(_)),
+      sources <<= (sourceDirectories in Compile) map identity,
+      instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
 
-      combinedClassDirectories <<= (classDirectory in Compile) map (Seq(_)),
-      sources in Config <<= (sourceDirectories in Compile) map identity,
+      products <<= (products in Test, instrumentedClassDirectory, streams) map (instrumentAction(_, _, _)),
+      test <<= (test in Test, streams) map ((_, streams) => testAction(streams)),
       
-      report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, combinedClassDirectories, 
-          sourceEncoding, sourceTabWidth) map reportAction)       
+      report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, classesToCover, 
+          sourceEncoding, sourceTabWidth) map reportAction))
   }
 }

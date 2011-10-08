@@ -15,37 +15,7 @@ import sbt._
 import Keys._
 import CommandSupport.logger
 
-trait Commands extends Keys with CommandGrammar with Instrumentation with Utils {
-  private[jacoco4sbt] lazy val jacocoCommand = Command("jacoco")(_ => Grammar) { (buildState, arguments) =>
-
-    implicit val implicitState = buildState
-
-    arguments match {
-      case "instrument" => instrument
-      case "persist" => persistCoverageData
-      case "uninstrument" => uninstrument
-      case "reset" => reset
-      case "clean" => cleanUp
-      
-      case formats: ReportFormatResult => {
-        val reportFormatsToGenerate = for {
-          formatTuple <- formats
-          (format, maybeEncoding) = formatTuple
-          encoding = maybeEncoding map (_.mkString) getOrElse "utf-8"
-          reportFormat = FormattedReport(format, encoding) 
-        } yield reportFormat
-        
-        if (reportFormatsToGenerate.isEmpty) createReport
-        else {
-          val temporaryBuildStateForReports = addSetting(reportFormats in Config := reportFormatsToGenerate)
-          createReport(temporaryBuildStateForReports)
-        }
-        
-        buildState
-      }
-    }
-  }
-
+trait Commands extends Keys with Instrumentation with Utils {
   def persistCoverageData(implicit buildState: State) = {
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter

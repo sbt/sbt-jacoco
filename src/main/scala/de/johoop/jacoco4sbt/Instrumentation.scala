@@ -22,39 +22,23 @@ import java.io.FileInputStream
 
 trait Instrumentation extends Utils with Keys {
 
-  def instrument(implicit buildState: State) = {
-    logger(buildState) info "Instrumenting test/compile/runtime products."
+  def instrumentAction(testProducts: Seq[File], instrumentedClassDirectory: File, streams: TaskStreams) = {
+    streams.log.debug("instrumenting products: " + testProducts)
 
     runtime.shutdown()
     runtime.startup()
+
+    val instrumenter = new Instrumenter(runtime)
+    val rebaseClassFiles = Path.rebase(testProducts, instrumentedClassDirectory)
     
-    addSettings(isInstrumented := true)
-  }
-
-  def uninstrument(implicit buildState: State) = {
-    logger(buildState) info "Uninstrumenting test/compile/runtime products."
-    addSettings(isInstrumented := false)
-  }
-  
-  def instrumentAction(originalProducts: Seq[File], instrumentedClassDirectory: File, shouldInstrument: Boolean, 
-      streams: TaskStreams) = {
-
-    if (shouldInstrument) {
-      streams.log.debug("instrumenting products: " + originalProducts)
-  
-      val instrumenter = new Instrumenter(runtime)
-      val rebaseClassFiles = Path.rebase(originalProducts, instrumentedClassDirectory)
-      
-      for { 
-        classFile <- (PathFinder(originalProducts) ** "*.class").get
-        _ = streams.log.debug("instrumenting " + classFile)
-        classStream = new FileInputStream(classFile)
-        instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
-      } {
-          IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
-      }
-      Seq(instrumentedClassDirectory)
-      
-    } else originalProducts
+    for { 
+      classFile <- (PathFinder(testProducts) ** "*.class").get
+      _ = streams.log.debug("instrumenting " + classFile)
+      classStream = new FileInputStream(classFile)
+      instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
+    } {
+        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+    }
+    Seq(instrumentedClassDirectory)
   }
 }

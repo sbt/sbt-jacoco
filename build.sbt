@@ -28,4 +28,4 @@ ivyXML :=
    
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
-// seq(ScriptedPlugin.scriptedSettings: _*)
+seq(ScriptedPlugin.scriptedSettings: _*)
