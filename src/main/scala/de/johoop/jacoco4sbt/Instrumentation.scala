@@ -13,14 +13,13 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
-import CommandSupport.logger
 
 import org.jacoco.core.runtime.LoggerRuntime
 import org.jacoco.core.instr.Instrumenter
 
 import java.io.FileInputStream
 
-trait Instrumentation extends Utils with Keys {
+trait Instrumentation extends JaCoCoRuntime {
 
   def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
       streams: TaskStreams) = {
