@@ -16,7 +16,7 @@ import Keys._
 import org.jacoco.core.runtime.IRuntime
 
 trait Keys {
-  lazy val Config = config("jacoco") extend Test
+  lazy val Config = config("jacoco") hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
   lazy val reportTitle = SettingKey[String]("report-title", "Title of the JacoCo report to generate.")

@@ -35,27 +35,4 @@ trait Commands extends Keys with Instrumentation with Utils {
       buildState
     }
   }
-  
-  def cleanUp(implicit buildState: State) = {
-    logger(buildState) info "Cleaning JaCoCo directory."
-    
-    doInJacocoDirectory { jacocoDirectory => 
-      IO delete jacocoDirectory
-      buildState
-    }
-  }
-  
-  def reset(implicit buildState: State) = {
-    logger(buildState) info "Resetting the collected coverage data."
-    runtime.reset()
-    
-    buildState
-  }
-  
-  def createReport(implicit buildState: State) = {
-    logger(buildState) info "Generating JaCoCo coverage report(s)."
-    logger(buildState) debug ("jacoco report formats: " + getSetting(reportFormats))
-
-    Project.evaluateTask(report in Config, buildState)
-  }
 }

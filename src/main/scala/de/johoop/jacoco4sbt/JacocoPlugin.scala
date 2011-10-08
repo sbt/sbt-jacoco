@@ -19,7 +19,22 @@ object JacocoPlugin extends Plugin {
   object jacoco extends Commands with Keys {
 
     def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-        sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int) = {
+        sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
+        streams: TaskStreams) = {
+
+      import java.io.FileOutputStream
+      import org.jacoco.core.data.ExecutionDataWriter
+
+      IO createDirectory jacocoDirectory
+      val executionDataStream = new FileOutputStream(jacocoDirectory / "jacoco.exec")
+      try {
+        streams.log.info("writing execution data to " + jacocoDirectory / "jacoco.exec")
+        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
+        runtime.collect(executionDataWriter, null, true)
+        executionDataStream.flush()
+      } finally {
+        executionDataStream.close()
+      }
 
       val report = new Report(
           reportDirectory = jacocoDirectory,
@@ -34,8 +49,9 @@ object JacocoPlugin extends Plugin {
       report.generate
     }
 
-    def testAction(streams: TaskStreams) = {
-      streams.log.debug("successfully executed covered test")      
+    def testAction(jacocoDirectory: File, streams: TaskStreams) = {
+      
+      streams.log.info("successfully executed covered test")      
     }
     
     val settings = Seq(ivyConfigurations += Config) ++
@@ -51,10 +67,11 @@ object JacocoPlugin extends Plugin {
       sources <<= (sourceDirectories in Compile) map identity,
       instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
 
-      products <<= (products in Test, instrumentedClassDirectory, streams) map (instrumentAction(_, _, _)),
-      test <<= (test in Test, streams) map ((_, streams) => testAction(streams)),
+      test <<= (test in Test, outputDirectory, streams) map ((_, out, streams) => testAction(out, streams)),
       
       report <<= (outputDirectory, reportFormats, reportTitle, sources in Config, classesToCover, 
-          sourceEncoding, sourceTabWidth) map reportAction))
+          sourceEncoding, sourceTabWidth, streams) map reportAction)) ++ Seq(
+              
+      products in Test <<= (products in Compile, products in Test, instrumentedClassDirectory in Config, streams) map instrumentAction)
   }
 }

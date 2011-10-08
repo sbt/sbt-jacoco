@@ -22,23 +22,23 @@ import java.io.FileInputStream
 
 trait Instrumentation extends Utils with Keys {
 
-  def instrumentAction(testProducts: Seq[File], instrumentedClassDirectory: File, streams: TaskStreams) = {
-    streams.log.debug("instrumenting products: " + testProducts)
+  def instrumentAction(compileProducts: Seq[File], testProducts: Seq[File], instrumentedClassDirectory: File, streams: TaskStreams) = {
+    streams.log.info("instrumenting products: " + testProducts)
 
     runtime.shutdown()
     runtime.startup()
 
     val instrumenter = new Instrumenter(runtime)
-    val rebaseClassFiles = Path.rebase(testProducts, instrumentedClassDirectory)
+    val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
     
     for { 
-      classFile <- (PathFinder(testProducts) ** "*.class").get
-      _ = streams.log.debug("instrumenting " + classFile)
+      classFile <- (PathFinder(compileProducts) ** "*.class").get
+      _ = streams.log.info("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
       instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
     } {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
-    Seq(instrumentedClassDirectory)
+    Seq(instrumentedClassDirectory) ++ testProducts
   }
 }
