@@ -35,6 +35,8 @@ object JacocoPlugin extends Plugin {
           sourceEncoding, sourceTabWidth, streams) map reportAction,
 
       definedTests <<= definedTests in Test,
+      definedTestNames <<= definedTestNames in Test,
+
       fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
       cover <<= report.dependsOn(test)))
   }
