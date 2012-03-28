@@ -25,7 +25,11 @@ trait Keys {
   lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
 
   lazy val coveredSources = TaskKey[Seq[File]]("covered-sources", "Covered Sources.")
-  lazy val classesToCover = TaskKey[Seq[File]]("classes-to-cover", "Combined Compile and Test class directories.")
+  lazy val classesToCover = TaskKey[Seq[File]]("classes-to-cover", "compiled classes (filtered by includes and excludes) that will be covered")
+  
+  lazy val includes = SettingKey[Seq[String]]("jacoco-includes", "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
+  
+  lazy val excludes = SettingKey[Seq[String]]("jacoco-excludes", "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
 
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
   

@@ -13,6 +13,8 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
+import java.io.File
+import inc.Locate
 
 object JacocoPlugin extends Plugin {
   object jacoco extends Reporting with Instrumentation with Keys {
@@ -26,7 +28,24 @@ object JacocoPlugin extends Plugin {
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
       
-      classesToCover <<= (classDirectory in Compile) map (Seq(_)),
+      includes := Seq("*"),
+    
+      excludes := Seq(),
+    
+      jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map { (classes, incl, excl) =>
+        val inclFilters = incl map GlobFilter.apply
+        val exclFilters = excl map GlobFilter.apply
+        
+        PathFinder(classes) ** new FileFilter { 
+          def accept(f: File) = IO.relativize(classes, f) match { 
+            case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
+              val name = Locate.toClassName(file)
+              inclFilters.exists(_.accept(name)) && ! exclFilters.exists(_.accept(name))
+            case _ => false
+          }
+        } get
+      },
+      
       coveredSources <<= (sourceDirectories in Compile) map identity,
       
       instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
