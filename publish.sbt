@@ -31,6 +31,11 @@ pomExtra := (
       <name>Joachim Hofer</name>
       <url>http://jmhofer.johoop.de</url>
     </developer>
+    <developer>
+      <id>asflierl</id>
+      <name>Andreas Flierl</name>
+      <url>http://flierl.eu</url>
+    </developer>
   </developers>
 )
 
