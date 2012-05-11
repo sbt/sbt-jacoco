@@ -6,6 +6,3 @@ resolvers += Resolver.url("sbt-plugin-releases", new URL("http://scalasbt.artifa
 
 addSbtPlugin("com.jsuereth" % "xsbt-gpg-plugin" % "0.6")
 
-libraryDependencies <++= (sbtVersion) { sv => Seq(
-  "org.scala-tools.sbt" %% "scripted-plugin" % sv,
-  "org.scala-tools.sbt" %% "scripted-sbt" % sv) }
