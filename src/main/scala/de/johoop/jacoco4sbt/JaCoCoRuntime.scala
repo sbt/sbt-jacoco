@@ -14,7 +14,9 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 import CommandSupport.logger
+import org.jacoco.core.runtime.RuntimeData
 
 trait JaCoCoRuntime {
+  val runtimeData = new RuntimeData
   val runtime = new org.jacoco.core.runtime.LoggerRuntime
 }

@@ -14,7 +14,7 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 
-import org.jacoco.core.runtime.LoggerRuntime
+import org.jacoco.core.runtime.{RuntimeData, LoggerRuntime}
 import org.jacoco.core.instr.Instrumenter
 
 import java.io.FileInputStream
@@ -27,7 +27,7 @@ trait Instrumentation extends JaCoCoRuntime {
     streams.log.debug("instrumenting products: " + compileProducts)
 
     runtime.shutdown()
-    runtime.startup()
+    runtime.startup(runtimeData)
 
     val instrumenter = new Instrumenter(runtime)
     val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
