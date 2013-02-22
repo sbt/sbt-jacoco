@@ -17,11 +17,9 @@ import java.io.File
 import inc.Locate
 
 object JacocoPlugin extends Plugin {
-  object jacoco extends Reporting with SavingData with Instrumentation with Keys {
 
-    val settings = Seq(ivyConfigurations += Config) ++
-      inConfig(Config)(Defaults.testTasks ++ Seq( 
-
+  private object JacocoDefaults extends Reporting with Keys {
+    val settings = Seq(
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
       reportTitle := "Jacoco Coverage Report",
@@ -29,29 +27,38 @@ object JacocoPlugin extends Plugin {
       sourceEncoding := "utf-8",
 
       includes := Seq("*"),
-    
+
       excludes := Seq(),
-    
-      jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map { (classes, incl, excl) =>
-        val inclFilters = incl map GlobFilter.apply
-        val exclFilters = excl map GlobFilter.apply
-        
-        PathFinder(classes) ** new FileFilter { 
-          def accept(f: File) = IO.relativize(classes, f) match { 
-            case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
-              val name = Locate.toClassName(file)
-              inclFilters.exists(_.accept(name)) && ! exclFilters.exists(_.accept(name))
-            case _ => false
-          }
-        } get
-      },
-      
+
       coveredSources <<= (sourceDirectories in Compile) map identity,
-      
+
       instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
 
-      report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover, 
-          sourceEncoding, sourceTabWidth, streams) map reportAction,
+      report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
+        sourceEncoding, sourceTabWidth, streams) map reportAction,
+    )
+  }
+
+  private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
+    val inclFilters = incl map GlobFilter.apply
+    val exclFilters = excl map GlobFilter.apply
+
+    PathFinder(classes) ** new FileFilter {
+      def accept(f: File) = IO.relativize(classes, f) match {
+        case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
+          val name = Locate.toClassName(file)
+          inclFilters.exists(_.accept(name)) && ! exclFilters.exists(_.accept(name))
+        case _ => false
+      }
+    } get
+  }
+
+  object jacoco extends Reporting with SavingData with Instrumentation with Keys {
+
+    val settings = Seq(ivyConfigurations += Config) ++
+      inConfig(Config)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
+
+      jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
 
       definedTests <<= definedTests in Test,
       definedTestNames <<= definedTestNames in Test,
@@ -64,38 +71,11 @@ object JacocoPlugin extends Plugin {
 
   object itJacoco extends Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
 
-    val settings = Seq(ivyConfigurations += IntegrationTestConfig) ++ inConfig(IntegrationTestConfig)(Defaults.testTasks ++ Seq(
+    val settings = Seq(ivyConfigurations += IntegrationTestConfig) ++ inConfig(IntegrationTestConfig)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
 
       outputDirectory <<= (crossTarget) { _ / "it-jacoco" },
-      reportFormats := Seq(HTMLReport()),
-      reportTitle := "Jacoco IntegrationTest Coverage Report",
-      sourceTabWidth := 2,
-      sourceEncoding := "utf-8",
 
-      includes := Seq("*"),
-
-      excludes := Seq(),
-
-      itJacoco.classesToCover in itJacoco.IntegrationTestConfig <<= (classDirectory in Compile, includes, excludes) map { (classes, incl, excl) =>
-        val inclFilters = incl map GlobFilter.apply
-        val exclFilters = excl map GlobFilter.apply
-
-        PathFinder(classes) ** new FileFilter {
-          def accept(f: File) = IO.relativize(classes, f) match {
-            case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
-              val name = Locate.toClassName(file)
-              inclFilters.exists(_.accept(name)) && ! exclFilters.exists(_.accept(name))
-            case _ => false
-          }
-        } get
-      },
-
-      coveredSources <<= (sourceDirectories in Compile) map identity,
-
-      instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
-
-      report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
-        sourceEncoding, sourceTabWidth, streams) map reportAction,
+      itJacoco.classesToCover in itJacoco.IntegrationTestConfig <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
 
       definedTests <<= definedTests in IntegrationTest,
       definedTestNames <<= definedTestNames in IntegrationTest,
