@@ -35,4 +35,13 @@ trait Keys {
   
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
   lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")
+
+  lazy val check = TaskKey[Unit]("check", "Executes the tests and saves the execution data in 'jacoco.exec'.")
+}
+
+trait IntegrationTestKeys extends Keys {
+
+  lazy val IntegrationTestConfig = config("it-jacoco") extend(IntegrationTest) hide
+
+  lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
 }

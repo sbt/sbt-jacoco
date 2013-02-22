@@ -3,12 +3,8 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 
-import org.jacoco.core.runtime.LoggerRuntime
-
-trait Reporting extends JaCoCoRuntime {
-  def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-      sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-      streams: TaskStreams) = {
+trait SavingData extends JaCoCoRuntime {
+  def saveDataAction(jacocoDirectory: File, streams: TaskStreams) = {
 
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
@@ -24,10 +20,20 @@ trait Reporting extends JaCoCoRuntime {
     } finally {
       executionDataStream.close()
     }
+  }
+}
+
+trait Reporting extends JaCoCoRuntime {
+  def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
+      sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
+      streams: TaskStreams) = {
+
+    val reportDataFile = jacocoDirectory / "jacoco-merged.exec" orElse "jacoco.exec"
+    streams.log.debug("Using file %s to create report" format reportDataFile.getName)
 
     val report = new Report(
         reportDirectory = jacocoDirectory,
-        executionDataFile = jacocoDirectory / "jacoco.exec",
+        executionDataFile = reportDataFile,
         reportFormats = reportFormats,
         reportTitle = reportTitle,
         classDirectories = classDirectories,
@@ -37,4 +43,9 @@ trait Reporting extends JaCoCoRuntime {
     
     report.generate
   }
+
+  class FileWithOrElse(file: File) {
+    def orElse(otherFileName: String): File = if (file.exists) file else new File(file.getParent, otherFileName)
+  }
+  implicit def fileToFileWithOrElse(f: File):FileWithOrElse = new FileWithOrElse(f)
 }
