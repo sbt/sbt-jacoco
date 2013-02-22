@@ -1,5 +1,11 @@
 #A Fork of Jacoco4sbt plugin.
 
+This project is a fork of [Joachim Hofer's jacoco4sbt plugin](https://bitbucket.org/jmhofer/jacoco4sbt).
+I created a fork because I wanted to add functionality to support code coverage for integration-testing and merging of unit-test and integration-test reports.
+
+Read the [main site Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/Home) on how to add the plugin to your project.
+
+
 ##Added the following functionality:
 + Supports coverage for integration testing. A new task has been added 'it-jacoco' which support al the same keys as 'jacoco'.
 + Supports merging of unittest coverage and integration-test coverage into a single coverage report. If 'it-jacoco' is run after 'jacoco' (and the execution data was saved) then it-jacoco will by default merge all data and create a single report.
