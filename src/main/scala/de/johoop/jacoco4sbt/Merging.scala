@@ -7,8 +7,12 @@ trait Merging extends JaCoCoRuntime {
   import java.io._
   import sbt.Keys._
 
-  def mergeAction(jacocoDirectory: File, streams: TaskStreams) = {
+  def conditionalMergeAction(jacocoDirectory: File, streams: TaskStreams, mergeReports: Boolean) = {
+    if(mergeReports) mergeAction(jacocoDirectory, streams)
+    else streams.log.debug("Not merging execution data!")
+  }
 
+  def mergeAction(jacocoDirectory: File, streams: TaskStreams) = {
     val parent = jacocoDirectory.getParentFile
 
     import FileSeq._
