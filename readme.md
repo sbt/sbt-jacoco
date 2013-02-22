@@ -65,9 +65,15 @@ The report is generated in <project>/target/scala-<version>/it-jacoco/html.
 
 ###To *Not* merge the unittest and integration-test data, disable the merging of reports in the 'build.sbt'
 
-    itJacoco.mergeReports in itJacoco.IntegrationTestConfig := false
+    itJacoco.mergeReports in itJacoco.Config := false
 With mergeReports set to 'false', it-jacoco will only include the integration-test data in the report.
 >To include the unittest coverage again use 'it-jacoco:merge' before creating the report. This will always merge even when mergeReports is set to 'false'.
+
+###To disable parallel execution for code coverage
+
+Add this line to your 'build.sbt'
+
+    parallelExecution in itJacoco.Config := false
 
 ###To clean the JaCoCo output-directory
 

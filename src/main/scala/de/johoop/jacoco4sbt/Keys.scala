@@ -41,8 +41,7 @@ trait Keys {
 }
 
 trait IntegrationTestKeys extends Keys {
-
-  lazy val IntegrationTestConfig = config("it-jacoco") extend(IntegrationTest) hide
+  override lazy val Config = config("it-jacoco") extend(IntegrationTest) hide
 
   lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
   lazy val mergeReports = SettingKey[Boolean]("merge-reports", "Indication whether to merge the unittest and integration test reports. Defaults to true.")

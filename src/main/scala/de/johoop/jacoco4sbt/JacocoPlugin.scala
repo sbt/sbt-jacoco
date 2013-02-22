@@ -83,11 +83,11 @@ object JacocoPlugin extends Plugin {
     val conditionalMerge = (outputDirectory, streams, mergeReports) map conditionalMergeAction
     val forceMerge = (outputDirectory, streams) map mergeAction
 
-    val settings = Seq(ivyConfigurations += IntegrationTestConfig) ++ inConfig(IntegrationTestConfig)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
+    val settings = Seq(ivyConfigurations += Config) ++ inConfig(Config)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
 
       outputDirectory <<= (crossTarget) { _ / "it-jacoco" },
 
-      itJacoco.classesToCover in itJacoco.IntegrationTestConfig <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
+      itJacoco.classesToCover in itJacoco.Config <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
 
       definedTests <<= definedTests in IntegrationTest,
       definedTestNames <<= definedTestNames in IntegrationTest,
