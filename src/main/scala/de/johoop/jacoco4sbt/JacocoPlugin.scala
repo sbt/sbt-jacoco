@@ -18,7 +18,14 @@ import inc.Locate
 
 object JacocoPlugin extends Plugin {
 
-  private object JacocoDefaults extends Reporting with Keys {
+  trait Cleaning {
+    import org.apache.ivy.util.FileUtil
+    def cleanAction(outputDirectory: File) = {
+      outputDirectory.listFiles.foreach(f => FileUtil.forceDelete(f))
+    }
+  }
+
+  private object JacocoDefaults extends Reporting with Cleaning with Keys {
     val settings = Seq(
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
@@ -36,6 +43,8 @@ object JacocoPlugin extends Plugin {
 
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, streams) map reportAction,
+
+      clean <<= (outputDirectory) map cleanAction
     )
   }
 

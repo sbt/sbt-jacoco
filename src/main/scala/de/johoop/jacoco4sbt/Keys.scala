@@ -37,6 +37,7 @@ trait Keys {
   lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")
 
   lazy val check = TaskKey[Unit]("check", "Executes the tests and saves the execution data in 'jacoco.exec'.")
+  lazy val clean = TaskKey[Unit]("clean", "Cleaning JaCoCo's output-directory.")
 }
 
 trait IntegrationTestKeys extends Keys {

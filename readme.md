@@ -3,6 +3,7 @@
 ##Added the following functionality:
 + Supports coverage for integration testing. A new task has been added 'it-jacoco' which support al the same keys as 'jacoco'.
 + Supports merging of unittest coverage and integration-test coverage into a single coverage report. If 'it-jacoco' is run after 'jacoco' (and the execution data was saved) then it-jacoco will by default merge all data and create a single report.
++ Added 'clean' key to clean to JaCoCo output-directory.
 
 ## Enabling integration-testing in SBT
 
@@ -53,3 +54,17 @@ To run both unittest and integration-tests and create a combined report:
     jacoco:check
     it-jacoco:cover
 The report is generated in <project>/target/scala-<version>/it-jacoco/html.
+
+To run both unittest and integration-tests and NOT create a combined report:
+
+    jacoco:check (or :cover)
+    it-jacoco:check
+    it-jacoco:report
+This only generates a report for the integration tests.
+To include the unittest coverage use 'it-jacoco:merge' before creating the report.
+
+To clean the JaCoCo output-directory
+
+    [it-]jacoco:clean
+
+
