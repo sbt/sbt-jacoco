@@ -4,7 +4,7 @@ name := "jacoco4sbt"
 
 organization := "de.johoop"
 
-version := "1.2.5"
+version := "1.2.5a"
 
 resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositories/releases"
 
