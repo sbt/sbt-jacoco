@@ -4,7 +4,7 @@ This project is a fork of [Joachim Hofer's jacoco4sbt plugin](https://bitbucket.
 I created a fork because I wanted to add functionality to support code coverage for integration-testing and merging of unit-test and integration-test reports.
 
 Read the [main site Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/Home) on how to add the plugin to your project.
-I hope Joachim wants to include these changes in his project. Otherwise just checkout and build this project and use this plugin in your project. See details below.
+I created a pull request sp I hope Joachim wants to include these changes in his project. Otherwise just add my Maven repo or checkout and build this project to use this plugin in your project. See details below.
 
 ##Added the following functionality:
 + Supports coverage for integration testing. A new task has been added 'it-jacoco' which support al the same keys as 'jacoco'.
@@ -79,7 +79,20 @@ Add this line to your 'build.sbt'
 
     [it-]jacoco:clean
 
-## Clone and build the project
+## To use this plugin
+
+Read the [main site Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/Home) on how to use the JaCoCo plugin in your project.
+To use this plugin, with the integration-test changes, set the plugin version to '1.2.5a' and either also include the maven repository containing the plugin or clone this project and publish the artifacts locally.
+
+### Add Maven repository to resolvers
+Add this repository to the resolvers in your 'plugins.sbt'
+I cross build the plugin for Scala 2.9.2 and 2.10.0.
+
+    resolvers += "Jacoco4Sbt-fork repo" at "http://repository-diversit.forge.cloudbees.com/release"
+
+    addSbtPlugin("de.johoop" % "jacoco4sbt" % "1.2.5a")
+
+### Clone and build the project
     $ hg clone ssh://hg@bitbucket.org/diversit/jacoco4sbt
     $ cd jacoco4sbt
     $ sbt
