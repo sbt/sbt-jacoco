@@ -4,11 +4,11 @@ name := "jacoco4sbt"
 
 organization := "de.johoop"
 
-version := "1.2.5a"
+version := "2.0.0"
 
 resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositories/releases"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.9.2"
 
 libraryDependencies ++= Seq(
   "org.jacoco" % "org.jacoco.core" % "0.6.2.201302030002" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
@@ -16,4 +16,3 @@ libraryDependencies ++= Seq(
    
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
-crossScalaVersions := Seq("2.9.2", "2.10.0")
