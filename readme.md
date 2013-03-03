@@ -7,11 +7,11 @@ See the [Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/) for details.
 ## Change Log
 
 * *2.0.0* (contributed by Joost)
-** Integration testing
-** (Optional) merging coverage of unit and integration tests
-** `clean` key for cleaning the JaCoCo output directory selectively
+    * Integration testing
+    * (Optional) merging coverage of unit and integration tests
+    * `clean` key for cleaning the JaCoCo output directory selectively
 * *1.2.2* (contributed by Andreas)
-** Includes and excludes
+    * Includes and excludes
 
 ## Contributors
 
