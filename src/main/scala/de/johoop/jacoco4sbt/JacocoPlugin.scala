@@ -37,7 +37,7 @@ object JacocoPlugin extends Plugin {
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, streams) map reportAction,
 
-      clean <<= outputDirectory map (dir => IO delete dir.listFiles)
+      clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
   }
 
