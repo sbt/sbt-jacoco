@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  * 
- * Copyright (c) 2011 Joachim Hofer
+ * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -24,19 +24,19 @@ trait Instrumentation extends JaCoCoRuntime {
   def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
       streams: TaskStreams) = {
     
-    streams.log.debug("instrumenting products: " + compileProducts)
+    streams.log debug ("instrumenting products: " + compileProducts)
 
-    runtime.shutdown()
-    runtime.startup(runtimeData)
+    runtime.shutdown
+    runtime startup runtimeData
 
     val instrumenter = new Instrumenter(runtime)
     val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
     
     for { 
       classFile <- (PathFinder(compileProducts) ** "*.class").get
-      _ = streams.log.debug("instrumenting " + classFile)
+      _ = streams.log debug ("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
-      instrumentedClass = try instrumenter.instrument(classStream) finally classStream.close()
+      instrumentedClass = try instrumenter instrument classStream finally classStream.close
     } {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }

@@ -1,3 +1,14 @@
+/*
+ * This file is part of jacoco4sbt.
+ * 
+ * Copyright (c) 2011-2013 Joachim Hofer & contributors
+ * All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package de.johoop.jacoco4sbt
 
 import sbt._
@@ -8,26 +19,26 @@ trait Merging extends JaCoCoRuntime {
   import sbt.Keys._
 
   def conditionalMergeAction(jacocoDirectory: File, streams: TaskStreams, mergeReports: Boolean) = {
-    if(mergeReports) mergeAction(jacocoDirectory, streams)
-    else streams.log.debug("Not merging execution data!")
+    if (mergeReports) mergeAction(jacocoDirectory, streams)
+    else streams.log debug "Not merging execution data!"
   }
 
   def mergeAction(jacocoDirectory: File, streams: TaskStreams) = {
     val parent = jacocoDirectory.getParentFile
 
     import FileSeq._
-    val execs = parent.walkWithFilter(f => f.getName == "jacoco.exec")
-    streams.log.debug("Found data files: %s" format execs.map(_.getAbsolutePath).mkString(","))
+    val execs = parent.walkWithFilter(_.getName == "jacoco.exec")
+    streams.log debug ("Found data files: %s" format execs.map(_.getAbsolutePath).mkString(","))
 
     val loader = new ExecFileLoader
-    execs.foreach(exec => loader.load(exec))
+    execs foreach loader.load
 
     val mergedFile = new File(jacocoDirectory, "jacoco-merged.exec")
-    streams.log.debug("Writing merged data to: %s" format mergedFile.getAbsolutePath)
+    streams.log debug ("Writing merged data to: %s" format mergedFile.getAbsolutePath)
     writeToFile(mergedFile) { outputStream =>
       val dataWriter = new ExecutionDataWriter(outputStream)
-      loader.getSessionInfoStore.accept(dataWriter)
-      loader.getExecutionDataStore.accept(dataWriter)
+      loader.getSessionInfoStore accept dataWriter
+      loader.getExecutionDataStore accept dataWriter
     }
   }
 

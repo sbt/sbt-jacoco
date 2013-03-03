@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  * 
- * Copyright (c) 2011 Joachim Hofer
+ * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -15,8 +15,9 @@ import sbt._
 import Keys._
 import CommandSupport.logger
 import org.jacoco.core.runtime.RuntimeData
+import org.jacoco.core.runtime.LoggerRuntime
 
 trait JaCoCoRuntime {
   val runtimeData = new RuntimeData
-  val runtime = new org.jacoco.core.runtime.LoggerRuntime
+  val runtime = new LoggerRuntime
 }

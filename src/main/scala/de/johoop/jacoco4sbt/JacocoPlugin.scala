@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  * 
- * Copyright (c) 2011, 2012 Joachim Hofer & contributors
+ * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -18,14 +18,7 @@ import inc.Locate
 
 object JacocoPlugin extends Plugin {
 
-  trait Cleaning {
-    import org.apache.ivy.util.FileUtil
-    def cleanAction(outputDirectory: File) = {
-      outputDirectory.listFiles.foreach(f => FileUtil.forceDelete(f))
-    }
-  }
-
-  private object JacocoDefaults extends Reporting with Cleaning with Keys {
+  private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
       outputDirectory <<= (crossTarget) { _ / "jacoco" },
       reportFormats := Seq(HTMLReport()),
@@ -44,7 +37,7 @@ object JacocoPlugin extends Plugin {
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, streams) map reportAction,
 
-      clean <<= (outputDirectory) map cleanAction
+      clean <<= outputDirectory map (dir => IO delete dir.listFiles)
     )
   }
 
@@ -56,7 +49,7 @@ object JacocoPlugin extends Plugin {
       def accept(f: File) = IO.relativize(classes, f) match {
         case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
           val name = Locate.toClassName(file)
-          inclFilters.exists(_.accept(name)) && ! exclFilters.exists(_.accept(name))
+          inclFilters.exists(_ accept name) && ! exclFilters.exists(_ accept name)
         case _ => false
       }
     } get
@@ -73,8 +66,8 @@ object JacocoPlugin extends Plugin {
       definedTestNames <<= definedTestNames in Test,
 
       fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
-      cover <<= report.dependsOn(check),
-      check <<= ((outputDirectory, streams) map saveDataAction).dependsOn(test)
+      cover <<= report dependsOn check,
+      check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test
       ))
   }
 
@@ -93,10 +86,10 @@ object JacocoPlugin extends Plugin {
       definedTestNames <<= definedTestNames in IntegrationTest,
 
       fullClasspath <<= (products in Compile, fullClasspath in IntegrationTest, instrumentedClassDirectory, streams) map instrumentAction,
-      report <<= report.dependsOn(conditionalMerge),
-      cover <<= report.dependsOn(conditionalMerge.dependsOn(check)),
+      report <<= report dependsOn conditionalMerge,
+      cover <<= report dependsOn (conditionalMerge dependsOn check),
 
-      check <<= ((outputDirectory, streams) map saveDataAction).dependsOn(test),
+      check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test,
       merge <<= forceMerge,
       mergeReports := true
     ))

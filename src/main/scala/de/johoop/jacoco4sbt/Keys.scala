@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  * 
- * Copyright (c) 2011, 2012 Joachim Hofer & contributors
+ * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
