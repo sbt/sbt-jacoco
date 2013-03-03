@@ -10,6 +10,7 @@ See the [Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/) for details.
     * Integration testing
     * (Optional) merging coverage of unit and integration tests
     * `clean` key for cleaning the JaCoCo output directory selectively
+    
 * *1.2.2* (contributed by Andreas)
     * Includes and excludes
 
