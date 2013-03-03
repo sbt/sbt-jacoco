@@ -18,23 +18,23 @@ trait Merging extends JaCoCoRuntime {
   import java.io._
   import sbt.Keys._
 
-  def conditionalMergeAction(jacocoDirectory: File, streams: TaskStreams, mergeReports: Boolean) = {
-    if (mergeReports) mergeAction(jacocoDirectory, streams)
+  def conditionalMergeAction(itJacocoDirectory: File, jacocoDirectory: File, streams: TaskStreams, mergeReports: Boolean) = {
+    if (mergeReports) mergeAction(itJacocoDirectory, jacocoDirectory, streams)
     else streams.log debug "Not merging execution data!"
   }
 
-  def mergeAction(jacocoDirectory: File, streams: TaskStreams) = {
+  def mergeAction(itJacocoDirectory: File, jacocoDirectory: File, streams: TaskStreams) = {
     val parent = jacocoDirectory.getParentFile
 
-    val execs = (parent ** "jacoco.exec").get
+    val execs = (jacocoDirectory / "jacoco.exec" +++ itJacocoDirectory / "jacoco.exec").get
     streams.log debug ("Found data files: %s" format execs.map(_.absolutePath).mkString(", "))
 
     val loader = new ExecFileLoader
     execs foreach loader.load
 
-    val mergedFile = new File(jacocoDirectory, "jacoco-merged.exec")
+    val mergedFile = new File(itJacocoDirectory, "jacoco-merged.exec")
     streams.log debug ("Writing merged data to: %s" format mergedFile.getAbsolutePath)
-    
+
     writeToFile(mergedFile) { outputStream =>
       val dataWriter = new ExecutionDataWriter(outputStream)
       loader.getSessionInfoStore accept dataWriter

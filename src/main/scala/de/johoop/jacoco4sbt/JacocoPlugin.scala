@@ -73,8 +73,8 @@ object JacocoPlugin extends Plugin {
 
   object itJacoco extends Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
 
-    val conditionalMerge = (outputDirectory, streams, mergeReports) map conditionalMergeAction
-    val forceMerge = (outputDirectory, streams) map mergeAction
+    val conditionalMerge = (outputDirectory, outputDirectory in jacoco.Config, streams, mergeReports) map conditionalMergeAction
+    val forceMerge = (outputDirectory, outputDirectory in jacoco.Config, streams) map mergeAction
 
     val settings = Seq(ivyConfigurations += Config) ++ inConfig(Config)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
 
@@ -87,7 +87,7 @@ object JacocoPlugin extends Plugin {
 
       fullClasspath <<= (products in Compile, fullClasspath in IntegrationTest, instrumentedClassDirectory, streams) map instrumentAction,
       report <<= report dependsOn conditionalMerge,
-      cover <<= report dependsOn (conditionalMerge dependsOn check),
+      cover <<= report dependsOn check,
 
       check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test,
       merge <<= forceMerge,
