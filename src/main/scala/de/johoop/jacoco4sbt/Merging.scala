@@ -43,17 +43,15 @@ trait Merging extends JaCoCoRuntime {
   }
 
   private def writeToFile(f: File)(writeFn: OutputStream => Unit) = {
-    var outputStream: Option[OutputStream] = None
     try {
-      outputStream = Some(new BufferedOutputStream(new FileOutputStream(f)))
-      outputStream.foreach(os => writeFn(os))
+      val out = new BufferedOutputStream(new FileOutputStream(f))
+      try writeFn(out)
+      catch {
+        case e: IOException => throw new ResourcesException("Error merging Jacoco files: %s" format e.getMessage)
+      } finally out.close
     } catch {
-      case e: IOException => throw new ResourcesException("Error merging Jacoco files: %s" format e.getMessage)
-    } finally {
-      outputStream.foreach { s =>
-        s.flush()
-        s.close()
-      }
+      case e: IOException => 
+        throw new ResourcesException("Unable to write out Jacoco file during merge: %s" format e.getMessage)
     }
   }
 }
