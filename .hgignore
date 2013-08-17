@@ -15,4 +15,5 @@ syntax: regexp
 ^project/project$
 ^project/plugins/project$
 ^project/plugins/target$
-^.idea.*$
+^\.idea.*$
+^.*\.iml$
