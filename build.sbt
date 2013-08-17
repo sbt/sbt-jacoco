@@ -11,7 +11,7 @@ resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositorie
 scalaVersion := "2.10.2"
 
 libraryDependencies ++= Seq(
-  "org.jacoco" % "org.jacoco.core" % "0.6.2.201302030002" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
-  "org.jacoco" % "org.jacoco.report" % "0.6.2.201302030002" artifacts(Artifact("org.jacoco.report", "jar", "jar")))
+  "org.jacoco" % "org.jacoco.core" % "0.6.3.201306030806" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
+  "org.jacoco" % "org.jacoco.report" % "0.6.3.201306030806" artifacts(Artifact("org.jacoco.report", "jar", "jar")))
    
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_")

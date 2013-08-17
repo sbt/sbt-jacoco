@@ -36,7 +36,7 @@ trait Instrumentation extends JaCoCoRuntime {
       classFile <- (PathFinder(compileProducts) ** "*.class").get
       _ = streams.log debug ("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
-      instrumentedClass = try instrumenter instrument classStream finally classStream.close
+      instrumentedClass = try instrumenter instrument (classStream, classFile.name) finally classStream.close
     } {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
