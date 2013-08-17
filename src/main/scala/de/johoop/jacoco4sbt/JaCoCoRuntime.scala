@@ -13,7 +13,6 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 import Keys._
-import CommandSupport.logger
 import org.jacoco.core.runtime.RuntimeData
 import org.jacoco.core.runtime.LoggerRuntime
 

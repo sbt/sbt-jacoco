@@ -20,7 +20,7 @@ object JacocoPlugin extends Plugin {
 
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
-      outputDirectory <<= (crossTarget) { _ / "jacoco" },
+      outputDirectory := crossTarget.value / "jacoco",
       reportFormats := Seq(HTMLReport()),
       reportTitle := "Jacoco Coverage Report",
       sourceTabWidth := 2,
@@ -30,9 +30,9 @@ object JacocoPlugin extends Plugin {
 
       excludes := Seq(),
 
-      coveredSources <<= (sourceDirectories in Compile) map identity,
+      coveredSources := (sourceDirectories in Compile).value,
 
-      instrumentedClassDirectory <<= (outputDirectory, classDirectory in Compile) (_ / _.getName),
+      instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
 
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, streams) map reportAction,
@@ -60,15 +60,14 @@ object JacocoPlugin extends Plugin {
     val settings = Seq(ivyConfigurations += Config) ++
       inConfig(Config)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
 
-      jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
+      jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
       definedTests <<= definedTests in Test,
       definedTestNames <<= definedTestNames in Test,
 
       fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
       cover <<= report dependsOn check,
-      check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test
-      ))
+      check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test))
   }
 
   object itJacoco extends Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
@@ -78,9 +77,9 @@ object JacocoPlugin extends Plugin {
 
     val settings = Seq(ivyConfigurations += Config) ++ inConfig(Config)(Defaults.testTasks ++ JacocoDefaults.settings ++ Seq(
 
-      outputDirectory <<= (crossTarget) { _ / "it-jacoco" },
+      outputDirectory := crossTarget.value / "it-jacoco",
 
-      itJacoco.classesToCover in itJacoco.Config <<= (classDirectory in Compile, includes, excludes) map (filterClassesToCover),
+      itJacoco.classesToCover in itJacoco.Config <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
       definedTests <<= definedTests in IntegrationTest,
       definedTestNames <<= definedTestNames in IntegrationTest,
@@ -91,7 +90,6 @@ object JacocoPlugin extends Plugin {
 
       check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test,
       merge <<= forceMerge,
-      mergeReports := true
-    ))
+      mergeReports := true))
   }
 }
