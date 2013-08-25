@@ -6,6 +6,11 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 ## Change Log
 
+* *2.1.0*
+
+    * Updated to work with sbt 0.13.x (contributed by Patrick)
+    * Updated to latest JaCoCo version 0.6.3
+    
 * *2.0.0* (contributed by Joost)
 
     * Integration testing
@@ -18,7 +23,7 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 ## Contributors
 
-Many thanks to [Andreas Flierl](https://bitbucket.org/asflierl) and [Joost den Boer](https://bitbucket.org/diversit) for their awesome contributions!
+Many thanks to [Andreas Flierl](https://bitbucket.org/asflierl), [Joost den Boer](https://bitbucket.org/diversit) and [Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
 
 ## License
 
