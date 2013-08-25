@@ -41,5 +41,9 @@ pomExtra := (
       <name>Joost den Boer</name>
       <url>http://www.diversit.eu</url>
     </developer>
+    <developer>
+      <id>paddymahoney</id>
+      <name>Patrick Mahoney</name>
+    </developer>
   </developers>
 )
