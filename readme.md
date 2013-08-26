@@ -6,6 +6,10 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 ## Change Log
 
+* *2.1.1*
+
+    * Updated for sbt 0.13.0 (final)
+
 * *2.1.0*
 
     * Updated to work with sbt 0.13.x (contributed by Patrick)
