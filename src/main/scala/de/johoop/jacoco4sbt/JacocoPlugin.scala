@@ -21,7 +21,7 @@ object JacocoPlugin extends Plugin {
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
       outputDirectory := crossTarget.value / "jacoco",
-      reportFormats := Seq(HTMLReport()),
+      reportFormats := Seq(ScalaHTMLReport()),
       reportTitle := "Jacoco Coverage Report",
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
