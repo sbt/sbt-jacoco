@@ -41,6 +41,14 @@ case class HTMLReport(encoding: String = "utf-8") extends FormattedReport {
   }
 }
 
+case class ScalaHTMLReport(encoding: String = "utf-8") extends FormattedReport {
+  def visitor(directory: File) = {
+    val formatter = new ScalaHtmlFormatter
+    formatter setOutputEncoding encoding
+    formatter createVisitor new FileMultiReportOutput(new File(directory, "html"))
+  }
+}
+
 case class XMLReport(encoding: String = "utf-8") extends FormattedReport {
   def visitor(directory: File) = {
     val formatter = new XMLFormatter

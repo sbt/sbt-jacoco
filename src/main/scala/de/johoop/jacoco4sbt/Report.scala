@@ -18,6 +18,7 @@ import html.HTMLFormatter
 
 import java.io.File
 import java.io.FileInputStream
+import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
 
 class Report(executionDataFile: File, classDirectories: Seq[File], 
     sourceDirectories: Seq[File], sourceEncoding: String, tabWidth: Int, 
@@ -51,7 +52,7 @@ class Report(executionDataFile: File, classDirectories: Seq[File],
 
   private def analyzeStructure(executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
     val coverageBuilder = new CoverageBuilder
-    val analyzer = new Analyzer(executionDataStore, coverageBuilder)
+    val analyzer = new FilteringAnalyzer(executionDataStore, coverageBuilder)
 
     classDirectories foreach { analyzer analyzeAll _ }
 
