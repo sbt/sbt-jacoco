@@ -1,5 +1,5 @@
-publishTo <<= version { version =>
-  val qualifier = "sbt-plugin-" + (if (version contains "-SNAPSHOT") "snapshots" else "releases")
+publishTo := { 
+  val qualifier = "sbt-plugin-" + (if (version.value contains "-SNAPSHOT") "snapshots" else "releases")
   Some(Resolver.url(qualifier, new URL(s"http://repo.scala-sbt.org/scalasbt/$qualifier"))(Resolver.ivyStylePatterns))
 }
 
