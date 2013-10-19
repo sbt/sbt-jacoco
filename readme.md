@@ -2,7 +2,7 @@
 
 This is an **[sbt](http://scala-sbt.org/)** plugin for code coverage analysis via **JaCoCo**.
 
-See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
+See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 
 ## Change Log
 
@@ -32,7 +32,7 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 Many thanks to
 [Andreas Flierl](https://bitbucket.org/asflierl),
-[Jason Zaugg](https://bitbucket.org/retronym),
+[Jason Zaugg](https://github.com/retronym),
 [Joost den Boer](https://bitbucket.org/diversit) and
 [Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
 
