@@ -6,6 +6,9 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 ## Change Log
 
+* *2.1.2*
+    * Added a Scala-specific report format (contributed by Jason)
+
 * *2.1.1*
 
     * Updated for sbt 0.13.0 (final)
@@ -27,7 +30,11 @@ See the **[Wiki](https://bitbucket.org/jmhofer/jacoco4sbt/wiki/)** for details.
 
 ## Contributors
 
-Many thanks to [Andreas Flierl](https://bitbucket.org/asflierl), [Joost den Boer](https://bitbucket.org/diversit) and [Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
+Many thanks to
+[Andreas Flierl](https://bitbucket.org/asflierl),
+[Jason Zaugg](https://bitbucket.org/retronym),
+[Joost den Boer](https://bitbucket.org/diversit) and
+[Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
 
 ## License
 

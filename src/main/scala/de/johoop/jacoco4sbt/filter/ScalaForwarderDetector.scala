@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
   *  - classes contains static forwarders to methods in the companion object (for convenient Java interop)
   *  - methods in (boxed) value classes forward to the method body in the companion object
   *  - implicit classes creates a factory method beside the class.
-  *  - lazy vals have an accessor that forwards to $lzycompute, which is the method
+  *  - lazy vals have an accessor that forwards to `\$lzycompute`, which is the method
   *    with the interesting code.
   */
 object ScalaForwarderDetector {

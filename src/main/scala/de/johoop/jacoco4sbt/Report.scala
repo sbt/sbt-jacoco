@@ -13,8 +13,6 @@ package de.johoop.jacoco4sbt
 
 import org.jacoco.core.data._
 import org.jacoco.core.analysis._
-import org.jacoco.report._
-import html.HTMLFormatter
 
 import java.io.File
 import java.io.FileInputStream
@@ -54,7 +52,7 @@ class Report(executionDataFile: File, classDirectories: Seq[File],
     val coverageBuilder = new CoverageBuilder
     val analyzer = new FilteringAnalyzer(executionDataStore, coverageBuilder)
 
-    classDirectories foreach { analyzer analyzeAll _ }
+    classDirectories foreach (analyzer analyzeAll)
 
     coverageBuilder getBundle reportTitle
   }
@@ -64,7 +62,7 @@ class Report(executionDataFile: File, classDirectories: Seq[File],
 
     val visitor = reportFormat.visitor(reportDirectory)
     
-    visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents);
+    visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
 
     visitor.visitEnd()

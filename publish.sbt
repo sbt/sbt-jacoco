@@ -45,5 +45,9 @@ pomExtra := (
       <id>paddymahoney</id>
       <name>Patrick Mahoney</name>
     </developer>
+    <developer>
+      <id>retronym</id>
+      <name>Jason Zaugg</name>
+    </developer>
   </developers>
 )

@@ -12,21 +12,12 @@
 package de.johoop.jacoco4sbt
 
 import org.jacoco.report.FileMultiReportOutput
-import org.jacoco.report.IMultiReportOutput
 import org.jacoco.report.IReportVisitor
 import org.jacoco.report.xml.XMLFormatter
 import org.jacoco.report.html.HTMLFormatter
 import org.jacoco.report.csv.CSVFormatter
 import java.io.File
 import java.io.FileOutputStream
-
-object FormattedReport {
-  def apply(format: String, encoding: String) = format match {
-    case "html" => HTMLReport(encoding)
-    case "xml" => XMLReport(encoding)
-    case "csv" => CSVReport(encoding)
-  }
-}
 
 sealed abstract class FormattedReport {
   val encoding : String
@@ -41,9 +32,9 @@ case class HTMLReport(encoding: String = "utf-8") extends FormattedReport {
   }
 }
 
-case class ScalaHTMLReport(encoding: String = "utf-8") extends FormattedReport {
+case class ScalaHTMLReport(encoding: String = "utf-8", withBranchCoverage: Boolean = false) extends FormattedReport {
   def visitor(directory: File) = {
-    val formatter = new ScalaHtmlFormatter
+    val formatter = new ScalaHtmlFormatter(withBranchCoverage)
     formatter setOutputEncoding encoding
     formatter createVisitor new FileMultiReportOutput(new File(directory, "html"))
   }
