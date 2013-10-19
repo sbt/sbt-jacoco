@@ -1,53 +1,8 @@
-publishTo := { 
-  val nexus = "https://oss.sonatype.org/"
-  if (version.value.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+publishTo <<= version { version =>
+  val qualifier = "sbt-plugin-" + (if (version contains "-SNAPSHOT") "snapshots" else "releases")
+  Some(Resolver.url(qualifier, new URL(s"http://repo.scala-sbt.org/scalasbt/$qualifier"))(Resolver.ivyStylePatterns))
 }
 
-publishMavenStyle := true
+publishMavenStyle := false
 
 publishArtifact in Test := false
-
-pomIncludeRepository := { _ => false }
-
-pomExtra := (
-  <url>http://www.bitbucket.org/jmhofer/jacoco4sbt</url>
-  <licenses>
-    <license>
-      <name>Eclipse Public License v1.0</name>
-      <url>http://www.eclipse.org/legal/epl-v10.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <url>https://bitbucket.org/jmhofer/jacoco4sbt</url>
-    <connection>scm:hg:https://bitbucket.org/jmhofer/jacoco4sbt</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>johofer</id>
-      <name>Joachim Hofer</name>
-      <url>http://jmhofer.johoop.de</url>
-    </developer>
-    <developer>
-      <id>asflierl</id>
-      <name>Andreas Flierl</name>
-      <url>http://flierl.eu</url>
-    </developer>
-    <developer>
-      <id>diversit</id>
-      <name>Joost den Boer</name>
-      <url>http://www.diversit.eu</url>
-    </developer>
-    <developer>
-      <id>paddymahoney</id>
-      <name>Patrick Mahoney</name>
-    </developer>
-    <developer>
-      <id>retronym</id>
-      <name>Jason Zaugg</name>
-    </developer>
-  </developers>
-)
