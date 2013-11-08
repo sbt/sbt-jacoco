@@ -41,6 +41,7 @@ class ScalaHtmlFormatter(withBranchCoverage: Boolean) extends HTMLFormatter {
     t.add("Element", null, new LabelColumn, false)
     t.add("Missed Lines", Styles.BAR, new BarColumn(ICoverageNode.CounterEntity.LINE, getLocale), true)
     t.add("Total Lines", Styles.CTR1, CounterColumn.newTotal(ICoverageNode.CounterEntity.LINE, getLocale), false)
+    t.add("Cov.", Styles.CTR2, new PercentageColumn(ICoverageNode.CounterEntity.LINE, getLocale), false)
     if (withBranchCoverage) {
       t.add("Missed Branches", Styles.BAR, new BarColumn(ICoverageNode.CounterEntity.BRANCH, getLocale), false)
       t.add("Cov.", Styles.CTR2, new PercentageColumn(ICoverageNode.CounterEntity.BRANCH, getLocale), false)
