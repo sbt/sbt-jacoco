@@ -6,6 +6,10 @@ See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 
 ## Change Log
 
+* *2.1.3*
+    * Fixed #3 (working directory in JaCoCo configuration)
+    * Updated to latest JaCoCo version 0.6.4
+
 * *2.1.2*
     * Added a Scala-specific report format (contributed by Jason)
 
