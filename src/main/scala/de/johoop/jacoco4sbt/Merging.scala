@@ -14,7 +14,8 @@ package de.johoop.jacoco4sbt
 import sbt._
 
 trait Merging extends JaCoCoRuntime {
-  import org.jacoco.core.data.{ExecutionDataWriter, ExecFileLoader}
+  import org.jacoco.core.data.ExecutionDataWriter
+  import org.jacoco.core.tools.ExecFileLoader
   import java.io._
   import sbt.Keys._
 
