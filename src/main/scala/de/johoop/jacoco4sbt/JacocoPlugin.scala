@@ -64,6 +64,7 @@ object JacocoPlugin extends Plugin {
 
       definedTests <<= definedTests in Test,
       definedTestNames <<= definedTestNames in Test,
+      executeTests <<= executeTests in Test,
 
       fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
       cover <<= report dependsOn check,
