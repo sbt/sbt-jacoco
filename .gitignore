@@ -14,5 +14,6 @@ project/plugins/project/
 project/plugins/target/
 .idea*
 *.iml
-src/test/resources/jacocoTest/target
-src/test/resources/jacocoTest/project/target
+src/test/resources/*/target
+src/test/resources/*/project/target
+src/test/resources/*/log

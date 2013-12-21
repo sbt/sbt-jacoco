@@ -6,11 +6,11 @@ import scala.sys.process.Process
 import java.io.File
 import org.specs2.matcher.FileMatchers
 
-class JacocoSpec extends Specification with FileMatchers { def is = s2"""
+class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { def is = s2"""
   $sequential
-  ${"JaCoCo".title}
+  ${"JaCoCo in a simple Scala project".title}
 
-  Covering tests should
+  Covering tests in a simple Scala project should
     return an exit code of zero,                             $e1
     create a jacoco target directory,                        $e2
     create a classes directory.                              $e3
@@ -21,7 +21,6 @@ class JacocoSpec extends Specification with FileMatchers { def is = s2"""
   lazy val jacocoDir = new File(targetDir, "scala-2.10/jacoco")
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
 
-  // side effect, maybe do this in a Specs2 "step" instead
   lazy val exitCode = Process("sbt.bat clean jacoco:cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
