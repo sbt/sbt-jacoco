@@ -62,11 +62,13 @@ object JacocoPlugin extends Plugin {
 
       jacoco.classesToCover in jacoco.Config <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
+      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
+
       definedTests <<= definedTests in Test,
       definedTestNames <<= definedTestNames in Test,
-      executeTests <<= executeTests in Test,
+      executeTests <<= (streams in test, loadedTestFrameworks, testLoader, testGrouping in test, testExecution in test,
+        fullClasspath, javaHome in test) flatMap Defaults.allTestGroupsTask,
 
-      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, streams) map instrumentAction,
       cover <<= report dependsOn check,
       check <<= ((outputDirectory, streams) map saveDataAction) dependsOn test))
   }
@@ -82,10 +84,13 @@ object JacocoPlugin extends Plugin {
 
       itJacoco.classesToCover in itJacoco.Config <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
+      fullClasspath <<= (products in Compile, fullClasspath in IntegrationTest, instrumentedClassDirectory, streams) map instrumentAction,
+
       definedTests <<= definedTests in IntegrationTest,
       definedTestNames <<= definedTestNames in IntegrationTest,
+      executeTests <<= (streams in test, loadedTestFrameworks, testLoader, testGrouping in test, testExecution in test,
+        fullClasspath, javaHome in test) flatMap Defaults.allTestGroupsTask,
 
-      fullClasspath <<= (products in Compile, fullClasspath in IntegrationTest, instrumentedClassDirectory, streams) map instrumentAction,
       report <<= report dependsOn conditionalMerge,
       cover <<= report dependsOn check,
 
