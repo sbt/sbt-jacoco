@@ -55,47 +55,42 @@ object JacocoPlugin extends Plugin {
     } get
   }
 
-  object jacoco extends Reporting with SavingData with Instrumentation with Keys {
+  object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
+    lazy val srcConfig = Test
+  }
 
-    val settings = Seq(ivyConfigurations += Config) ++ Seq(
+  object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
+    lazy val srcConfig = IntegrationTest
+
+    lazy val conditionalMerge = (outputDirectory, outputDirectory in jacoco.Config, streams, mergeReports) map conditionalMergeAction
+    lazy val forceMerge = (outputDirectory, outputDirectory in jacoco.Config, streams) map mergeAction
+
+    override def settings = super.settings ++ Seq(
+      report <<= report dependsOn conditionalMerge,
+      merge <<= forceMerge,
+      mergeReports := true)
+  }
+
+  trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
+    def srcConfig: Configuration
+
+    def settings = Seq(ivyConfigurations += Config) ++ Seq(
       libraryDependencies +=
         "org.jacoco" % "org.jacoco.agent" % "0.6.4.201312101107" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
-      fullClasspath <<= (products in Compile, fullClasspath in Test, instrumentedClassDirectory, update, fork, streams) map instrumentAction,
+      fullClasspath <<= (products in Compile, fullClasspath in srcConfig, instrumentedClassDirectory, update, fork, streams) map instrumentAction,
       javaOptions <++= (fork, outputDirectory) map { (forked, out) =>
         if (forked) Seq(s"-Djacoco-agent.destfile=${out / "jacoco.exec" absolutePath}") else Seq()
       },
 
-      definedTests <<= definedTests in Test,
-      definedTestNames <<= definedTestNames in Test,
+      outputDirectory := crossTarget.value / Config.name,
+
+      definedTests <<= definedTests in srcConfig,
+      definedTestNames <<= definedTestNames in srcConfig,
 
       cover <<= report dependsOn check,
       check <<= ((outputDirectory, fork, streams) map saveDataAction) dependsOn test))
-  }
-
-  object itJacoco extends Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
-
-    val conditionalMerge = (outputDirectory, outputDirectory in jacoco.Config, streams, mergeReports) map conditionalMergeAction
-    val forceMerge = (outputDirectory, outputDirectory in jacoco.Config, streams) map mergeAction
-
-    val settings = Seq(ivyConfigurations += Config) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
-
-      outputDirectory := crossTarget.value / "it-jacoco",
-
-      itJacoco.classesToCover in itJacoco.Config <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
-
-      fullClasspath <<= (products in Compile, fullClasspath in IntegrationTest, instrumentedClassDirectory, update, fork, streams) map instrumentAction,
-
-      definedTests <<= definedTests in IntegrationTest,
-      definedTestNames <<= definedTestNames in IntegrationTest,
-
-      report <<= report dependsOn conditionalMerge,
-      cover <<= report dependsOn check,
-
-      check <<= ((outputDirectory, fork, streams) map saveDataAction) dependsOn test,
-      merge <<= forceMerge,
-      mergeReports := true))
   }
 }
