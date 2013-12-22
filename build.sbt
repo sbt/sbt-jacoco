@@ -27,3 +27,5 @@ buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test)
 buildInfoPackage := "de.johoop.jacoco4sbt.build"
 
 test in Test <<= test in Test dependsOn publishLocal
+
+parallelExecution in Test := false

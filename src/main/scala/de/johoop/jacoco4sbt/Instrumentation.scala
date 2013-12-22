@@ -31,7 +31,7 @@ trait Instrumentation extends JaCoCoRuntime {
 
       val tmp = IO.temporaryDirectory
       val jacocoAgent = agentJars flatMap (IO.unzip(_, tmp, (_: String) endsWith ".jar")) map Attributed.blank
-      streams.log info s"Found jacoco agent: $jacocoAgent"
+      streams.log debug s"Found jacoco agent: $jacocoAgent"
       (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
 
     } else {

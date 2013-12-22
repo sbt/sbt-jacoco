@@ -25,13 +25,8 @@ import play.test.Helpers;
 public class ApplicationTest {
 
     public static File relativeToBaseDir(String path) {
-        String baseDir = System.getProperty("play.base.dir");
-        if (baseDir == null) {
-            throw new NullPointerException("The play.base.dir property must be set so that relative paths can be resolved.");
-        }
-        System.out.println("BASE DIRECTORY: " + baseDir);
         System.out.println("Absolute current working directory path: " + new File(".").getAbsolutePath());
-        return new File(baseDir, path);
+        return new File(new File("."), path);
     }
 
     @Test
