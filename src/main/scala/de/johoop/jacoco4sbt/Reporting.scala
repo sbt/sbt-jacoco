@@ -15,21 +15,23 @@ import sbt._
 import Keys._
 
 trait SavingData extends JaCoCoRuntime {
-  def saveDataAction(jacocoDirectory: File, streams: TaskStreams) = {
+  def saveDataAction(jacocoDirectory: File, forked: Boolean, streams: TaskStreams) = {
 
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
 
-    IO createDirectory jacocoDirectory
-    val jacocoFile = jacocoDirectory / "jacoco.exec"
-    val executionDataStream = new FileOutputStream(jacocoFile)
-    try {
-      streams.log debug ("writing execution data to " + jacocoFile)
-      val executionDataWriter = new ExecutionDataWriter(executionDataStream)
-      runtimeData collect (executionDataWriter, executionDataWriter, true)
-      executionDataStream.flush
-    } finally {
-      executionDataStream.close
+    if (! forked) {
+      IO createDirectory jacocoDirectory
+      val jacocoFile = jacocoDirectory / "jacoco.exec"
+      val executionDataStream = new FileOutputStream(jacocoFile)
+      try {
+        streams.log debug ("writing execution data to " + jacocoFile)
+        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
+        runtimeData collect (executionDataWriter, executionDataWriter, true)
+        executionDataStream.flush
+      } finally {
+        executionDataStream.close
+      }
     }
   }
 }

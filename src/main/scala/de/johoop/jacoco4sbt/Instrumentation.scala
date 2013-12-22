@@ -14,22 +14,32 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 
-import org.jacoco.core.runtime.{RuntimeData, LoggerRuntime}
 import org.jacoco.core.instr.Instrumenter
 
 import java.io.FileInputStream
+import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
 
 trait Instrumentation extends JaCoCoRuntime {
 
   def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
-      streams: TaskStreams) = {
+      resolved: UpdateReport, forked: Boolean, streams: TaskStreams) = {
     
-    streams.log debug ("instrumenting products: " + compileProducts)
+    streams.log debug s"instrumenting products: $compileProducts"
 
-    runtime.shutdown
-    runtime startup runtimeData
+    val (jacocoAgent, instrumenter) = if (forked) {
+      val agentJars = resolved select (module = moduleFilter(name = "org.jacoco.agent"))
 
-    val instrumenter = new Instrumenter(runtime)
+      val tmp = IO.temporaryDirectory
+      val jacocoAgent = agentJars flatMap (IO.unzip(_, tmp, (_: String) endsWith ".jar")) map Attributed.blank
+      streams.log info s"Found jacoco agent: $jacocoAgent"
+      (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
+
+    } else {
+      runtime.shutdown
+      runtime startup runtimeData
+      (Seq(), new Instrumenter(runtime))
+    }
+
     val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
     
     for { 
@@ -40,7 +50,7 @@ trait Instrumentation extends JaCoCoRuntime {
     } {
         IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
-    
-    Attributed.blank(instrumentedClassDirectory) +: fullClasspath 
+
+    jacocoAgent ++ (Attributed.blank(instrumentedClassDirectory) +: fullClasspath)
   }
 }
