@@ -6,6 +6,11 @@ See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 
 ## Change Log
 
+* *2.1.4*
+    * Fixed a bad regression (#8) and added tests so that it doesn't happen again
+    * Made code coverage work with forked tests (#3 again, #6 and #9) - this should make life
+      a lot easier for [Play2](http://playframework.com) users
+
 * *2.1.3*
     * Fixed #3 (working directory in JaCoCo configuration)
     * Updated to latest JaCoCo version 0.6.4
