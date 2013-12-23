@@ -1,18 +1,20 @@
 # jacoco4sbt - Code Coverage via JaCoCo from within SBT
 
-This is an **[sbt](http://scala-sbt.org/)** plugin for code coverage analysis via **JaCoCo**.
+This is an **[sbt](http://scala-sbt.org/)** plugin for code coverage analysis via **[JaCoCo](http://www.eclemma.org/jacoco/)**.
 
 See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 
 ## Change Log
 
 * *2.1.4*
-    * Fixed a bad regression (#8) and added tests so that it doesn't happen again
-    * Made code coverage work with forked tests (#3 again, #6 and #9) - this should make life
+    * Fixed a bad regression ([#8](https://github.com/sbt/jacoco4sbt/issues/8)) and added tests so that it doesn't happen again
+    * Made code coverage work with forked tests ([#3](https://github.com/sbt/jacoco4sbt/issues/3) again,
+      [#6](https://github.com/sbt/jacoco4sbt/issues/6) and
+      [#9](https://github.com/sbt/jacoco4sbt/issues/9)) - this should make life
       a lot easier for [Play2](http://playframework.com) users
 
 * *2.1.3*
-    * Fixed #3 (working directory in JaCoCo configuration)
+    * Fixed [#3](https://github.com/sbt/jacoco4sbt/issues/3) (working directory in JaCoCo configuration)
     * Updated to latest JaCoCo version 0.6.4
 
 * *2.1.2*
