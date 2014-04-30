@@ -5,6 +5,9 @@ This is an **[sbt](http://scala-sbt.org/)** plugin for code coverage analysis vi
 See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 
 ## Change Log
+* *2.1.5*
+    * Added report summary to the build output
+    * Added check for required coverage
 
 * *2.1.4*
     * Fixed a bad regression ([#8](https://github.com/sbt/jacoco4sbt/issues/8)) and added tests so that it doesn't happen again

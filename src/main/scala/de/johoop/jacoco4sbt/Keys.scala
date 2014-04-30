@@ -32,7 +32,12 @@ trait Keys {
   lazy val excludes = SettingKey[Seq[String]]("jacoco-excludes", "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
 
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
-  
+  /**
+   * Example - in build.sbt add
+   * jacoco.ratios in jacoco.Config := Map("instruction" -> 35, "method" -> 40, "branch" -> 30, "complexity" -> 35, "line" -> 50, "class" -> 40)
+   */
+  lazy val ratios = SettingKey[Map[String, Double]]("ratios", "Required coverage ratios.")
+
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
   lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")
 

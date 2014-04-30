@@ -39,7 +39,7 @@ trait SavingData extends JaCoCoRuntime {
 trait Reporting extends JaCoCoRuntime {
   def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
       sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-      streams: TaskStreams) = {
+      streams: TaskStreams, ratios: Map[String, Double]) = {
 
     val reportDataFile = jacocoDirectory / "jacoco-merged.exec" orElse "jacoco.exec"
     streams.log debug ("Using file %s to create report" format reportDataFile.getName)
@@ -52,8 +52,10 @@ trait Reporting extends JaCoCoRuntime {
         classDirectories = classDirectories,
         sourceDirectories = sourceDirectories,
         tabWidth = tabWidth,
-        sourceEncoding = sourceEncoding)
-    
+        sourceEncoding = sourceEncoding,
+        ratios = ratios,
+        streams = streams)
+
     report.generate
   }
 
