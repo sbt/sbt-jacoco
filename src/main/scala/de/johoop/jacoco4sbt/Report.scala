@@ -39,10 +39,14 @@ class Report(executionDataFile: File,
     
     reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
-    checkCoverage(bundleCoverage)
+    if (!checkCoverage(bundleCoverage)) {
+      streams.log error "Required coverage is not met"
+      // is there a better way to fail build?
+      sys.exit(0)
+    }
   }
 
-  private def checkCoverage(bundle: IBundleCoverage) =
+  private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) =
   {
     streams.log info ""
     streams.log info s"------- $reportTitle --------"
@@ -56,14 +60,10 @@ class Report(executionDataFile: File,
       Nil
     streams.log info s"Check $reportDirectory for detail report"
     streams.log info ""
-    if (checkResult contains false)
-    {
-      streams.log error "Required coverage is not met"
-      sys.exit(0)
-    }
+    !(checkResult contains false)
   }
 
-  private def checkCounter(unit: String, c: ICounter, required: Double) =
+  private[jacoco4sbt] def checkCounter(unit: String, c: ICounter, required: Double) =
   {
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
