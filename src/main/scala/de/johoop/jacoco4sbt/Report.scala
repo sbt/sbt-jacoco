@@ -29,8 +29,7 @@ class Report(executionDataFile: File,
              reportTitle: String,
              reportDirectory: File,
              ratios: Map[String, Double],
-             streams: TaskStreams
-             ) {
+             streams: TaskStreams) {
 
   private val format = new DecimalFormat("#.##")
 
@@ -68,11 +67,12 @@ class Report(executionDataFile: File,
   {
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
-    val ratio = c.getCoveredRatio * 100
-    val success = ratio >= required
+    val coveredRatio = if (c.getCoveredRatio.isNaN) 0 else c.getCoveredRatio
+    val ratioPercent = coveredRatio * 100
+    val success = ratioPercent >= required
     val sign = if (success) ">=" else "<"
     val status = if (success) "OK" else "NOK"
-    val formattedRatio = format.format(ratio)
+    val formattedRatio = format.format(ratioPercent)
     streams.log info s"$unit: $formattedRatio% ($sign required $required%) covered, $missedCount of $totalCount missed, $status"
     success
   }
