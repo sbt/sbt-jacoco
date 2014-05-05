@@ -21,7 +21,7 @@ class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { d
   lazy val jacocoDir = new File(targetDir, "scala-2.10/jacoco")
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
 
-  lazy val exitCode = Process("sbt.bat clean jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover", Some(testProjectBase)) !
 
   def e1 = exitCode should not be equalTo(0)
   def e2 = jacocoDir should exist and beADirectory

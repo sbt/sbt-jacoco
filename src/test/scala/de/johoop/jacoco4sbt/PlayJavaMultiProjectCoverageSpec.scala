@@ -28,7 +28,7 @@ class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers {
     targetDir <- targetDirs
   } yield new File(targetDir, reportPath)
 
-  lazy val exitCode = Process("sbt.bat clean jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
   def e2 = jacocoDirs should contain(exist and beADirectory).foreach
