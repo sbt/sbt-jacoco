@@ -34,9 +34,9 @@ trait Keys {
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
   /**
    * Example - in build.sbt add
-   * jacoco.ratios in jacoco.Config := Map("instruction" -> 35, "method" -> 40, "branch" -> 30, "complexity" -> 35, "line" -> 50, "class" -> 40)
+   * jacoco.thresholds in jacoco.Config := Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)
    */
-  lazy val ratios = SettingKey[Map[String, Double]]("ratios", "Required coverage ratios.")
+  lazy val thresholds = SettingKey[Thresholds]("thresholds", "Required coverage ratios.")
 
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
   lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")

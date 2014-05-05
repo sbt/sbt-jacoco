@@ -14,9 +14,7 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 import java.io.File
-import sbt.inc.Locate
-import scala.Some
-import sbt.Configuration
+import inc.Locate
 
 object JacocoPlugin extends Plugin {
 
@@ -28,7 +26,7 @@ object JacocoPlugin extends Plugin {
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
 
-      ratios:= Map(),
+      thresholds:= Thresholds(),
       includes := Seq("*"),
 
       excludes := Seq(),
@@ -38,7 +36,7 @@ object JacocoPlugin extends Plugin {
       instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
 
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
-        sourceEncoding, sourceTabWidth, streams, ratios) map reportAction,
+        sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
 
       clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )

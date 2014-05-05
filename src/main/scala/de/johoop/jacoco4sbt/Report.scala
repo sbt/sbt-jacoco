@@ -28,7 +28,7 @@ class Report(executionDataFile: File,
              reportFormats: Seq[FormattedReport],
              reportTitle: String,
              reportDirectory: File,
-             ratios: Map[String, Double],
+             thresholds: Thresholds,
              streams: TaskStreams) {
 
   private val format = new DecimalFormat("#.##")
@@ -51,12 +51,12 @@ class Report(executionDataFile: File,
     streams.log info ""
     streams.log info s"------- $reportTitle --------"
     streams.log info ""
-    val checkResult = checkCounter("Lines", bundle.getLineCounter, ratios.getOrElse("line", 0d)) ::
-      checkCounter("Instructions", bundle.getInstructionCounter, ratios.getOrElse("instruction", 0d)) ::
-      checkCounter("Branches", bundle.getBranchCounter, ratios.getOrElse("branch", 0d)) ::
-      checkCounter("Methods", bundle.getMethodCounter, ratios.getOrElse("method", 0d)) ::
-      checkCounter("Complexity", bundle.getComplexityCounter, ratios.getOrElse("complexity", 0d)) ::
-      checkCounter("Class", bundle.getClassCounter, ratios.getOrElse("class", 0d)) ::
+    val checkResult = checkCounter("Lines", bundle.getLineCounter, thresholds.line) ::
+      checkCounter("Instructions", bundle.getInstructionCounter, thresholds.instruction) ::
+      checkCounter("Branches", bundle.getBranchCounter, thresholds.branch) ::
+      checkCounter("Methods", bundle.getMethodCounter, thresholds.method) ::
+      checkCounter("Complexity", bundle.getComplexityCounter, thresholds.complexity) ::
+      checkCounter("Class", bundle.getClassCounter, thresholds.clazz) ::
       Nil
     streams.log info s"Check $reportDirectory for detail report"
     streams.log info ""
