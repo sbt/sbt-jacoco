@@ -13,7 +13,8 @@ object TopLevel extends Build
             scalaVersion := "2.10.3",
             scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-language:_"),
             organization := "com.navetas",
-            fork in jacoco.Config := false
+            fork in jacoco.Config := false,
+            jacoco.thresholds in jacoco.Config := Thresholds(instruction = 100, method = 100, branch = 100, complexity = 100, line = 100, clazz = 100)
         )
     )
 }

@@ -42,7 +42,7 @@ class Report(executionDataFile: File,
     if (!checkCoverage(bundleCoverage)) {
       streams.log error "Required coverage is not met"
       // is there a better way to fail build?
-      sys.exit(0)
+      sys.exit(1)
     }
   }
 
