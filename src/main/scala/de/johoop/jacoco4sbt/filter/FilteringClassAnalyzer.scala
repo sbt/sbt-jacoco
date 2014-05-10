@@ -39,8 +39,8 @@ import scala.collection.JavaConverters._
  * These filters are based on [[https://github.com/timezra/jacoco/commit/b6146ebed8b8e7507ec634ee565fe03f3e940fdd]],
  * but extended to correctly exclude synthetics in module classes.
  */
-private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, probes: Array[Boolean],
-                                           stringPool: StringPool, coverageVisitor: ICoverageVisitor) extends ClassAnalyzer(classid, probes, stringPool) {
+private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, noMatch: Boolean, probes: Array[Boolean],
+                                           stringPool: StringPool, coverageVisitor: ICoverageVisitor) extends ClassAnalyzer(classid, noMatch, probes, stringPool) {
 
   private val className = classNode.name
 
@@ -102,15 +102,14 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore,
   override def analyzeClass(reader: ClassReader) {
     val classNode = new ClassNode()
     reader.accept(classNode, 0)
-    val visitor = createFilteringVisitor(CRC64.checksum(reader.b), classNode)
+    val visitor = createFilteringVisitor(CRC64.checksum(reader.b), reader.getClassName, classNode)
     reader.accept(visitor, 0)
   }
 
-  private def createFilteringVisitor(classid: Long, classNode: ClassNode): ClassVisitor = {
-    val data = executionData.get(classid)
-    val probes = if (data == null) null else data.getProbes
-    val stringPool = new StringPool
-    val analyzer = new FilteringClassAnalyzer(classid, classNode, probes, stringPool, coverageVisitor)
-    new ClassProbesAdapter(analyzer)
+  private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
+    val data = Option(executionData get classid)
+    val (noMatch, probes) = data map (data => (false, data getProbes)) getOrElse (executionData contains className, null)
+    val analyzer = new FilteringClassAnalyzer(classid, classNode, noMatch, probes, new StringPool, coverageVisitor)
+    new ClassProbesAdapter(analyzer, false)
   }
 }

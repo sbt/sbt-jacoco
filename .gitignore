@@ -7,7 +7,6 @@ bin/
 .settings
 target/
 .scala_dependencies
-lib/
 project/target/
 project/project/
 project/plugins/project/

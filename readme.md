@@ -45,6 +45,7 @@ See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 ## Contributors
 
 Many thanks to
+[Alexey Pismenskiy](https://github.com/apismensky),
 [Andreas Flierl](https://bitbucket.org/asflierl),
 [Jason Zaugg](https://github.com/retronym),
 [Joost den Boer](https://bitbucket.org/diversit) and
