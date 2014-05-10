@@ -7,7 +7,8 @@ See the **[Wiki](https://github.com/sbt/jacoco4sbt/wiki)** for details.
 ## Change Log
 * *2.1.5*
     * Added report summary to the build output
-    * Added check for required coverage
+    * Added check for required coverage (fixing [#14](https://github.com/sbt/jacoco4sbt/issues/14))
+    * Updated to JaCoCo version 0.7.0 (fixing [#18](https://github.com/sbt/jacoco4sbt/issues/18))
 
 * *2.1.4*
     * Fixed a bad regression ([#8](https://github.com/sbt/jacoco4sbt/issues/8)) and added tests so that it doesn't happen again
