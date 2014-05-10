@@ -11,9 +11,9 @@ class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { d
   ${"JaCoCo in a simple Scala project".title}
 
   Covering tests in a simple Scala project should
-    return an exit code of zero,                             $e1
-    create a jacoco target directory,                        $e2
-    create a classes directory.                              $e3
+    return an exit code != 0 when required coverage is not met,    $e1
+    create a jacoco target directory,                                        $e2
+    create a classes directory.                                              $e3
 """
 
   lazy val testProjectBase = new File(BuildInfo.test_resourceDirectory, "jacocoTest")
@@ -21,9 +21,9 @@ class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { d
   lazy val jacocoDir = new File(targetDir, "scala-2.10/jacoco")
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
 
-  lazy val exitCode = Process("sbt.bat clean jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover", Some(testProjectBase)) !
 
-  def e1 = exitCode should be equalTo(0)
+  def e1 = exitCode should not be equalTo(0)
   def e2 = jacocoDir should exist and beADirectory
   def e3 = coveredClassesDir should exist and beADirectory
 }

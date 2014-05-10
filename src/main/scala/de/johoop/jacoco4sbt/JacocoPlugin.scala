@@ -26,6 +26,7 @@ object JacocoPlugin extends Plugin {
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
 
+      thresholds:= Thresholds(),
       includes := Seq("*"),
 
       excludes := Seq(),
@@ -35,7 +36,7 @@ object JacocoPlugin extends Plugin {
       instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
 
       report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
-        sourceEncoding, sourceTabWidth, streams) map reportAction,
+        sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
 
       clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
