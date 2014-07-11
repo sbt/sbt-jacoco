@@ -10,12 +10,19 @@ resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositorie
 
 scalaVersion := "2.10.4"
 
+val jacocoCore = Artifact("org.jacoco.core", "jar", "jar")
+
+val jacocoReport = Artifact("org.jacoco.report", "jar", "jar")
+
+val jacocoVersion = "0.7.1.201405082137"
+
 libraryDependencies ++= Seq(
-  "org.jacoco" % "org.jacoco.core" % "0.7.0.201403182114" artifacts(Artifact("org.jacoco.core", "jar", "jar")),
-  "org.jacoco" % "org.jacoco.report" % "0.7.0.201403182114" artifacts(Artifact("org.jacoco.report", "jar", "jar")),
-  "org.specs2" %% "specs2" % "2.3.11" % "test",
-  "org.mockito" % "mockito-all" % "1.9.5" % "test",
-  "org.pegdown" % "pegdown" % "1.2.1" % "test")
+  "org.jacoco"  %  "org.jacoco.core"   % jacocoVersion artifacts(jacocoCore),
+  "org.jacoco"  %  "org.jacoco.report" % jacocoVersion artifacts(jacocoReport),
+  "org.specs2"  %% "specs2"            % "2.3.13" % Test,
+  "org.mockito" %  "mockito-all"       % "1.9.5"  % Test,
+  "org.pegdown" %  "pegdown"           % "1.2.1"  % Test
+)
    
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_")
 
