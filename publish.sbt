@@ -1,6 +1,7 @@
-publishTo := { 
-  val qualifier = "sbt-plugin-" + (if (version.value contains "-SNAPSHOT") "snapshots" else "releases")
-  Some(Resolver.url(qualifier, new URL(s"http://repo.scala-sbt.org/scalasbt/$qualifier"))(Resolver.ivyStylePatterns))
+publishTo := {
+  val r = if (isSnapshot.value) Resolver.sbtPluginRepo("snapshots")
+          else Resolver.sbtPluginRepo("releases")
+  Some(r)
 }
 
 publishMavenStyle := false

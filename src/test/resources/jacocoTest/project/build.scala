@@ -9,7 +9,7 @@ object TopLevel extends Build
         id = "jacocoTest",
         base = file( "." ),
         settings = Defaults.defaultSettings ++ jacoco.settings ++ Seq(
-            libraryDependencies ++= Seq( "org.scalatest" %% "scalatest" % "1.9.1" % "test" ),
+            libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "2.2.0" % Test),
             scalaVersion := "2.10.4",
             scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-language:_"),
             organization := "com.navetas",
