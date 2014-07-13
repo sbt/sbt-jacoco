@@ -15,6 +15,11 @@ Execute the plugin with `sbt jacoco:cover`.
 See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 
 ## Change Log
+* *2.1.6*
+    * Updated to JaCoCo version 0.7.1
+    * Fixed integration test settings (fixing [#13](https://github.com/sbt/jacoco4sbt/issues/13))
+    * Updated sbt to 0.13.5 and other small fixes
+
 * *2.1.5*
     * Added report summary to the build output
     * Added check for required coverage (fixing [#14](https://github.com/sbt/jacoco4sbt/issues/14))
@@ -58,8 +63,10 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 Many thanks to
 [Alexey Pismenskiy](https://github.com/apismensky),
 [Andreas Flierl](https://bitbucket.org/asflierl),
+[Jacek Laskowski](https://github.com/jaceklaskowski),
 [Jason Zaugg](https://github.com/retronym),
-[Joost den Boer](https://bitbucket.org/diversit) and
+[Joost den Boer](https://bitbucket.org/diversit),
+[Michael Schleichardt](https://github.com/schleichardt) and
 [Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
 
 ## License
