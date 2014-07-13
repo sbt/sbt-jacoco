@@ -14,6 +14,10 @@ Execute the plugin with `sbt jacoco:cover`.
 
 See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 
+## Build Status
+
+[![Build Status](https://travis-ci.org/sbt/jacoco4sbt.svg?branch=master)](https://travis-ci.org/sbt/jacoco4sbt)
+
 ## Change Log
 * *2.1.6*
     * Updated to JaCoCo version 0.7.1
