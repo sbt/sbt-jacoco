@@ -20,7 +20,7 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 
 ## Change Log
 * *2.1.6*
-    * Updated to JaCoCo version 0.7.1
+    * Updated to JaCoCo version 0.7.1 (fixing [#22](https://github.com/sbt/jacoco4sbt/issues/22))
     * Fixed integration test settings (fixing [#13](https://github.com/sbt/jacoco4sbt/issues/13))
     * Updated sbt to 0.13.5 and other small fixes
 
