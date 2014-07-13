@@ -77,7 +77,7 @@ object JacocoPlugin extends Plugin {
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
       libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % "0.7.0.201403182114" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
+        "org.jacoco" % "org.jacoco.agent" % "0.7.1.201405082137" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
