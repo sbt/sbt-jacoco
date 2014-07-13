@@ -1,1 +1,1 @@
-addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.6-SNAPSHOT")
+addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.6")
