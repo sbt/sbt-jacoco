@@ -52,7 +52,7 @@ class Report(executionDataFiles: Seq[File],
     streams.log info ""
     streams.log info s"------- $reportTitle --------"
     streams.log info ""
-    val checkResult = checkCounter("Linez2", bundle.getLineCounter, thresholds.line) ::
+    val checkResult = checkCounter("Lines", bundle.getLineCounter, thresholds.line) ::
       checkCounter("Instructions", bundle.getInstructionCounter, thresholds.instruction) ::
       checkCounter("Branches", bundle.getBranchCounter, thresholds.branch) ::
       checkCounter("Methods", bundle.getMethodCounter, thresholds.method) ::
