@@ -43,7 +43,7 @@ object JacocoPlugin extends Plugin {
         sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
 
       aggregateReport <<= (aggregateReportDirectory, aggregateExecutionDataFiles, reportFormats, aggregateReportTitle, aggregateCoveredSources, aggregateClassesToCover,
-        sourceEncoding, sourceTabWidth, aggregateThresholds, streams) map reportAggregateAction,
+        sourceEncoding, sourceTabWidth, aggregateThresholds, streams) map aggregateReportAction,
 
       clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )

@@ -55,7 +55,7 @@ trait Reporting extends JaCoCoRuntime {
     report.generate
   }
 
-  def reportAggregateAction(reportDirectory: File, executionDataFiles: Seq[File], reportFormats: Seq[FormattedReport], reportTitle: String,
+  def aggregateReportAction(reportDirectory: File, executionDataFiles: Seq[File], reportFormats: Seq[FormattedReport], reportTitle: String,
       sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
       thresholds: Thresholds, streams: TaskStreams): Unit = {
 
