@@ -19,14 +19,21 @@ trait Keys {
   lazy val Config = config("jacoco") extend(Test) hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
+  lazy val aggregateReportDirectory = SettingKey[File]("aggregate-report-directory", "Where JaCoCo should store its aggregate reports.")
+  lazy val executionDataFile = SettingKey[File]("execution-data-file", "Execution data output file.")
+  lazy val executionDataFiles = TaskKey[Seq[File]]("execution-data-files", "All execution data output files for aggregated modules.")
   lazy val reportTitle = SettingKey[String]("report-title", "Title of the JacoCo report to generate.")
+  lazy val aggregateReportTitle = SettingKey[String]("aggregate-report-title", "Title of the JacoCo aggregate report to generate.")
   lazy val reportFormats = SettingKey[Seq[FormattedReport]]("report-formats", "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
+
   lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo reports.")
   lazy val sourceEncoding = SettingKey[String]("source-encoding", "Encoding of the source files (for JaCoCo reporting).")
 
   lazy val coveredSources = TaskKey[Seq[File]]("covered-sources", "Covered Sources.")
+  lazy val coveredSourcesAggregate = TaskKey[Seq[File]]("covered-sources-aggregate", "Covered Sources for all aggregated modules.")
   lazy val classesToCover = TaskKey[Seq[File]]("classes-to-cover", "compiled classes (filtered by includes and excludes) that will be covered")
-  
+  lazy val classesToCoverAggregate = TaskKey[Seq[File]]("classes-to-cover-aggregate", "compiled classes (filtered by includes and excludes) that will be covered for all aggregated modules")
+
   lazy val includes = SettingKey[Seq[String]]("jacoco-includes", "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
   
   lazy val excludes = SettingKey[Seq[String]]("jacoco-excludes", "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
@@ -37,8 +44,11 @@ trait Keys {
    * jacoco.thresholds in jacoco.Config := Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)
    */
   lazy val thresholds = SettingKey[Thresholds]("thresholds", "Required coverage ratios.")
+  lazy val thresholdsAggregate = SettingKey[Thresholds]("thresholds-aggregate", "Required coverage ratios for the aggregate report.")
 
   lazy val report = TaskKey[Unit]("report", "Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
+  lazy val reportAggregate = TaskKey[Unit]("report-aggregate", "Generates an aggregated JaCoCo report.")
+
   lazy val cover = TaskKey[Unit]("cover", "Executes the tests and creates a JaCoCo coverage report.")
 
   lazy val check = TaskKey[Unit]("check", "Executes the tests and saves the execution data in 'jacoco.exec'.")

@@ -21,12 +21,16 @@ object JacocoPlugin extends Plugin {
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
       outputDirectory := crossTarget.value / "jacoco",
+      aggregateReportDirectory := outputDirectory.value / "aggregate",
       reportFormats := Seq(ScalaHTMLReport()),
+
       reportTitle := "Jacoco Coverage Report",
+      aggregateReportTitle := "Jacoco Aggregate Coverage Report",
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
 
       thresholds:= Thresholds(),
+      thresholdsAggregate := Thresholds(),
       includes := Seq("*"),
 
       excludes := Seq(),
@@ -35,8 +39,11 @@ object JacocoPlugin extends Plugin {
 
       instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
 
-      report <<= (outputDirectory, reportFormats, reportTitle, coveredSources, classesToCover,
+      report <<= (outputDirectory, executionDataFile, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
+
+      reportAggregate <<= (aggregateReportDirectory, executionDataFiles, reportFormats, reportTitle, coveredSourcesAggregate, classesToCoverAggregate,
+        sourceEncoding, sourceTabWidth, thresholdsAggregate, streams) map reportAggregateAction,
 
       clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
@@ -58,6 +65,9 @@ object JacocoPlugin extends Plugin {
 
   object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
     lazy val srcConfig = Test
+
+    override def settings = super.settings ++ Seq(
+      executionDataFile := (outputDirectory in Config).value / "jacoco.exec")
   }
 
   object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
@@ -69,10 +79,20 @@ object JacocoPlugin extends Plugin {
     override def settings = super.settings ++ Seq(
       report  in Config <<= (report  in Config) dependsOn conditionalMerge,
       merge <<= forceMerge,
-      mergeReports := true)
+      mergeReports := true,
+      executionDataFile := (outputDirectory in Config).value / "jacoco-merged.exec")
   }
 
+
+
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
+
+    lazy val submoduleSettingsTask = Def.task {
+      ((sourceDirectory in Compile).value, (classesToCover in Config).value, (executionDataFile in Config).value)
+    }
+
+    val submoduleSettings = submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, Config)))
+
     def srcConfig: Configuration
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
@@ -80,7 +100,9 @@ object JacocoPlugin extends Plugin {
         "org.jacoco" % "org.jacoco.agent" % "0.7.1.201405082137" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
-
+      classesToCoverAggregate := submoduleSettings.value.flatMap(_._2).distinct,
+      coveredSourcesAggregate :=  submoduleSettings.value.map(_._1).distinct,
+      executionDataFiles :=  submoduleSettings.value.map(_._3).distinct,
       fullClasspath <<= (products in Compile, fullClasspath in srcConfig, instrumentedClassDirectory, update, fork, streams) map instrumentAction,
       javaOptions <++= (fork, outputDirectory) map { (forked, out) =>
         if (forked) Seq(s"-Djacoco-agent.destfile=${out / "jacoco.exec" absolutePath}") else Seq()
@@ -90,8 +112,7 @@ object JacocoPlugin extends Plugin {
 
       definedTests <<= definedTests in srcConfig,
       definedTestNames <<= definedTestNames in srcConfig,
-
-      cover <<= report dependsOn check,
-      check <<= ((outputDirectory, fork, streams) map saveDataAction) dependsOn test))
+      cover <<= reportAggregate dependsOn (report dependsOn check),
+      check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test))
   }
 }
