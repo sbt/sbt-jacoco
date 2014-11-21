@@ -16,6 +16,7 @@ class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers {
     create a jacoco target directory in each subproject,          $e2
     create a classes directory in each subproject,                $e3
     not fail any executed test cases.                             $e4
+    produce an aggregated report.                                 $e5
 """
 
   lazy val testProjectBase = new File(BuildInfo.test_resourceDirectory, "play-multi-project-jacoco")
@@ -27,14 +28,16 @@ class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers {
     reportPath <- List("Application", "Integration") map ("test-reports/" + _ + "Test.xml")
     targetDir <- targetDirs
   } yield new File(targetDir, reportPath)
+  lazy val aggregateReport = new File(testProjectBase, "target/scala-2.10/jacoco/aggregate/html")
 
-  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} clean jacoco:aggregate-cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
   def e2 = jacocoDirs should contain(exist and beADirectory).foreach
   def e3 = coveredClassesDirs should contain(exist and beADirectory).foreach
 
   def e4 = testReports should contain(onlySuccesses).foreach
+  def e5 = aggregateReport should exist and beADirectory
 
   def onlySuccesses: Matcher[File] = { file: File => XML.loadFile(file) \\ "failure" should beEmpty }
 }

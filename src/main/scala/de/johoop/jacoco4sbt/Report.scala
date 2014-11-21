@@ -19,8 +19,9 @@ import java.io.FileInputStream
 import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
 import sbt.Keys._
 import java.text.DecimalFormat
+import org.jacoco.core.tools.ExecFileLoader
 
-class Report(executionDataFile: File,
+class Report(executionDataFiles: Seq[File],
              classDirectories: Seq[File],
              sourceDirectories: Seq[File],
              sourceEncoding: String,
@@ -78,22 +79,10 @@ class Report(executionDataFile: File,
   }
 
   private def loadExecutionData = {
-    val executionDataStore = new ExecutionDataStore
-    val sessionInfoStore = new SessionInfoStore
-    val fis = new FileInputStream(executionDataFile)
-    try {
-      val executionDataReader = new ExecutionDataReader(fis)
+    val loader = new ExecFileLoader
+    executionDataFiles foreach loader.load
 
-      executionDataReader setExecutionDataVisitor executionDataStore
-      executionDataReader setSessionInfoVisitor sessionInfoStore
-
-      while (executionDataReader.read()) { /* side effects galore :( */ }
-
-    } finally {
-      fis.close()
-    }
-
-    (executionDataStore, sessionInfoStore)
+    (loader.getExecutionDataStore, loader.getSessionInfoStore)
   }
 
   private def analyzeStructure(executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {

@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
   // So we can get code coverage
   lazy val jacocoSettings = Seq(
       parallelExecution in jacoco.Config := false,
-      jacoco.excludes in jacoco.Config := Seq("Routes*","*Reverse*","*anonfun*"),
+      jacoco.excludes in jacoco.Config := Seq("Routes*","*Reverse*","*anonfun*", "*routes*"),
       Keys.fork in jacoco.Config := true
     )
     
