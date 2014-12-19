@@ -67,7 +67,7 @@ object JacocoPlugin extends Plugin {
     lazy val srcConfig = Test
 
     override def settings = super.settings ++ Seq(
-      executionDataFile := (outputDirectory in Config).value / "jacoco.exec")
+      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec")
   }
 
   object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
@@ -80,7 +80,7 @@ object JacocoPlugin extends Plugin {
       report  in Config <<= (report  in Config) dependsOn conditionalMerge,
       merge <<= forceMerge,
       mergeReports := true,
-      executionDataFile := (outputDirectory in Config).value / "jacoco-merged.exec")
+      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
   }
 
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
