@@ -91,6 +91,8 @@ object JacocoPlugin extends Plugin {
 
     val submoduleSettings = submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, Config)))
 
+    val submoduleCoverTasks = (cover in Config).all(ScopeFilter(inAggregates(ThisProject)))
+
     def srcConfig: Configuration
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
@@ -111,7 +113,7 @@ object JacocoPlugin extends Plugin {
       definedTests <<= definedTests in srcConfig,
       definedTestNames <<= definedTestNames in srcConfig,
       cover <<= report dependsOn check,
-      aggregateCover <<= aggregateReport dependsOn (report dependsOn check),
+      aggregateCover <<= aggregateReport dependsOn (submoduleCoverTasks),
       check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test))
   }
 }
