@@ -14,7 +14,7 @@ val jacocoCore = Artifact("org.jacoco.core", "jar", "jar")
 
 val jacocoReport = Artifact("org.jacoco.report", "jar", "jar")
 
-val jacocoVersion = "0.7.1.201405082137"
+val jacocoVersion = "0.7.2.201409121644"
 
 libraryDependencies ++= Seq(
   "org.jacoco"  %  "org.jacoco.core"   % jacocoVersion artifacts(jacocoCore),
