@@ -8,13 +8,13 @@ version := "2.1.7-SNAPSHOT"
 
 resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositories/releases"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.5"
 
 val jacocoCore = Artifact("org.jacoco.core", "jar", "jar")
 
 val jacocoReport = Artifact("org.jacoco.report", "jar", "jar")
 
-val jacocoVersion = "0.7.1.201405082137"
+val jacocoVersion = "0.7.5.201505241946"
 
 libraryDependencies ++= Seq(
   "org.jacoco"  %  "org.jacoco.core"   % jacocoVersion artifacts(jacocoCore),

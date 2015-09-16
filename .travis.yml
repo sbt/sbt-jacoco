@@ -2,7 +2,7 @@ language: scala
 script:
   - sbt publish-local test
 scala:
-  - 2.10.4
+  - 2.10.5
 jdk:
   - openjdk6
   - openjdk7
