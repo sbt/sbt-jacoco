@@ -1,6 +1,6 @@
 /*
  * This file is part of jacoco4sbt.
- * 
+ *
  * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
@@ -95,7 +95,7 @@ object JacocoPlugin extends Plugin {
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
       libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % "0.7.1.201405082137" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
+        "org.jacoco" % "org.jacoco.agent" % "0.7.5.201505241946" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
       aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).distinct,
