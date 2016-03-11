@@ -1,6 +1,6 @@
 /*
  * This file is part of jacoco4sbt.
- * 
+ *
  * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
@@ -11,15 +11,16 @@
  */
 package de.johoop.jacoco4sbt
 
-import org.jacoco.core.data._
-import org.jacoco.core.analysis._
-
 import java.io.File
-import java.io.FileInputStream
-import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
-import sbt.Keys._
 import java.text.DecimalFormat
+
+import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
+import org.jacoco.core.analysis._
+import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
+import sbt.Keys._
+
+import scala.language.postfixOps
 
 class Report(executionDataFiles: Seq[File],
              classDirectories: Seq[File],
@@ -34,12 +35,11 @@ class Report(executionDataFiles: Seq[File],
 
   private val format = new DecimalFormat("#.##")
 
-  def generate : Unit = {
+  def generate(): Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
-    
-    reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
+    reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
     if (!checkCoverage(bundleCoverage)) {
       streams.log error "Required coverage is not met"
       // is there a better way to fail build?
@@ -80,7 +80,7 @@ class Report(executionDataFiles: Seq[File],
 
   private def loadExecutionData = {
     val loader = new ExecFileLoader
-    executionDataFiles foreach loader.load
+    executionDataFiles filter(_.exists) foreach loader.load
 
     (loader.getExecutionDataStore, loader.getSessionInfoStore)
   }
@@ -90,19 +90,17 @@ class Report(executionDataFiles: Seq[File],
     val analyzer = new FilteringAnalyzer(executionDataStore, coverageBuilder)
 
     classDirectories foreach (analyzer analyzeAll)
-
     coverageBuilder getBundle reportTitle
   }
 
-  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage, 
+  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage,
       executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
 
     val visitor = reportFormat.visitor(reportDirectory)
-    
+
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
-    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
+    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth))
 
     visitor.visitEnd()
   }
-
 }

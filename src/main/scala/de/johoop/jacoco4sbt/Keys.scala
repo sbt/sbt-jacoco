@@ -1,6 +1,6 @@
 /*
  * This file is part of jacoco4sbt.
- * 
+ *
  * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
@@ -12,18 +12,18 @@
 package de.johoop.jacoco4sbt
 
 import sbt._
-import Keys._
-import org.jacoco.core.runtime.IRuntime
+
+import scala.language.postfixOps
 
 trait Keys {
-  lazy val Config = config("jacoco") extend(Test) hide
+  lazy val Config = config("jacoco") extend Test hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
   lazy val aggregateReportDirectory = SettingKey[File]("aggregate-report-directory", "Where JaCoCo should store its aggregate reports.")
   lazy val executionDataFile = SettingKey[File]("execution-data-file", "Execution data output file.")
   lazy val aggregateExecutionDataFiles = TaskKey[Seq[File]]("aggregate-execution-data-files", "All execution data output files for aggregated modules.")
-  lazy val reportTitle = SettingKey[String]("report-title", "Title of the JacoCo report to generate.")
-  lazy val aggregateReportTitle = SettingKey[String]("aggregate-report-title", "Title of the JacoCo aggregate report to generate.")
+  lazy val reportTitle = SettingKey[String]("report-title", "Title of the JaCoCo report to generate.")
+  lazy val aggregateReportTitle = SettingKey[String]("aggregate-report-title", "Title of the JaCoCo aggregate report to generate.")
   lazy val reportFormats = SettingKey[Seq[FormattedReport]]("report-formats", "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
 
   lazy val sourceTabWidth = SettingKey[Int]("source-tab-width", "Tab width of the sources to display in the JaCoCo reports.")
@@ -35,7 +35,7 @@ trait Keys {
   lazy val aggregateClassesToCover = TaskKey[Seq[File]]("aggregate-classes-to-cover", "compiled classes (filtered by includes and excludes) that will be covered across all aggregated project")
 
   lazy val includes = SettingKey[Seq[String]]("jacoco-includes", "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
-  
+
   lazy val excludes = SettingKey[Seq[String]]("jacoco-excludes", "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
 
   lazy val instrumentedClassDirectory = SettingKey[File]("instrumented-class-directory", "Directory containing the instrumented classes.")
@@ -57,7 +57,7 @@ trait Keys {
 }
 
 trait IntegrationTestKeys extends Keys {
-  override lazy val Config = config("it-jacoco") extend(IntegrationTest) hide
+  override lazy val Config = config("it-jacoco") extend IntegrationTest hide
 
   lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
   lazy val mergeReports = SettingKey[Boolean]("merge-reports", "Indication whether to merge the unittest and integration test reports. Defaults to true.")

@@ -1,6 +1,6 @@
 /*
  * This file is part of jacoco4sbt.
- * 
+ *
  * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
@@ -11,35 +11,35 @@
  */
 package de.johoop.jacoco4sbt
 
+import sbt.Keys._
 import sbt._
-import Keys._
 
 trait SavingData extends JaCoCoRuntime {
   def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams) = {
 
     import java.io.FileOutputStream
+
     import org.jacoco.core.data.ExecutionDataWriter
 
-    if (! forked) {
+    if (!forked) {
       IO createDirectory jacocoFile.getParentFile
       val executionDataStream = new FileOutputStream(jacocoFile)
       try {
         streams.log debug ("writing execution data to " + jacocoFile)
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
         runtimeData collect (executionDataWriter, executionDataWriter, true)
-        executionDataStream.flush
+        executionDataStream.flush()
       } finally {
-        executionDataStream.close
+        executionDataStream.close()
       }
     }
   }
 }
 
 trait Reporting extends JaCoCoRuntime {
-  def reportAction(reportDirectory: File, executionDataFile: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-                   sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-                   thresholds: Thresholds, streams: TaskStreams): Unit = {
-
+  def reportAction(reportDirectory: File, executionDataFile: File, reportFormats: Seq[FormattedReport],
+                   reportTitle: String, sourceDirectories: Seq[File], classDirectories: Seq[File],
+                   sourceEncoding: String, tabWidth: Int, thresholds: Thresholds, streams: TaskStreams): Unit = {
     val report = new Report(
       reportDirectory = reportDirectory,
       executionDataFiles = Seq(executionDataFile),
@@ -52,16 +52,17 @@ trait Reporting extends JaCoCoRuntime {
       thresholds = thresholds,
       streams = streams)
 
-    report.generate
+    report.generate()
   }
 
-  def aggregateReportAction(reportDirectory: File, executionDataFiles: Seq[File], reportFormats: Seq[FormattedReport], reportTitle: String,
-      sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-      thresholds: Thresholds, streams: TaskStreams): Unit = {
+  def aggregateReportAction(reportDirectory: File, executionDataFiles: Seq[File], reportFormats: Seq[FormattedReport],
+                            reportTitle: String, sourceDirectories: Seq[File], classDirectories: Seq[File],
+                            sourceEncoding: String, tabWidth: Int, thresholds: Thresholds,
+                            streams: TaskStreams): Unit = {
+
 
     // Only generate an aggregate report if there are multiple executions
-    if(executionDataFiles.size > 1) {
-
+    if (executionDataFiles.size > 1) {
       val report = new Report(
         reportDirectory = reportDirectory,
         executionDataFiles = executionDataFiles,
@@ -73,13 +74,13 @@ trait Reporting extends JaCoCoRuntime {
         sourceEncoding = sourceEncoding,
         thresholds = thresholds,
         streams = streams)
-
-      report.generate
+      report.generate()
     }
   }
 
   class FileWithOrElse(file: File) {
     def orElse(otherFileName: String): File = if (file.exists) file else new File(file.getParent, otherFileName)
   }
+
   implicit def fileToFileWithOrElse(f: File): FileWithOrElse = new FileWithOrElse(f)
 }

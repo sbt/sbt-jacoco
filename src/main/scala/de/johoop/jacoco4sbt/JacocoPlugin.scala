@@ -1,6 +1,6 @@
 /*
  * This file is part of jacoco4sbt.
- * 
+ *
  * Copyright (c) 2011-2013 Joachim Hofer & contributors
  * All rights reserved.
  *
@@ -11,12 +11,19 @@
  */
 package de.johoop.jacoco4sbt
 
+import java.io.{IOException, FileOutputStream, BufferedOutputStream, File}
+
+import org.jacoco.core.data.ExecutionDataWriter
+import org.jacoco.core.tools.ExecFileLoader
+import sbt.Keys._
 import sbt._
-import Keys._
-import java.io.File
-import inc.Locate
+import sbt.inc.Locate
+
+import scala.language.postfixOps
 
 object JacocoPlugin extends Plugin {
+
+  lazy val aggregate = TaskKey[Unit]("aggregate-all", "Generates an aggregated JaCoCo report.")
 
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
@@ -42,8 +49,9 @@ object JacocoPlugin extends Plugin {
       report <<= (outputDirectory, executionDataFile, reportFormats, reportTitle, coveredSources, classesToCover,
         sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
 
-      aggregateReport <<= (aggregateReportDirectory, aggregateExecutionDataFiles, reportFormats, aggregateReportTitle, aggregateCoveredSources, aggregateClassesToCover,
-        sourceEncoding, sourceTabWidth, aggregateThresholds, streams) map aggregateReportAction,
+      aggregateReport <<= (aggregateReportDirectory, aggregateExecutionDataFiles, reportFormats,
+        aggregateReportTitle, aggregateCoveredSources, aggregateClassesToCover, sourceEncoding,
+        sourceTabWidth, aggregateThresholds, streams) map aggregateReportAction,
 
       clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
@@ -67,7 +75,8 @@ object JacocoPlugin extends Plugin {
     lazy val srcConfig = Test
 
     override def settings = super.settings ++ Seq(
-      executionDataFile := (outputDirectory in Config).value / "jacoco.exec")
+      executionDataFile := (outputDirectory in Config).value / "jacoco.exec"
+    )
   }
 
   object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
@@ -95,7 +104,7 @@ object JacocoPlugin extends Plugin {
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
       libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % "0.7.1.201405082137" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
+        "org.jacoco" % "org.jacoco.agent" % "0.7.5.201505241946" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
       aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).distinct,
@@ -112,6 +121,73 @@ object JacocoPlugin extends Plugin {
       definedTestNames <<= definedTestNames in srcConfig,
       cover <<= report dependsOn check,
       aggregateCover <<= aggregateReport dependsOn (report dependsOn check),
-      check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test))
+      check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test,
+      aggregate in Config <<= Def.task()
+    ))
   }
+
+  val aggregateFilter = ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile))
+
+  private lazy val coverageAggregate0 = Def.task(
+    jacoco.synchronized {
+      val log = streams.value.log
+      log.info(s"Aggregating coverage from subprojects...")
+
+      val execFiles = crossTarget.all(aggregateFilter).value map (_ / "jacoco" / "jacoco.exec") filter (_.exists())
+      val target = crossTarget.value
+      val sources = sourceDirectories.all(aggregateFilter).value.flatten filter (_.exists())
+      val classes = classDirectory.all(aggregateFilter).value filter (_.exists())
+
+      if (execFiles.nonEmpty) {
+        val loader = new ExecFileLoader
+        execFiles foreach loader.load
+
+        val reportDirectory = new File(target, "jacoco")
+        reportDirectory.mkdirs()
+        val mergedFile = new File(reportDirectory, "jacoco.exec")
+
+        try {
+          val out = new BufferedOutputStream(new FileOutputStream(mergedFile))
+          try {
+            val dataWriter = new ExecutionDataWriter(out)
+            loader.getSessionInfoStore accept dataWriter
+            loader.getExecutionDataStore accept dataWriter
+            out.flush()
+
+            val report = new Report(
+              reportDirectory = reportDirectory,
+              executionDataFiles = execFiles,
+              reportFormats = Seq(
+                XMLReport(encoding = "utf-8"),
+                ScalaHTMLReport(withBranchCoverage = true)
+              ),
+              reportTitle = "Aggregated Report",
+              classDirectories = classes,
+              sourceDirectories = sources,
+              tabWidth = 2,
+              sourceEncoding = "utf-8",
+              thresholds = Thresholds(),
+              streams = streams.value)
+            report.generate()
+          } catch {
+            case e: IOException =>
+              e.printStackTrace()
+              throw new ResourcesException("Error merging Jacoco files: %s" format e.getMessage)
+          } finally {
+            out.close()
+          }
+        } catch {
+          case e: IOException =>
+            e.printStackTrace()
+            throw new ResourcesException("Unable to write out Jacoco file during merge: %s" format e.getMessage)
+        }
+      }
+    }
+  )
+
+  lazy val Config = config("jacoco") extend Test hide
+
+  override lazy val projectSettings = Seq(
+    aggregate in Config <<= coverageAggregate0
+  )
 }
