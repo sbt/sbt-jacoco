@@ -59,23 +59,19 @@ trait Reporting extends JaCoCoRuntime {
       sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
       thresholds: Thresholds, streams: TaskStreams): Unit = {
 
-    // Only generate an aggregate report if there are multiple executions
-    if(executionDataFiles.size > 1) {
+    val report = new Report(
+      reportDirectory = reportDirectory,
+      executionDataFiles = executionDataFiles,
+      reportFormats = reportFormats,
+      reportTitle = reportTitle,
+      classDirectories = classDirectories,
+      sourceDirectories = sourceDirectories,
+      tabWidth = tabWidth,
+      sourceEncoding = sourceEncoding,
+      thresholds = thresholds,
+      streams = streams)
 
-      val report = new Report(
-        reportDirectory = reportDirectory,
-        executionDataFiles = executionDataFiles,
-        reportFormats = reportFormats,
-        reportTitle = reportTitle,
-        classDirectories = classDirectories,
-        sourceDirectories = sourceDirectories,
-        tabWidth = tabWidth,
-        sourceEncoding = sourceEncoding,
-        thresholds = thresholds,
-        streams = streams)
-
-      report.generate
-    }
+    report.generate
   }
 
   class FileWithOrElse(file: File) {

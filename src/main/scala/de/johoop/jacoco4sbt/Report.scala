@@ -80,7 +80,10 @@ class Report(executionDataFiles: Seq[File],
 
   private def loadExecutionData = {
     val loader = new ExecFileLoader
-    executionDataFiles foreach loader.load
+    executionDataFiles foreach { f =>
+      // it is possible that there's no test at all, thus no executionDataFile
+      if (f.exists) loader.load(f)
+    } 
 
     (loader.getExecutionDataStore, loader.getSessionInfoStore)
   }
