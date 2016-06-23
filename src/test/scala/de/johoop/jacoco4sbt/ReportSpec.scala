@@ -18,10 +18,8 @@ import org.specs2.Specification
 import sbt.Logger
 import org.specs2.specification.Before
 
-class ReportSpec extends Specification {
-  def is = s2"""
-  $sequential
-  ${"Report Unit Test".title}
+class ReportSpec extends Specification { def is = args(sequential = true) ^ s2"""
+  Report Unit Test
 
   Report.checkCounter should
     return false if coverage is less than required           ${MockedCounter().e1}

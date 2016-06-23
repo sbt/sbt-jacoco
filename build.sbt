@@ -1,39 +1,32 @@
-sbtPlugin := true
+lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
 
-name := "jacoco4sbt"
+  name := "jacoco4sbt",
+  organization := "de.johoop",
+  version := "2.2.0-SNAPSHOT",
+  scalaVersion := "2.10.6",
 
-organization := "de.johoop"
+  sbtPlugin := true,
 
-version := "2.1.7-SNAPSHOT"
+  libraryDependencies ++= Seq(
+    "org.jacoco"  %  "org.jacoco.core"      % jacocoVersion artifacts jacocoCore,
+    "org.jacoco"  %  "org.jacoco.report"    % jacocoVersion artifacts jacocoReport,
+    "org.specs2"  %% "specs2-core"          % "3.8.4" % Test,
+    "org.specs2"  %% "specs2-matcher-extra" % "3.8.4" % Test,
 
-resolvers += "Sonatype Release" at "https://oss.sonatype.org/content/repositories/releases"
+    "org.mockito" %  "mockito-all"          % "1.10.19"  % Test,
+    "org.pegdown" %  "pegdown"              % "1.6.0"  % Test
+  ),
 
-scalaVersion := "2.10.4"
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_"),
 
-val jacocoCore = Artifact("org.jacoco.core", "jar", "jar")
+  buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test),
+  buildInfoPackage := "de.johoop.jacoco4sbt.build",
 
-val jacocoReport = Artifact("org.jacoco.report", "jar", "jar")
-
-val jacocoVersion = "0.7.5.201505241946"
-
-libraryDependencies ++= Seq(
-  "org.jacoco"  %  "org.jacoco.core"   % jacocoVersion artifacts(jacocoCore),
-  "org.jacoco"  %  "org.jacoco.report" % jacocoVersion artifacts(jacocoReport),
-  "org.specs2"  %% "specs2"            % "2.3.13" % Test,
-  "org.mockito" %  "mockito-all"       % "1.9.5"  % Test,
-  "org.pegdown" %  "pegdown"           % "1.2.1"  % Test
+  test in Test <<= test in Test dependsOn publishLocal,
+  parallelExecution in Test := false,
+  scalacOptions in Test ++= Seq("-Yrangepos")
 )
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_")
-
-buildInfoSettings
-
-sourceGenerators in Compile <+= buildInfo
-
-buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test)
-
-buildInfoPackage := "de.johoop.jacoco4sbt.build"
-
-test in Test <<= test in Test dependsOn publishLocal
-
-parallelExecution in Test := false
+lazy val jacocoCore    = Artifact("org.jacoco.core", "jar", "jar")
+lazy val jacocoReport  = Artifact("org.jacoco.report", "jar", "jar")
+lazy val jacocoVersion = "0.7.5.201505241946"

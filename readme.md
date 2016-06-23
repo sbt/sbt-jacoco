@@ -69,9 +69,12 @@ Many thanks to
 [Andreas Flierl](https://bitbucket.org/asflierl),
 [Jacek Laskowski](https://github.com/jaceklaskowski),
 [Jason Zaugg](https://github.com/retronym),
+[Jerry Lin](https://github.com/linjer),
 [Joost den Boer](https://bitbucket.org/diversit),
-[Michael Schleichardt](https://github.com/schleichardt) and
-[Patrick Mahoney](https://bitbucket.org/paddymahoney) for their awesome contributions!
+[Michael Schleichardt](https://github.com/schleichardt),
+[Patrick Mahoney](https://bitbucket.org/paddymahoney) and
+[Wei Chen](https://github.com/wchen9911)
+for their awesome contributions!
 
 ## License
 

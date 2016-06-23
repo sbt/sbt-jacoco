@@ -6,9 +6,8 @@ import scala.sys.process.Process
 import java.io.File
 import org.specs2.matcher.FileMatchers
 
-class ForkedSimpleScalaProjectCoverageSpec extends Specification with FileMatchers { def is = s2"""
-  $sequential
-  ${"JaCoCo in a simple, but forked Scala project".title}
+class ForkedSimpleScalaProjectCoverageSpec extends Specification with FileMatchers { def is = args(sequential = true) ^ s2"""
+  JaCoCo in a simple, but forked Scala project
 
   Covering tests in a simple, but forked Scala project should
     return an exit code of zero,                              $e1
@@ -21,9 +20,9 @@ class ForkedSimpleScalaProjectCoverageSpec extends Specification with FileMatche
   lazy val jacocoDir = new File(targetDir, "scala-2.10/jacoco")
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
 
-  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(Seq(Util.processName, "clean", "jacoco:cover"), Some(testProjectBase)) !
 
-  def e1 = exitCode should be equalTo(0)
+  def e1 = exitCode should be equalTo 0
   def e2 = jacocoDir should exist and beADirectory
   def e3 = coveredClassesDir should exist and beADirectory
 }

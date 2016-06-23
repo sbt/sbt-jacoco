@@ -6,9 +6,8 @@ import scala.sys.process.Process
 import java.io.File
 import org.specs2.matcher.FileMatchers
 
-class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { def is = s2"""
-  $sequential
-  ${"JaCoCo in a simple Scala project".title}
+class SimpleScalaProjectCoverageSpec extends Specification with FileMatchers { def is = args(sequential = true) ^ s2"""
+  JaCoCo in a simple Scala project
 
   Covering tests in a simple Scala project should
     return an exit code != 0 when required coverage is not met,    $e1
