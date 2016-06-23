@@ -19,17 +19,28 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 [![Build Status](https://travis-ci.org/sbt/jacoco4sbt.svg?branch=master)](https://travis-ci.org/sbt/jacoco4sbt)
 
 ## Change Log
+
+* *2.2.0*
+
+    * Update to JaCoCo version 0.7.5 (fixing [#47](https://github.com/sbt/jacoco4sbt/issues/47))
+    * Update sbt to 0.13.11
+    * Update Scala to 2.10.6
+    * Restructure the build, update several dependencies
+
 * *2.1.6*
+
     * Updated to JaCoCo version 0.7.1 (fixing [#22](https://github.com/sbt/jacoco4sbt/issues/22))
     * Fixed integration test settings (fixing [#13](https://github.com/sbt/jacoco4sbt/issues/13))
     * Updated sbt to 0.13.5 and other small fixes
 
 * *2.1.5*
+
     * Added report summary to the build output
     * Added check for required coverage (fixing [#14](https://github.com/sbt/jacoco4sbt/issues/14))
     * Updated to JaCoCo version 0.7.0 (fixing [#18](https://github.com/sbt/jacoco4sbt/issues/18))
 
 * *2.1.4*
+
     * Fixed a bad regression ([#8](https://github.com/sbt/jacoco4sbt/issues/8)) and added tests so that it doesn't happen again
     * Made code coverage work with forked tests ([#3](https://github.com/sbt/jacoco4sbt/issues/3) again,
       [#6](https://github.com/sbt/jacoco4sbt/issues/6) and
@@ -37,10 +48,12 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
       a lot easier for [Play2](http://playframework.com) users
 
 * *2.1.3*
+
     * Fixed [#3](https://github.com/sbt/jacoco4sbt/issues/3) (working directory in JaCoCo configuration)
     * Updated to latest JaCoCo version 0.6.4
 
 * *2.1.2*
+
     * Added a Scala-specific report format (contributed by Jason)
 
 * *2.1.1*
