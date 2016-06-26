@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  * 
- * Copyright (c) 2011-2013 Joachim Hofer & contributors
+ * Copyright (c) Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -12,11 +12,9 @@
 package de.johoop.jacoco4sbt
 
 import sbt._
-import Keys._
-import org.jacoco.core.runtime.IRuntime
 
 trait Keys {
-  lazy val Config = config("jacoco") extend(Test) hide
+  lazy val Config = config("jacoco") extend Test hide
 
   lazy val outputDirectory = SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
   lazy val aggregateReportDirectory = SettingKey[File]("aggregate-report-directory", "Where JaCoCo should store its aggregate reports.")
@@ -57,7 +55,7 @@ trait Keys {
 }
 
 trait IntegrationTestKeys extends Keys {
-  override lazy val Config = config("it-jacoco") extend(IntegrationTest) hide
+  override lazy val Config = config("it-jacoco") extend IntegrationTest hide
 
   lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
   lazy val mergeReports = SettingKey[Boolean]("merge-reports", "Indication whether to merge the unittest and integration test reports. Defaults to true.")

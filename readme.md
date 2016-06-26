@@ -4,7 +4,7 @@ This is an [sbt](http://scala-sbt.org/) and [Typesafe Activator](https://typesaf
 
 Install the plugin by adding the following to `project/plugins.sbt`:
 
-    addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.6")
+    addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.2.0")
 
 and then in `build.sbt`:
 

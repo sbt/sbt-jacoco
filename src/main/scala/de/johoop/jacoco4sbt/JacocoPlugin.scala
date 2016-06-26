@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  *
- * Copyright (c) 2011-2013 Joachim Hofer & contributors
+ * Copyright (c) Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -114,7 +114,7 @@ object JacocoPlugin extends Plugin {
       definedTests <<= definedTests in srcConfig,
       definedTestNames <<= definedTestNames in srcConfig,
       cover <<= report dependsOn check,
-      aggregateCover <<= aggregateReport dependsOn (submoduleCoverTasks),
+      aggregateCover <<= aggregateReport dependsOn submoduleCoverTasks,
       check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test))
   }
 }
