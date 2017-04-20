@@ -12,14 +12,15 @@
 package de.johoop.jacoco4sbt.filter
 
 import scala.collection.mutable
-import org.jacoco.core.internal.analysis.{MethodAnalyzer, StringPool, ClassAnalyzer}
+import org.jacoco.core.internal.analysis.{ClassAnalyzer, ClassCoverageImpl, MethodAnalyzer, StringPool}
 import org.jacoco.core.internal.flow.{ClassProbesAdapter, MethodProbesVisitor}
 import org.jacoco.core.internal.instr.InstrSupport
 import org.objectweb.asm._
 import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
 import org.jacoco.core.internal.data.CRC64
 import org.jacoco.core.data.ExecutionDataStore
-import org.objectweb.asm.tree.{JumpInsnNode, MethodInsnNode, MethodNode, ClassNode}
+import org.objectweb.asm.tree.{ClassNode, JumpInsnNode, MethodInsnNode, MethodNode}
+
 import scala.collection.JavaConverters._
 
 /**
@@ -39,16 +40,14 @@ import scala.collection.JavaConverters._
  * These filters are based on [[https://github.com/timezra/jacoco/commit/b6146ebed8b8e7507ec634ee565fe03f3e940fdd]],
  * but extended to correctly exclude synthetics in module classes.
  */
-private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, noMatch: Boolean, probes: Array[Boolean],
-                                           stringPool: StringPool, coverageVisitor: ICoverageVisitor) extends ClassAnalyzer(classid, noMatch, probes, stringPool) {
-
-  private val className = classNode.name
+private final class FilteringClassAnalyzer(classCoverage: ClassCoverageImpl, classNode: ClassNode, probes: Array[Boolean],
+                                           stringPool: StringPool, coverageVisitor: ICoverageVisitor) extends ClassAnalyzer(classCoverage, probes, stringPool) {
 
   private val coverages = mutable.Buffer[IMethodCoverage]()
 
   override def visitMethod(access: Int, name: String, desc: String,
                            signature: String, exceptions: Array[String]): MethodProbesVisitor = {
-    InstrSupport.assertNotInstrumented(name, getCoverage.getName)
+    InstrSupport.assertNotInstrumented(name, classCoverage.getName)
     if ((access & Opcodes.ACC_SYNTHETIC) != 0)
       null
     else {
@@ -67,11 +66,11 @@ private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, 
     try visitFiltered()
     finally {
       super.visitEnd()
-      coverageVisitor.visitCoverage(getCoverage)
+      coverageVisitor.visitCoverage(classCoverage)
     }
   }
 
-  private val isModuleClass = className.endsWith("$")
+  private val isModuleClass = classCoverage.getName.endsWith("$")
 
   private val methods: Seq[MethodNode] = classNode.methods.asInstanceOf[java.util.List[MethodNode]].asScala
 
@@ -80,7 +79,7 @@ private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, 
       mc <- coverages
       methodNode = methods.find(m => m.name == mc.getName && m.desc == mc.getDesc).get
       if !ignore(mc, methodNode)
-    } getCoverage.addMethod(mc)
+    } classCoverage.addMethod(mc)
   }
 
   private def ignore(mc: IMethodCoverage, node: MethodNode): Boolean = {
@@ -89,9 +88,9 @@ private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, 
     def isModuleStaticInit = isModuleClass && name == "<clinit>"
 
     (
-         isSyntheticMethod(className, name, mc.getFirstLine, mc.getLastLine)  // equals/hashCode/unapply et al
+         isSyntheticMethod(classCoverage.getName, name, mc.getFirstLine, mc.getLastLine)  // equals/hashCode/unapply et al
       || isModuleStaticInit // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
-      || isScalaForwarder(className, node)
+      || isScalaForwarder(classCoverage.getName, node)
       || isAccessor(node)
     )
   }
@@ -109,7 +108,8 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore,
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
     val data = Option(executionData get classid)
     val (noMatch, probes) = data map (data => (false, data getProbes)) getOrElse (executionData contains className, null)
-    val analyzer = new FilteringClassAnalyzer(classid, classNode, noMatch, probes, new StringPool, coverageVisitor)
+    val classCoverageAnalyzer = new ClassCoverageImpl(className, classid, noMatch)
+    val analyzer = new FilteringClassAnalyzer(classCoverageAnalyzer, classNode, probes, new StringPool, coverageVisitor)
     new ClassProbesAdapter(analyzer, false)
   }
 }
