@@ -2,7 +2,7 @@ lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
 
   name := "jacoco4sbt",
   organization := "de.johoop",
-  version := "2.2.0",
+  version := "2.3.0",
   scalaVersion := "2.10.6",
 
   sbtPlugin := true,
@@ -29,4 +29,4 @@ lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
 
 lazy val jacocoCore    = Artifact("org.jacoco.core", "jar", "jar")
 lazy val jacocoReport  = Artifact("org.jacoco.report", "jar", "jar")
-lazy val jacocoVersion = "0.7.5.201505241946"
+lazy val jacocoVersion = "0.7.6.201602180812"

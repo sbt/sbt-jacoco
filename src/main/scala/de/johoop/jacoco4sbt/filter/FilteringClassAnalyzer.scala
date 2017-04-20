@@ -11,17 +11,17 @@
  */
 package de.johoop.jacoco4sbt.filter
 
-import scala.collection.mutable
+import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
+import org.jacoco.core.data.ExecutionDataStore
 import org.jacoco.core.internal.analysis.{ClassAnalyzer, ClassCoverageImpl, MethodAnalyzer, StringPool}
+import org.jacoco.core.internal.data.CRC64
 import org.jacoco.core.internal.flow.{ClassProbesAdapter, MethodProbesVisitor}
 import org.jacoco.core.internal.instr.InstrSupport
 import org.objectweb.asm._
-import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
-import org.jacoco.core.internal.data.CRC64
-import org.jacoco.core.data.ExecutionDataStore
-import org.objectweb.asm.tree.{ClassNode, JumpInsnNode, MethodInsnNode, MethodNode}
+import org.objectweb.asm.tree.{ClassNode, MethodNode}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 /**
  * Filters coverage results from Scala synthetic methods:
@@ -83,8 +83,10 @@ private final class FilteringClassAnalyzer(classCoverage: ClassCoverageImpl, cla
   }
 
   private def ignore(mc: IMethodCoverage, node: MethodNode): Boolean = {
+    import AccessorDetector._
+    import ScalaForwarderDetector._
+    import ScalaSyntheticMethod._
     import node.name
-    import ScalaSyntheticMethod._, ScalaForwarderDetector._, AccessorDetector._
     def isModuleStaticInit = isModuleClass && name == "<clinit>"
 
     (
