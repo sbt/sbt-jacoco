@@ -24,7 +24,7 @@ class IntegrationTestScalaProjectCoverageSpec extends Specification with FileMat
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
   lazy val coveredItClassesDir = new File(itJacocoDir, "classes")
 
-  lazy val exitCode = Process(s"${Util.processName} clean jacoco:cover it-jacoco:cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} -Dplugin.version=${BuildInfo.version} clean jacoco:cover it-jacoco:cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
   def e2 = jacocoDir should exist and beADirectory
