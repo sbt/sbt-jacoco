@@ -20,7 +20,7 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 
 ## Change Log
 
-* *2.3.0*
+* *2.3.0* _(unreleased)_
 
     * Update to JaCoCo version 0.7.6 ([#67](https://github.com/sbt/jacoco4sbt/pull/67))
 
