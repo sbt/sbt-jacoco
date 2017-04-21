@@ -20,7 +20,7 @@ class ForkedSimpleScalaProjectCoverageSpec extends Specification with FileMatche
   lazy val jacocoDir = new File(targetDir, "scala-2.10/jacoco")
   lazy val coveredClassesDir = new File(jacocoDir, "classes")
 
-  lazy val exitCode = Process(Seq(Util.processName, "clean", "jacoco:cover"), Some(testProjectBase)) !
+  lazy val exitCode = Process(Seq(Util.processName, s"-Dplugin.version=${BuildInfo.version}", "clean", "jacoco:cover"), Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo 0
   def e2 = jacocoDir should exist and beADirectory

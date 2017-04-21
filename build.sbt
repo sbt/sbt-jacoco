@@ -19,7 +19,7 @@ lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
 
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_"),
 
-  buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test),
+  buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test, version),
   buildInfoPackage := "de.johoop.jacoco4sbt.build",
 
   test in Test <<= test in Test dependsOn publishLocal,

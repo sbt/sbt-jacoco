@@ -29,7 +29,7 @@ class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers {
   } yield new File(targetDir, reportPath)
   lazy val aggregateReport = new File(testProjectBase, "target/scala-2.10/jacoco/aggregate/html")
 
-  lazy val exitCode = Process(s"${Util.processName} clean jacoco:aggregate-cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} -Dplugin.version=${BuildInfo.version} clean jacoco:aggregate-cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
   def e2 = jacocoDirs should contain(exist and beADirectory).foreach
