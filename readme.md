@@ -20,9 +20,10 @@ See [Wiki](https://github.com/sbt/jacoco4sbt/wiki) for more details.
 
 ## Change Log
 
-* *2.3.0* _(unreleased)_
+* *2.3.0*
 
     * Update to JaCoCo version 0.7.6 ([#67](https://github.com/sbt/jacoco4sbt/pull/67))
+    * Include license info (EPL v1.0) in generated artifacts (fixing [#64](https://github.com/sbt/jacoco4sbt/issues/64))
 
 * *2.2.0*
 
