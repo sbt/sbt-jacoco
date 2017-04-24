@@ -1,6 +1,6 @@
 # jacoco4sbt - Code Coverage via JaCoCo in sbt
 
-This is an [sbt](http://scala-sbt.org/) and [Typesafe Activator](https://typesafe.com/activator) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
+This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
 
 Install the plugin by adding the following to `project/plugins.sbt`:
 
