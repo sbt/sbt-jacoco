@@ -22,7 +22,7 @@ lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
   buildInfoKeys := Seq[BuildInfoKey](resourceDirectory in Test, version, "jacocoVersion" -> jacocoVersion),
   buildInfoPackage := "de.johoop.jacoco4sbt.build",
 
-  test in Test <<= test in Test dependsOn publishLocal,
+  test in Test := (test in Test dependsOn publishLocal).value,
   parallelExecution in Test := false,
   scalacOptions in Test ++= Seq("-Yrangepos")
 )

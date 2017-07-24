@@ -41,13 +41,33 @@ object JacocoPlugin extends Plugin {
 
       instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
 
-      report <<= (outputDirectory, executionDataFile, reportFormats, reportTitle, coveredSources, classesToCover,
-        sourceEncoding, sourceTabWidth, thresholds, streams) map reportAction,
+      report := reportAction(
+        outputDirectory.value,
+        executionDataFile.value,
+        reportFormats.value,
+        reportTitle.value,
+        coveredSources.value,
+        classesToCover.value,
+        sourceEncoding.value,
+        sourceTabWidth.value,
+        thresholds.value,
+        streams.value
+      ),
 
-      aggregateReport <<= (aggregateReportDirectory, aggregateExecutionDataFiles, reportFormats, aggregateReportTitle, aggregateCoveredSources, aggregateClassesToCover,
-        sourceEncoding, sourceTabWidth, aggregateThresholds, streams) map aggregateReportAction,
+      aggregateReport := aggregateReportAction(
+        aggregateReportDirectory.value,
+        aggregateExecutionDataFiles.value,
+        reportFormats.value,
+        aggregateReportTitle.value,
+        aggregateCoveredSources.value,
+        aggregateClassesToCover.value,
+        sourceEncoding.value,
+        sourceTabWidth.value,
+        aggregateThresholds.value,
+        streams.value
+      ),
 
-      clean <<= outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
+      clean := outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
   }
 
@@ -75,12 +95,16 @@ object JacocoPlugin extends Plugin {
   object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
     lazy val srcConfig = IntegrationTest
 
-    lazy val conditionalMerge = (outputDirectory in Config, outputDirectory in jacoco.Config, streams, mergeReports) map conditionalMergeAction
-    lazy val forceMerge = (outputDirectory in Config, outputDirectory in jacoco.Config, streams) map mergeAction
+    lazy val conditionalMerge = Def.task {
+      conditionalMergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value, mergeReports.value)
+    }
+    lazy val forceMerge = Def.task {
+      mergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value)
+    }
 
     override def settings = super.settings ++ Seq(
-      report  in Config <<= (report  in Config) dependsOn conditionalMerge,
-      merge <<= forceMerge,
+      report  in Config := ((report  in Config) dependsOn conditionalMerge).value,
+      merge := forceMerge.value,
       mergeReports := true,
       (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
   }
@@ -102,21 +126,21 @@ object JacocoPlugin extends Plugin {
       libraryDependencies +=
         "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "jacoco" artifacts Artifact("org.jacoco.agent", "jar", "jar")
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
-      classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
+      classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
       aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
       aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
       aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
-      fullClasspath <<= (products in Compile, fullClasspath in srcConfig, instrumentedClassDirectory, update, fork, streams) map instrumentAction,
-      javaOptions <++= (fork, outputDirectory) map { (forked, out) =>
-        if (forked) Seq(s"-Djacoco-agent.destfile=${out / "jacoco.exec" absolutePath}") else Seq()
+      fullClasspath := instrumentAction((products in Compile).value, (fullClasspath in srcConfig).value, instrumentedClassDirectory.value, update.value, fork.value, streams.value),
+      javaOptions ++= {
+        if (fork.value) Seq(s"-Djacoco-agent.destfile=${outputDirectory.value / "jacoco.exec" absolutePath}") else Seq()
       },
 
       outputDirectory in Config := crossTarget.value / Config.name,
 
-      definedTests <<= definedTests in srcConfig,
-      definedTestNames <<= definedTestNames in srcConfig,
-      cover <<= report dependsOn check,
-      aggregateCover <<= aggregateReport dependsOn submoduleCoverTasks,
-      check <<= ((executionDataFile, fork, streams) map saveDataAction) dependsOn test))
+      definedTests := (definedTests in srcConfig).value,
+      definedTestNames := (definedTestNames in srcConfig).value,
+      cover := (report dependsOn check).value,
+      aggregateCover := (aggregateReport dependsOn submoduleCoverTasks).value,
+      check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value))
   }
 }
