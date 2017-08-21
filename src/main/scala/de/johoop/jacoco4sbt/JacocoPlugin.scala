@@ -16,9 +16,8 @@ import Keys._
 import java.io.File
 
 import de.johoop.jacoco4sbt.build.BuildInfo
-import inc.Locate
 
-object JacocoPlugin extends Plugin {
+object JacocoPlugin extends AutoPlugin {
 
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
@@ -78,12 +77,17 @@ object JacocoPlugin extends Plugin {
     PathFinder(classes) ** new FileFilter {
       def accept(f: File) = IO.relativize(classes, f) match {
         case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
-          val name = Locate.toClassName(file)
+          val name = toClassName(file)
           inclFilters.exists(_ accept name) && ! exclFilters.exists(_ accept name)
         case _ => false
       }
     } get
   }
+
+  private def toClassName(entry: String): String =
+    entry.stripSuffix(ClassExt).replace('/', '.')
+
+  private val ClassExt = ".class"
 
   object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
     lazy val srcConfig = Test
@@ -132,7 +136,8 @@ object JacocoPlugin extends Plugin {
       aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
       fullClasspath := instrumentAction((products in Compile).value, (fullClasspath in srcConfig).value, instrumentedClassDirectory.value, update.value, fork.value, streams.value),
       javaOptions ++= {
-        if (fork.value) Seq(s"-Djacoco-agent.destfile=${outputDirectory.value / "jacoco.exec" absolutePath}") else Seq()
+        val dir = outputDirectory.value
+        if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
       },
 
       outputDirectory in Config := crossTarget.value / Config.name,
