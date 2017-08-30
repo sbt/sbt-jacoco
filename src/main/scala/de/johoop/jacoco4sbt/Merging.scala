@@ -48,11 +48,11 @@ trait Merging extends JaCoCoRuntime {
       val out = new BufferedOutputStream(new FileOutputStream(f))
       try writeFn(out)
       catch {
-        case e: IOException => throw new ResourcesException("Error merging Jacoco files: %s" format e.getMessage)
+        case e: IOException => sys.error("Error merging Jacoco files: %s" format e.getMessage)
       } finally out.close
     } catch {
       case e: IOException => 
-        throw new ResourcesException("Unable to write out Jacoco file during merge: %s" format e.getMessage)
+        sys.error("Unable to write out Jacoco file during merge: %s" format e.getMessage)
     }
   }
 }
