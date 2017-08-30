@@ -5,9 +5,11 @@ import de.johoop.jacoco4sbt.build.BuildInfo
 import scala.sys.process.Process
 import java.io.File
 import org.specs2.matcher.{Matcher, FileMatchers}
-import scala.xml.{NodeSeq, XML}
+import scala.xml.XML
 
-class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers { def is = args(sequential = true) ^ s2"""
+class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers { def is =
+  // play sbt plugin doesn't support 1.0 yet so can't test against it
+  skipAllIf(BuildInfo.sbtVersion.startsWith("1.0")) ^ args(sequential = true) ^ s2"""
   JaCoCo in a Play Java multi-project
 
   Covering tests in a Play Scala project with subprojects should
@@ -29,7 +31,7 @@ class PlayJavaMultiProjectCoverageSpec extends Specification with FileMatchers {
   } yield new File(targetDir, reportPath)
   lazy val aggregateReport = new File(testProjectBase, "target/scala-2.10/jacoco/aggregate/html")
 
-  lazy val exitCode = Process(s"${Util.processName} -Dplugin.version=${BuildInfo.version} clean jacoco:aggregate-cover", Some(testProjectBase)) !
+  lazy val exitCode = Process(s"${Util.processName} -Dsbt.version=${BuildInfo.sbtVersion} -Dplugin.version=${BuildInfo.version} clean jacoco:aggregate-cover", Some(testProjectBase)) !
 
   def e1 = exitCode should be equalTo(0)
   def e2 = jacocoDirs should contain(exist and beADirectory).foreach
