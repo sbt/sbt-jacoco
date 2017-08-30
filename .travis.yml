@@ -1,4 +1,6 @@
 language: scala
+sudo: false
+dist: trusty
 
 script:
   - sbt "++${TRAVIS_SCALA_VERSION}" "^^${SBT_VERSION}" publishLocal test 
