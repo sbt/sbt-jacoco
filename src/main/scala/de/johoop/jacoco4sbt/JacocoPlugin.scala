@@ -16,9 +16,8 @@ import Keys._
 import java.io.File
 
 import de.johoop.jacoco4sbt.build.BuildInfo
-import inc.Locate
 
-object JacocoPlugin extends Plugin {
+object JacocoPlugin extends AutoPlugin {
 
   private object JacocoDefaults extends Reporting with Keys {
     val settings = Seq(
@@ -78,13 +77,22 @@ object JacocoPlugin extends Plugin {
     PathFinder(classes) ** new FileFilter {
       def accept(f: File) = IO.relativize(classes, f) match {
         case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
-          val name = Locate.toClassName(file)
+          val name = toClassName(file)
           inclFilters.exists(_ accept name) && ! exclFilters.exists(_ accept name)
         case _ => false
       }
     } get
   }
 
+  private def toClassName(entry: String): String =
+    entry.stripSuffix(ClassExt).replace('/', '.')
+
+  private val ClassExt = ".class"
+
+  object autoImport {
+    val jacoco = JacocoPlugin.jacoco
+    val itJacoco = JacocoPlugin.itJacoco
+  }
   object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
     lazy val srcConfig = Test
 
@@ -96,17 +104,40 @@ object JacocoPlugin extends Plugin {
     lazy val srcConfig = IntegrationTest
 
     lazy val conditionalMerge = Def.task {
-      conditionalMergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value, mergeReports.value)
+      conditionalMergeAction(
+        (executionDataFile in jacoco.Config).value,
+        (executionDataFile in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        (mergeReports in Config).value,
+        streams.value)
     }
+
     lazy val forceMerge = Def.task {
-      mergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value)
+      mergeAction(
+        (executionDataFile in jacoco.Config).value,
+        (executionDataFile in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        streams.value)
     }
 
     override def settings = super.settings ++ Seq(
-      report  in Config := ((report  in Config) dependsOn conditionalMerge).value,
       merge := forceMerge.value,
       mergeReports := true,
-      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
+      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec",
+      (mergedExecutionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec",
+      (report in Config) := reportAction(
+        (outputDirectory in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        (reportFormats in Config).value,
+        (reportTitle in Config).value,
+        (coveredSources in Config).value,
+        (classesToCover in Config).value,
+        (sourceEncoding in Config).value,
+        (sourceTabWidth in Config).value,
+        (thresholds in Config).value,
+        (streams in Config).value
+      ),
+      report in Config := ((report in Config) dependsOn conditionalMerge).value)
   }
 
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
@@ -132,7 +163,8 @@ object JacocoPlugin extends Plugin {
       aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
       fullClasspath := instrumentAction((products in Compile).value, (fullClasspath in srcConfig).value, instrumentedClassDirectory.value, update.value, fork.value, streams.value),
       javaOptions ++= {
-        if (fork.value) Seq(s"-Djacoco-agent.destfile=${outputDirectory.value / "jacoco.exec" absolutePath}") else Seq()
+        val dir = outputDirectory.value
+        if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
       },
 
       outputDirectory in Config := crossTarget.value / Config.name,
