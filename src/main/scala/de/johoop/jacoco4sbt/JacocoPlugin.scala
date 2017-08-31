@@ -104,17 +104,28 @@ object JacocoPlugin extends AutoPlugin {
     lazy val srcConfig = IntegrationTest
 
     lazy val conditionalMerge = Def.task {
-      conditionalMergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value, mergeReports.value)
+      conditionalMergeAction(
+        (executionDataFile in jacoco.Config).value,
+        (executionDataFile in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        mergeReports.value,
+        streams.value)
     }
+
     lazy val forceMerge = Def.task {
-      mergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value)
+      mergeAction(
+        (executionDataFile in jacoco.Config).value,
+        (executionDataFile in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        streams.value)
     }
 
     override def settings = super.settings ++ Seq(
       report  in Config := ((report  in Config) dependsOn conditionalMerge).value,
       merge := forceMerge.value,
       mergeReports := true,
-      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
+      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec",
+      (mergedExecutionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
   }
 
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>

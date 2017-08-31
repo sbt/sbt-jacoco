@@ -59,4 +59,5 @@ trait IntegrationTestKeys extends Keys {
 
   lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
   lazy val mergeReports = SettingKey[Boolean]("merge-reports", "Indication whether to merge the unittest and integration test reports. Defaults to true.")
+  lazy val mergedExecutionDataFile = SettingKey[File]("merged-execution-data-file", "Execution data file contain unit test and integration test data.")
 }
