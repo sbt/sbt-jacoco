@@ -1,0 +1,13 @@
+# coverage should pass
+> jacoco:cover
+> it-jacoco:cover
+
+# unit tests
+$ exists target/scala-2.10/jacoco/classes
+$ exists target/scala-2.10/jacoco/jacoco.exec
+$ exists target/scala-2.10/jacoco/html/index.html
+
+# integration tests
+$ exists target/scala-2.10/it-jacoco/classes
+$ exists target/scala-2.10/it-jacoco/jacoco-merged.exec
+$ exists target/scala-2.10/it-jacoco/html/index.html
