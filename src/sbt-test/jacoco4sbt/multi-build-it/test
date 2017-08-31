@@ -1,0 +1,13 @@
+> clean
+
+> jacoco:aggregateCover
+$ exists common/target/scala-2.12/jacoco/jacoco.exec
+$ exists extras/target/scala-2.12/jacoco/jacoco.exec
+$ exists target/scala-2.12/jacoco/aggregate/html/index.html
+
+> it-jacoco:aggregateCover
+$ exists common/target/scala-2.12/it-jacoco/jacoco.exec
+$ exists common/target/scala-2.12/it-jacoco/jacoco-merged.exec
+$ exists extras/target/scala-2.12/it-jacoco/jacoco.exec
+$ exists extras/target/scala-2.12/it-jacoco/jacoco-merged.exec
+$ exists target/scala-2.12/it-jacoco/aggregate/html/index.html
