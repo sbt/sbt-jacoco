@@ -1,3 +1,5 @@
+> clean
+
 # coverage should fail
 -> jacoco:cover
 

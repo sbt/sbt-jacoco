@@ -14,5 +14,5 @@ $ exists target/scala-2.10/it-jacoco/classes
 $ exists target/scala-2.10/it-jacoco/jacoco.exec
 $ exists target/scala-2.10/it-jacoco/html/index.html
 
-# should have a merged report
-$ exists target/scala-2.10/it-jacoco/jacoco-merged.exec
+# should not have a merged report
+$ absent target/scala-2.10/it-jacoco/jacoco-merged.exec

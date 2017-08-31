@@ -108,7 +108,7 @@ object JacocoPlugin extends AutoPlugin {
         (executionDataFile in jacoco.Config).value,
         (executionDataFile in Config).value,
         (mergedExecutionDataFile in Config).value,
-        mergeReports.value,
+        (mergeReports in Config).value,
         streams.value)
     }
 
@@ -121,11 +121,23 @@ object JacocoPlugin extends AutoPlugin {
     }
 
     override def settings = super.settings ++ Seq(
-      report  in Config := ((report  in Config) dependsOn conditionalMerge).value,
       merge := forceMerge.value,
       mergeReports := true,
       (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec",
-      (mergedExecutionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
+      (mergedExecutionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec",
+      (report in Config) := reportAction(
+        (outputDirectory in Config).value,
+        (mergedExecutionDataFile in Config).value,
+        (reportFormats in Config).value,
+        (reportTitle in Config).value,
+        (coveredSources in Config).value,
+        (classesToCover in Config).value,
+        (sourceEncoding in Config).value,
+        (sourceTabWidth in Config).value,
+        (thresholds in Config).value,
+        (streams in Config).value
+      ),
+      report in Config := ((report in Config) dependsOn conditionalMerge).value)
   }
 
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
