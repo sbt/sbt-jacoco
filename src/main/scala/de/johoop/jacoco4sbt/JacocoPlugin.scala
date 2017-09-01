@@ -16,6 +16,7 @@ import Keys._
 import java.io.File
 
 import de.johoop.jacoco4sbt.build.BuildInfo
+import sbt.plugins.JvmPlugin
 
 object JacocoPlugin extends AutoPlugin {
 
@@ -88,6 +89,8 @@ object JacocoPlugin extends AutoPlugin {
     entry.stripSuffix(ClassExt).replace('/', '.')
 
   private val ClassExt = ".class"
+
+  override def requires = JvmPlugin
 
   object autoImport {
     val jacoco = JacocoPlugin.jacoco
