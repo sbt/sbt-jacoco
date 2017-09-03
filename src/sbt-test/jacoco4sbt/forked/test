@@ -1,7 +1,7 @@
 > clean
 
 # coverage should pass
-> jacoco:cover
+> jacoco:jacoco
 
 # instrumented classes
 $ exists target/scala-2.12/jacoco/classes
