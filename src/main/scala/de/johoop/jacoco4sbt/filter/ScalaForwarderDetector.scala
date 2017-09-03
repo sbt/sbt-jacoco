@@ -1,7 +1,7 @@
 /*
  * This file is part of jacoco4sbt.
  *
- * Copyright (c) 2013 Joachim Hofer & contributors
+ * Copyright (c) Joachim Hofer & contributors
  * All rights reserved.
  *
  * This program and the accompanying materials
@@ -9,6 +9,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+
 package de.johoop.jacoco4sbt.filter
 
 import org.objectweb.asm.Opcodes
