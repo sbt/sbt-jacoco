@@ -15,7 +15,7 @@ package de.johoop.jacoco4sbt
 import sbt._
 import Keys._
 
-trait SavingData extends JaCoCoRuntime {
+private[jacoco4sbt] trait SavingData extends JaCoCoRuntime {
   def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams) = {
 
     import java.io.FileOutputStream
@@ -36,7 +36,7 @@ trait SavingData extends JaCoCoRuntime {
   }
 }
 
-trait Reporting extends JaCoCoRuntime {
+private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
   def reportAction(
       reportDirectory: File,
       executionDataFile: File,
