@@ -12,50 +12,24 @@
 
 package de.johoop.jacoco4sbt
 
-import sbt.Keys._
 import sbt._
-import sbt.plugins.JvmPlugin
 
-object JacocoPlugin extends AutoPlugin {
-  override def requires = JvmPlugin
+object JacocoPlugin extends BaseJacocoPlugin {
 
-  object autoImport {
-    val jacoco = JacocoPlugin.jacoco
-    val itJacoco = JacocoPlugin.itJacoco
-  }
-  object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
-    lazy val srcConfig = Test
-
-    override def settings =
-      super.settings ++ Seq((executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec")
+  object autoImport extends CommonKeys {
+    lazy val Jacoco = config("jacoco").extend(Test).hide
   }
 
-  object itJacoco
-      extends SharedSettings
-      with Reporting
-      with Merging
-      with SavingData
-      with Instrumentation
-      with IntegrationTestKeys {
-    lazy val srcConfig = IntegrationTest
+  import autoImport._
 
-    lazy val conditionalMerge = Def.task {
-      conditionalMergeAction(
-        (outputDirectory in Config).value,
-        (outputDirectory in jacoco.Config).value,
-        streams.value,
-        mergeReports.value)
-    }
-    lazy val forceMerge = Def.task {
-      mergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value)
-    }
+  override protected val pluginConfig: Configuration = Jacoco
+  lazy val srcConfig = Test
 
-    override def settings =
-      super.settings ++ Seq(
-        report in Config := ((report in Config) dependsOn conditionalMerge).value,
-        merge := forceMerge.value,
-        mergeReports := true,
-        (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec"
+  override def trigger: PluginTrigger = allRequirements
+
+  override def projectSettings: Seq[Setting[_]] =
+    super.projectSettings ++
+      Seq(
+        (executionDataFile in Jacoco) := (outputDirectory in Jacoco).value / "jacoco.exec"
       )
-  }
 }
