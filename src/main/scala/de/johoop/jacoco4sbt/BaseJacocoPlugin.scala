@@ -20,9 +20,9 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
 
   lazy val submoduleSettingsTask = Def.task {
     (
-      (classesToCover in pluginConfig ?).value,
-      (sourceDirectory in Compile ?).value,
-      (executionDataFile in pluginConfig ?).value)
+      (classesToCover in pluginConfig).?.value,
+      (sourceDirectory in Compile).?.value,
+      (executionDataFile in pluginConfig).?.value)
   }
 
   lazy val submoduleSettings =
@@ -53,7 +53,11 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
           streams.value),
         javaOptions ++= {
           val dir = outputDirectory.value
-          if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
+          if (fork.value) {
+            Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
+          } else {
+            Nil
+          }
         },
         outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
         definedTests := (definedTests in srcConfig).value,
@@ -68,14 +72,14 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
     val inclFilters = incl map GlobFilter.apply
     val exclFilters = excl map GlobFilter.apply
 
-    PathFinder(classes) ** new FileFilter {
+    (PathFinder(classes) ** new FileFilter {
       def accept(f: File) = IO.relativize(classes, f) match {
         case Some(file) if !f.isDirectory && file.endsWith(".class") =>
           val name = toClassName(file)
           inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
         case _ => false
       }
-    } get
+    }).get
   }
 
   private def toClassName(entry: String): String =
