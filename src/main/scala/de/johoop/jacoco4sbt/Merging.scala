@@ -20,7 +20,11 @@ trait Merging extends JaCoCoRuntime {
   import java.io._
   import sbt.Keys._
 
-  def conditionalMergeAction(itJacocoDirectory: File, jacocoDirectory: File, streams: TaskStreams, mergeReports: Boolean) = {
+  def conditionalMergeAction(
+      itJacocoDirectory: File,
+      jacocoDirectory: File,
+      streams: TaskStreams,
+      mergeReports: Boolean) = {
     if (mergeReports) mergeAction(itJacocoDirectory, jacocoDirectory, streams)
     else streams.log debug "Not merging execution data!"
   }
@@ -52,7 +56,7 @@ trait Merging extends JaCoCoRuntime {
         case e: IOException => sys.error("Error merging Jacoco files: %s" format e.getMessage)
       } finally out.close
     } catch {
-      case e: IOException => 
+      case e: IOException =>
         sys.error("Unable to write out Jacoco file during merge: %s" format e.getMessage)
     }
   }

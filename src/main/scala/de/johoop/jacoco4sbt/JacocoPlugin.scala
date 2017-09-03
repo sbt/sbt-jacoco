@@ -26,22 +26,16 @@ object JacocoPlugin extends AutoPlugin {
       outputDirectory := crossTarget.value / "jacoco",
       aggregateReportDirectory := outputDirectory.value / "aggregate",
       reportFormats := Seq(ScalaHTMLReport()),
-
       reportTitle := "Jacoco Coverage Report",
       aggregateReportTitle := "Jacoco Aggregate Coverage Report",
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
-
-      thresholds:= Thresholds(),
+      thresholds := Thresholds(),
       aggregateThresholds := Thresholds(),
       includes := Seq("*"),
-
       excludes := Seq(),
-
       coveredSources := (sourceDirectories in Compile).value,
-
       instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
-
       report := reportAction(
         outputDirectory.value,
         executionDataFile.value,
@@ -54,7 +48,6 @@ object JacocoPlugin extends AutoPlugin {
         thresholds.value,
         streams.value
       ),
-
       aggregateReport := aggregateReportAction(
         aggregateReportDirectory.value,
         aggregateExecutionDataFiles.value,
@@ -67,7 +60,6 @@ object JacocoPlugin extends AutoPlugin {
         aggregateThresholds.value,
         streams.value
       ),
-
       clean := outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
     )
   }
@@ -78,9 +70,9 @@ object JacocoPlugin extends AutoPlugin {
 
     PathFinder(classes) ** new FileFilter {
       def accept(f: File) = IO.relativize(classes, f) match {
-        case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
+        case Some(file) if !f.isDirectory && file.endsWith(".class") =>
           val name = toClassName(file)
-          inclFilters.exists(_ accept name) && ! exclFilters.exists(_ accept name)
+          inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
         case _ => false
       }
     } get
@@ -100,25 +92,37 @@ object JacocoPlugin extends AutoPlugin {
   object jacoco extends SharedSettings with Reporting with SavingData with Instrumentation with Keys {
     lazy val srcConfig = Test
 
-    override def settings = super.settings ++ Seq(
-      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec")
+    override def settings =
+      super.settings ++ Seq((executionDataFile in Config) := (outputDirectory in Config).value / "jacoco.exec")
   }
 
-  object itJacoco extends SharedSettings with Reporting with Merging with SavingData with Instrumentation with IntegrationTestKeys {
+  object itJacoco
+      extends SharedSettings
+      with Reporting
+      with Merging
+      with SavingData
+      with Instrumentation
+      with IntegrationTestKeys {
     lazy val srcConfig = IntegrationTest
 
     lazy val conditionalMerge = Def.task {
-      conditionalMergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value, mergeReports.value)
+      conditionalMergeAction(
+        (outputDirectory in Config).value,
+        (outputDirectory in jacoco.Config).value,
+        streams.value,
+        mergeReports.value)
     }
     lazy val forceMerge = Def.task {
       mergeAction((outputDirectory in Config).value, (outputDirectory in jacoco.Config).value, streams.value)
     }
 
-    override def settings = super.settings ++ Seq(
-      report  in Config := ((report  in Config) dependsOn conditionalMerge).value,
-      merge := forceMerge.value,
-      mergeReports := true,
-      (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec")
+    override def settings =
+      super.settings ++ Seq(
+        report in Config := ((report in Config) dependsOn conditionalMerge).value,
+        merge := forceMerge.value,
+        mergeReports := true,
+        (executionDataFile in Config) := (outputDirectory in Config).value / "jacoco-merged.exec"
+      )
   }
 
   trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
@@ -127,33 +131,44 @@ object JacocoPlugin extends AutoPlugin {
       ((classesToCover in Config ?).value, (sourceDirectory in Compile ?).value, (executionDataFile in Config ?).value)
     }
 
-    val submoduleSettings = submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, Config)))
+    val submoduleSettings =
+      submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, Config)))
 
     val submoduleCoverTasks = (cover in Config).all(ScopeFilter(inAggregates(ThisProject)))
 
     def srcConfig: Configuration
 
-    def settings = Seq(
-      ivyConfigurations += Config,
-      libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "jacoco" artifacts Artifact("org.jacoco.agent", "jar", "jar")
-    ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
-      classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
-      aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
-      aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
-      aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
-      fullClasspath := instrumentAction((products in Compile).value, (fullClasspath in srcConfig).value, instrumentedClassDirectory.value, update.value, fork.value, streams.value),
-      javaOptions ++= {
-        val dir = outputDirectory.value
-        if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
-      },
-
-      outputDirectory in Config := crossTarget.value / Config.name,
-
-      definedTests := (definedTests in srcConfig).value,
-      definedTestNames := (definedTestNames in srcConfig).value,
-      cover := (report dependsOn check).value,
-      aggregateCover := (aggregateReport dependsOn submoduleCoverTasks).value,
-      check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value))
+    def settings =
+      Seq(
+        ivyConfigurations += Config,
+        libraryDependencies +=
+          "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "jacoco" artifacts Artifact(
+            "org.jacoco.agent",
+            "jar",
+            "jar")
+      ) ++ inConfig(Config)(
+        Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
+          classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
+          aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
+          aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
+          aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
+          fullClasspath := instrumentAction(
+            (products in Compile).value,
+            (fullClasspath in srcConfig).value,
+            instrumentedClassDirectory.value,
+            update.value,
+            fork.value,
+            streams.value),
+          javaOptions ++= {
+            val dir = outputDirectory.value
+            if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
+          },
+          outputDirectory in Config := crossTarget.value / Config.name,
+          definedTests := (definedTests in srcConfig).value,
+          definedTestNames := (definedTestNames in srcConfig).value,
+          cover := (report dependsOn check).value,
+          aggregateCover := (aggregateReport dependsOn submoduleCoverTasks).value,
+          check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value
+        ))
   }
 }

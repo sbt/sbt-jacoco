@@ -21,7 +21,7 @@ trait SavingData extends JaCoCoRuntime {
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
 
-    if (! forked) {
+    if (!forked) {
       IO createDirectory jacocoFile.getParentFile
       val executionDataStream = new FileOutputStream(jacocoFile)
       try {
@@ -37,9 +37,17 @@ trait SavingData extends JaCoCoRuntime {
 }
 
 trait Reporting extends JaCoCoRuntime {
-  def reportAction(reportDirectory: File, executionDataFile: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-                   sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-                   thresholds: Thresholds, streams: TaskStreams): Unit = {
+  def reportAction(
+      reportDirectory: File,
+      executionDataFile: File,
+      reportFormats: Seq[FormattedReport],
+      reportTitle: String,
+      sourceDirectories: Seq[File],
+      classDirectories: Seq[File],
+      sourceEncoding: String,
+      tabWidth: Int,
+      thresholds: Thresholds,
+      streams: TaskStreams): Unit = {
 
     val report = new Report(
       reportDirectory = reportDirectory,
@@ -51,14 +59,23 @@ trait Reporting extends JaCoCoRuntime {
       tabWidth = tabWidth,
       sourceEncoding = sourceEncoding,
       thresholds = thresholds,
-      streams = streams)
+      streams = streams
+    )
 
     report.generate
   }
 
-  def aggregateReportAction(reportDirectory: File, executionDataFiles: Seq[File], reportFormats: Seq[FormattedReport], reportTitle: String,
-      sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-      thresholds: Thresholds, streams: TaskStreams): Unit = {
+  def aggregateReportAction(
+      reportDirectory: File,
+      executionDataFiles: Seq[File],
+      reportFormats: Seq[FormattedReport],
+      reportTitle: String,
+      sourceDirectories: Seq[File],
+      classDirectories: Seq[File],
+      sourceEncoding: String,
+      tabWidth: Int,
+      thresholds: Thresholds,
+      streams: TaskStreams): Unit = {
 
     val report = new Report(
       reportDirectory = reportDirectory,
@@ -70,7 +87,8 @@ trait Reporting extends JaCoCoRuntime {
       tabWidth = tabWidth,
       sourceEncoding = sourceEncoding,
       thresholds = thresholds,
-      streams = streams)
+      streams = streams
+    )
 
     report.generate
   }

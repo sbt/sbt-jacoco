@@ -22,9 +22,14 @@ import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
 
 trait Instrumentation extends JaCoCoRuntime {
 
-  def instrumentAction(compileProducts: Seq[File], fullClasspath: Classpath, instrumentedClassDirectory: File, 
-      resolved: UpdateReport, forked: Boolean, streams: TaskStreams) = {
-    
+  def instrumentAction(
+      compileProducts: Seq[File],
+      fullClasspath: Classpath,
+      instrumentedClassDirectory: File,
+      resolved: UpdateReport,
+      forked: Boolean,
+      streams: TaskStreams) = {
+
     streams.log debug s"instrumenting products: $compileProducts"
 
     val (jacocoAgent, instrumenter) = if (forked) {
@@ -42,14 +47,15 @@ trait Instrumentation extends JaCoCoRuntime {
     }
 
     val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
-    
-    for { 
+
+    for {
       classFile <- (PathFinder(compileProducts) ** "*.class").get
       _ = streams.log debug ("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
-      instrumentedClass = try instrumenter instrument (classStream, classFile.name) finally classStream.close
+      instrumentedClass = try instrumenter instrument (classStream, classFile.name)
+      finally classStream.close
     } {
-        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+      IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
 
     jacocoAgent ++ (Attributed.blank(instrumentedClassDirectory) +: fullClasspath)
