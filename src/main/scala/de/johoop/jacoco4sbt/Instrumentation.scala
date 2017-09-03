@@ -20,7 +20,7 @@ import org.jacoco.core.instr.Instrumenter
 import java.io.FileInputStream
 import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
 
-trait Instrumentation extends JaCoCoRuntime {
+private[jacoco4sbt] trait Instrumentation extends JaCoCoRuntime {
 
   def instrumentAction(
       compileProducts: Seq[File],

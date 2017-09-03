@@ -17,7 +17,7 @@ import Keys._
 import org.jacoco.core.runtime.RuntimeData
 import org.jacoco.core.runtime.LoggerRuntime
 
-trait JaCoCoRuntime {
+private[jacoco4sbt] trait JaCoCoRuntime {
   val runtimeData = new RuntimeData
   val runtime = new LoggerRuntime
 }
