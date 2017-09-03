@@ -14,9 +14,7 @@ package de.johoop.jacoco4sbt
 
 import sbt._
 
-trait Keys {
-  lazy val Config = config("jacoco") extend Test hide
-
+private[jacoco4sbt] trait CommonKeys {
   lazy val outputDirectory =
     SettingKey[File]("output-directory", "Where JaCoCo should store its execution data and reports.")
   lazy val aggregateReportDirectory =
@@ -75,13 +73,4 @@ trait Keys {
 
   lazy val check = TaskKey[Unit]("check", "Executes the tests and saves the execution data in 'jacoco.exec'.")
   lazy val clean = TaskKey[Unit]("clean", "Cleaning JaCoCo's output-directory.")
-}
-
-trait IntegrationTestKeys extends Keys {
-  override lazy val Config = config("it-jacoco") extend IntegrationTest hide
-
-  lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
-  lazy val mergeReports = SettingKey[Boolean](
-    "merge-reports",
-    "Indication whether to merge the unittest and integration test reports. Defaults to true.")
 }

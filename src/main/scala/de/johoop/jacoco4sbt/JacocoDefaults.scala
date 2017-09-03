@@ -3,7 +3,7 @@ package de.johoop.jacoco4sbt
 import sbt.Keys._
 import sbt._
 
-private[jacoco4sbt] object JacocoDefaults extends Reporting with Keys {
+private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
   val settings = Seq(
     outputDirectory := crossTarget.value / "jacoco",
     aggregateReportDirectory := outputDirectory.value / "aggregate",

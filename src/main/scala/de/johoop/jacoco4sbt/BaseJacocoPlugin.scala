@@ -5,29 +5,42 @@ import java.io.File
 import de.johoop.jacoco4sbt.build.BuildInfo
 import sbt.Keys._
 import sbt._
+import sbt.plugins.JvmPlugin
 
-private[jacoco4sbt] trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
+private[jacoco4sbt] abstract class BaseJacocoPlugin
+    extends AutoPlugin
+    with Reporting
+    with SavingData
+    with Instrumentation
+    with CommonKeys {
+
+  protected def pluginConfig: Configuration
+
+  override def requires: Plugins = JvmPlugin
 
   lazy val submoduleSettingsTask = Def.task {
-    ((classesToCover in Config ?).value, (sourceDirectory in Compile ?).value, (executionDataFile in Config ?).value)
+    (
+      (classesToCover in pluginConfig ?).value,
+      (sourceDirectory in Compile ?).value,
+      (executionDataFile in pluginConfig ?).value)
   }
 
-  val submoduleSettings =
-    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, Config)))
+  lazy val submoduleSettings =
+    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, pluginConfig)))
 
-  val submoduleCoverTasks = (cover in Config).all(ScopeFilter(inAggregates(ThisProject)))
+  lazy val submoduleCoverTasks = (cover in pluginConfig).all(ScopeFilter(inAggregates(ThisProject)))
 
   def srcConfig: Configuration
 
-  def settings =
+  override def projectSettings: Seq[Setting[_]] =
     Seq(
-      ivyConfigurations += Config,
+      ivyConfigurations += pluginConfig,
       libraryDependencies +=
         "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "jacoco" artifacts Artifact(
           "org.jacoco.agent",
           "jar",
           "jar")
-    ) ++ inConfig(Config)(
+    ) ++ inConfig(pluginConfig)(
       Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
         classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
         aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
@@ -44,7 +57,7 @@ private[jacoco4sbt] trait SharedSettings { _: Reporting with SavingData with Ins
           val dir = outputDirectory.value
           if (fork.value) Seq(s"-Djacoco-agent.destfile=${dir / "jacoco.exec" absolutePath}") else Seq()
         },
-        outputDirectory in Config := crossTarget.value / Config.name,
+        outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
         definedTests := (definedTests in srcConfig).value,
         definedTestNames := (definedTestNames in srcConfig).value,
         cover := (report dependsOn check).value,
