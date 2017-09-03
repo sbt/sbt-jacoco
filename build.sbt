@@ -9,12 +9,10 @@ crossSbtVersions := Seq("0.13.16", "1.0.1")
 val jacocoVersion = "0.7.9"
 
 libraryDependencies ++= Seq(
-  "org.jacoco"  %  "org.jacoco.core"      % jacocoVersion,
-  "org.jacoco"  %  "org.jacoco.report"    % jacocoVersion,
-  "org.specs2"  %% "specs2-core"          % "3.9.1"         % Test,
-  "org.specs2"  %% "specs2-matcher-extra" % "3.9.1"         % Test,
-  "org.mockito" %  "mockito-all"          % "1.10.19"       % Test,
-  "org.pegdown" %  "pegdown"              % "1.6.0"         % Test
+  "org.jacoco"    %  "org.jacoco.core"      % jacocoVersion,
+  "org.jacoco"    %  "org.jacoco.report"    % jacocoVersion,
+  "org.scalatest" %% "scalatest"            % "3.0.4"         % Test,
+  "org.mockito"   %  "mockito-all"          % "1.10.19"       % Test
 )
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_")
