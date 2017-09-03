@@ -12,52 +12,62 @@
 
 package de.johoop.jacoco4sbt
 
+import java.io._
+
+import org.jacoco.core.data.ExecutionDataWriter
+import org.jacoco.core.tools.ExecFileLoader
+import sbt.Keys._
 import sbt._
 
 private[jacoco4sbt] trait Merging extends JaCoCoRuntime {
-  import org.jacoco.core.data.ExecutionDataWriter
-  import org.jacoco.core.tools.ExecFileLoader
-  import java.io._
-  import sbt.Keys._
-
   def conditionalMergeAction(
-      itJacocoDirectory: File,
-      jacocoDirectory: File,
+      utExecutionData: File,
+      itExecutionData: File,
+      mergedExecutionData: File,
       streams: TaskStreams,
-      mergeReports: Boolean) = {
-    if (mergeReports) mergeAction(itJacocoDirectory, jacocoDirectory, streams)
-    else streams.log debug "Not merging execution data!"
+      mergeReports: Boolean): Unit = {
+
+    if (mergeReports) {
+      mergeAction(utExecutionData, itExecutionData, mergedExecutionData, streams)
+    } else {
+      streams.log debug "Not merging execution data!"
+    }
   }
 
-  def mergeAction(itJacocoDirectory: File, jacocoDirectory: File, streams: TaskStreams) = {
-    val parent = jacocoDirectory.getParentFile
+  def mergeAction(
+      utExecutionData: File,
+      itExecutionData: File,
+      mergedExecutionData: File,
+      streams: TaskStreams): Unit = {
 
-    val execs = (jacocoDirectory / "jacoco.exec" +++ itJacocoDirectory / "jacoco.exec").get
-    streams.log debug ("Found data files: %s" format execs.map(_.absolutePath).mkString(", "))
+    val sources = Seq(utExecutionData, itExecutionData).filter(_.exists())
+    streams.log.debug("Found data files: %s".format(sources.map(_.absolutePath).mkString(", ")))
 
-    val loader = new ExecFileLoader
-    execs foreach loader.load
+    val loader = new ExecFileLoader()
+    sources.foreach(loader.load)
 
-    val mergedFile = new File(itJacocoDirectory, "jacoco-merged.exec")
-    streams.log debug ("Writing merged data to: %s" format mergedFile.getAbsolutePath)
+    streams.log.debug("Writing merged data to: %s".format(mergedExecutionData.getAbsolutePath))
 
-    writeToFile(mergedFile) { outputStream =>
+    writeToFile(mergedExecutionData) { outputStream =>
       val dataWriter = new ExecutionDataWriter(outputStream)
       loader.getSessionInfoStore accept dataWriter
       loader.getExecutionDataStore accept dataWriter
     }
   }
 
-  private def writeToFile(f: File)(writeFn: OutputStream => Unit) = {
+  private def writeToFile(f: File)(writeFn: OutputStream => Unit): Unit = {
     try {
       val out = new BufferedOutputStream(new FileOutputStream(f))
-      try writeFn(out)
-      catch {
-        case e: IOException => sys.error("Error merging Jacoco files: %s" format e.getMessage)
-      } finally out.close
+      try {
+        writeFn(out)
+      } catch {
+        case e: IOException => sys.error("Error merging Jacoco files: %s".format(e.getMessage))
+      } finally {
+        out.close()
+      }
     } catch {
       case e: IOException =>
-        sys.error("Unable to write out Jacoco file during merge: %s" format e.getMessage)
+        sys.error("Unable to write out Jacoco file during merge: %s".format(e.getMessage))
     }
   }
 }
