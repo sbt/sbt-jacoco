@@ -35,11 +35,7 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
   override def projectSettings: Seq[Setting[_]] =
     Seq(
       ivyConfigurations += pluginConfig,
-      libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "jacoco" artifacts Artifact(
-          "org.jacoco.agent",
-          "jar",
-          "jar")
+      libraryDependencies += "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % pluginConfig
     ) ++ inConfig(pluginConfig)(
       Defaults.testSettings ++
       JacocoDefaults.settings ++
