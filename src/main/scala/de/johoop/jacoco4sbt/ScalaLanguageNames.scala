@@ -20,15 +20,18 @@ class ScalaLanguageNames extends JavaNames {
   override def getPackageName(vmname: String): String =
     super.getPackageName(decode(vmname))
 
-  override def getClassName(vmname: String, vmsignature: String, vmsuperclass: String, vminterfaces: Array[String]): String = {
+  override def getClassName(
+      vmname: String,
+      vmsignature: String,
+      vmsuperclass: String,
+      vminterfaces: Array[String]): String = {
     if (vmname.contains("anonfun$"))
       vmname.split("""anonfun\$""").toList match {
         case List(pre, post) =>
           getClassName(cleanClassName(pre)) + " anonfun$" + post
         case _ =>
           getClassName(cleanClassName(vmname))
-      }
-    else if (vmname.contains("$anon$"))
+      } else if (vmname.contains("$anon$"))
       vminterfaces.map(getClassName).mkString("new " + getClassName(vmsuperclass), " with ", "{ ... }")
     else getClassName(cleanClassName(vmname))
   }
@@ -39,7 +42,11 @@ class ScalaLanguageNames extends JavaNames {
   override def getMethodName(vmclassname: String, vmmethodname: String, vmdesc: String, vmsignature: String): String =
     super.getMethodName(vmclassname, getMethodName(vmmethodname), vmdesc, vmsignature)
 
-  override def getQualifiedMethodName(vmclassname: String, vmmethodname: String, vmdesc: String, vmsignature: String): String =
+  override def getQualifiedMethodName(
+      vmclassname: String,
+      vmmethodname: String,
+      vmdesc: String,
+      vmsignature: String): String =
     super.getQualifiedMethodName(vmclassname, getMethodName(vmmethodname), vmdesc, vmsignature)
 
   private def cleanClassName(name: String) = {
@@ -50,7 +57,8 @@ class ScalaLanguageNames extends JavaNames {
     val pos: Int = vmname.lastIndexOf('/')
     val name: String = if (pos == -1) vmname else vmname.substring(pos + 1)
     cleanClassName(
-      if (name.endsWith("$$")) name.dropRight(2).replace('$', '.') // ambiguous, we could be an inner class of the object or the class.
+      if (name.endsWith("$$"))
+        name.dropRight(2).replace('$', '.') // ambiguous, we could be an inner class of the object or the class.
       else if (name.endsWith("$")) name.dropRight(1).replace('$', '.') + " (object)"
       else name.replace('$', '.')
     )
