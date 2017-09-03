@@ -12,15 +12,14 @@
 
 package de.johoop.jacoco4sbt
 
-import org.jacoco.core.data._
-import org.jacoco.core.analysis._
-
 import java.io.File
-import java.io.FileInputStream
-import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
-import sbt.Keys._
 import java.text.DecimalFormat
+
+import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
+import org.jacoco.core.analysis._
+import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
+import sbt.Keys._
 
 class Report(
     executionDataFiles: Seq[File],
@@ -36,7 +35,7 @@ class Report(
 
   private val format = new DecimalFormat("#.##")
 
-  def generate: Unit = {
+  def generate(): Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
 
@@ -92,16 +91,16 @@ class Report(
     val coverageBuilder = new CoverageBuilder
     val analyzer = new FilteringAnalyzer(executionDataStore, coverageBuilder)
 
-    classDirectories foreach (analyzer analyzeAll)
+    classDirectories.foreach(analyzer.analyzeAll)
 
-    coverageBuilder getBundle reportTitle
+    coverageBuilder.getBundle(reportTitle)
   }
 
   private def createReport(
       reportFormat: FormattedReport,
       bundleCoverage: IBundleCoverage,
       executionDataStore: ExecutionDataStore,
-      sessionInfoStore: SessionInfoStore) = {
+      sessionInfoStore: SessionInfoStore): Unit = {
 
     val visitor = reportFormat.visitor(reportDirectory)
 

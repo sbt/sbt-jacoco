@@ -62,7 +62,7 @@ private final class FilteringClassAnalyzer(
       null
     else {
       new MethodAnalyzer(stringPool.get(name), stringPool.get(desc), stringPool.get(signature), probes) {
-        override def visitEnd() {
+        override def visitEnd(): Unit = {
           super.visitEnd()
           val hasInstructions = getCoverage.getInstructionCounter.getTotalCount > 0
           if (hasInstructions)
@@ -72,7 +72,7 @@ private final class FilteringClassAnalyzer(
     }
   }
 
-  override def visitEnd() {
+  override def visitEnd(): Unit = {
     try visitFiltered()
     finally {
       super.visitEnd()
@@ -82,9 +82,9 @@ private final class FilteringClassAnalyzer(
 
   private val isModuleClass = classCoverage.getName.endsWith("$")
 
-  private val methods: Seq[MethodNode] = classNode.methods.asInstanceOf[java.util.List[MethodNode]].asScala
+  private val methods: Seq[MethodNode] = classNode.methods.asScala
 
-  private def visitFiltered() {
+  private def visitFiltered(): Unit = {
     for {
       mc <- coverages
       methodNode = methods.find(m => m.name == mc.getName && m.desc == mc.getDesc).get
@@ -110,7 +110,8 @@ private final class FilteringClassAnalyzer(
 
 final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor: ICoverageVisitor)
     extends Analyzer(executionData, coverageVisitor) {
-  override def analyzeClass(reader: ClassReader) {
+
+  override def analyzeClass(reader: ClassReader): Unit = {
     val classNode = new ClassNode()
     reader.accept(classNode, 0)
     val visitor = createFilteringVisitor(CRC64.checksum(reader.b), reader.getClassName, classNode)
@@ -119,7 +120,8 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor
 
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
     val data = Option(executionData get classid)
-    val (noMatch, probes) = data map (data => (false, data getProbes)) getOrElse (executionData contains className, null)
+    val (noMatch, probes) = data.map(data => (false, data.getProbes))
+      .getOrElse((executionData contains className, null))
     val classCoverageAnalyzer = new ClassCoverageImpl(className, classid, noMatch)
     val analyzer =
       new FilteringClassAnalyzer(classCoverageAnalyzer, classNode, probes, new StringPool, coverageVisitor)

@@ -12,15 +12,16 @@
 
 package de.johoop.jacoco4sbt
 
+import java.io.FileOutputStream
+
+import org.jacoco.core.data.ExecutionDataWriter
+import sbt.Keys._
 import sbt._
-import Keys._
+
+import scala.language.implicitConversions
 
 private[jacoco4sbt] trait SavingData extends JaCoCoRuntime {
-  def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams) = {
-
-    import java.io.FileOutputStream
-    import org.jacoco.core.data.ExecutionDataWriter
-
+  def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams): Unit = {
     if (!forked) {
       IO createDirectory jacocoFile.getParentFile
       val executionDataStream = new FileOutputStream(jacocoFile)
@@ -28,9 +29,9 @@ private[jacoco4sbt] trait SavingData extends JaCoCoRuntime {
         streams.log debug ("writing execution data to " + jacocoFile)
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
         runtimeData collect (executionDataWriter, executionDataWriter, true)
-        executionDataStream.flush
+        executionDataStream.flush()
       } finally {
-        executionDataStream.close
+        executionDataStream.close()
       }
     }
   }
@@ -62,7 +63,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       streams = streams
     )
 
-    report.generate
+    report.generate()
   }
 
   def aggregateReportAction(
@@ -90,7 +91,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       streams = streams
     )
 
-    report.generate
+    report.generate()
   }
 
   class FileWithOrElse(file: File) {
