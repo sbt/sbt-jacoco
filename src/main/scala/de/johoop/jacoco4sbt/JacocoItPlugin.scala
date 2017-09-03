@@ -7,24 +7,23 @@ import sbt._
 object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   object autoImport {
-    lazy val ItJacoco = config("it-jacoco").extend(IntegrationTest).hide
+    lazy val ItJacoco: Configuration = config("it-jacoco").extend(IntegrationTest).hide
 
-    lazy val merge = TaskKey[Unit]("merge", "Merges all '*.exec' files into a single data file.")
+    lazy val merge: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
 
-    lazy val mergedExecutionDataFile =
-      SettingKey[File]("merged-execution-data-file", "Execution data file contain unit test and integration test data.")
+    lazy val mergedExecutionDataFile: SettingKey[File] =
+      settingKey[File]("Execution data file contain unit test and integration test data.")
 
-    lazy val mergeReports = SettingKey[Boolean](
-      "merge-reports",
-      "Indication whether to merge the unittest and integration test reports. Defaults to true.")
+    lazy val mergeReports: SettingKey[Boolean] =
+      settingKey[Boolean]("Indication whether to merge the unittest and integration test reports. Defaults to true.")
   }
 
   import autoImport._
 
   override protected val pluginConfig: Configuration = ItJacoco
-  lazy val srcConfig = IntegrationTest
+  lazy val srcConfig: Configuration = IntegrationTest
 
-  lazy val conditionalMerge = Def.task {
+  lazy val conditionalMerge: Def.Initialize[Task[Unit]] = Def.task {
     conditionalMergeAction(
       (executionDataFile in Jacoco).value,
       (executionDataFile in ItJacoco).value,
@@ -33,7 +32,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
       mergeReports.value)
   }
 
-  lazy val forceMerge = Def.task {
+  lazy val forceMerge: Def.Initialize[Task[Unit]] = Def.task {
     mergeAction(
       (executionDataFile in Jacoco).value,
       (executionDataFile in ItJacoco).value,
