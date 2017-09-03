@@ -47,6 +47,19 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
         report in ItJacoco := ((report in ItJacoco) dependsOn conditionalMerge).value,
         merge := forceMerge.value,
         mergeReports := true,
-        (mergedExecutionDataFile in ItJacoco):= (outputDirectory in ItJacoco).value / "jacoco-merged.exec"
+        (mergedExecutionDataFile in ItJacoco) := (outputDirectory in ItJacoco).value / "jacoco-merged.exec",
+        (report in ItJacoco) := reportAction(
+          (outputDirectory in ItJacoco).value,
+          (mergedExecutionDataFile in ItJacoco).value,
+          (reportFormats in ItJacoco).value,
+          (reportTitle in ItJacoco).value,
+          (coveredSources in ItJacoco).value,
+          (classesToCover in ItJacoco).value,
+          (sourceEncoding in ItJacoco).value,
+          (sourceTabWidth in ItJacoco).value,
+          (thresholds in ItJacoco).value,
+          (streams in ItJacoco).value
+        ),
+        report in ItJacoco := ((report in ItJacoco) dependsOn conditionalMerge).value
       )
 }

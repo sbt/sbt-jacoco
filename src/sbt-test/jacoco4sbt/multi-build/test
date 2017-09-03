@@ -1,3 +1,6 @@
+> clean
+
+# coverage should pass
 > jacoco:cover
 
 $ exists common/target/scala-2.12/jacoco/jacoco.exec
