@@ -14,7 +14,8 @@ package de.johoop.jacoco4sbt
 
 import org.specs2.Specification
 
-class ReportSpec extends Specification { def is = args(sequential = true) ^ s2"""
+class ReportSpec extends Specification {
+  def is = args(sequential = true) ^ s2"""
   Report Unit Test
 
   Report.checkCounter should

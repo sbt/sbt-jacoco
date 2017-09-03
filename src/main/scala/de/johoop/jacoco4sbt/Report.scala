@@ -22,23 +22,24 @@ import sbt.Keys._
 import java.text.DecimalFormat
 import org.jacoco.core.tools.ExecFileLoader
 
-class Report(executionDataFiles: Seq[File],
-             classDirectories: Seq[File],
-             sourceDirectories: Seq[File],
-             sourceEncoding: String,
-             tabWidth: Int,
-             reportFormats: Seq[FormattedReport],
-             reportTitle: String,
-             reportDirectory: File,
-             thresholds: Thresholds,
-             streams: TaskStreams) {
+class Report(
+    executionDataFiles: Seq[File],
+    classDirectories: Seq[File],
+    sourceDirectories: Seq[File],
+    sourceEncoding: String,
+    tabWidth: Int,
+    reportFormats: Seq[FormattedReport],
+    reportTitle: String,
+    reportDirectory: File,
+    thresholds: Thresholds,
+    streams: TaskStreams) {
 
   private val format = new DecimalFormat("#.##")
 
-  def generate : Unit = {
+  def generate: Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
-    
+
     reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
     if (!checkCoverage(bundleCoverage)) {
@@ -48,8 +49,7 @@ class Report(executionDataFiles: Seq[File],
     }
   }
 
-  private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) =
-  {
+  private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) = {
     streams.log info ""
     streams.log info s"------- $reportTitle --------"
     streams.log info ""
@@ -65,8 +65,7 @@ class Report(executionDataFiles: Seq[File],
     !(checkResult contains false)
   }
 
-  private[jacoco4sbt] def checkCounter(unit: String, c: ICounter, required: Double) =
-  {
+  private[jacoco4sbt] def checkCounter(unit: String, c: ICounter, required: Double) = {
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
     val coveredRatio = if (c.getCoveredRatio.isNaN) 0 else c.getCoveredRatio
@@ -84,7 +83,7 @@ class Report(executionDataFiles: Seq[File],
     executionDataFiles foreach { f =>
       // it is possible that there's no test at all, thus no executionDataFile
       if (f.exists) loader.load(f)
-    } 
+    }
 
     (loader.getExecutionDataStore, loader.getSessionInfoStore)
   }
@@ -98,13 +97,16 @@ class Report(executionDataFiles: Seq[File],
     coverageBuilder getBundle reportTitle
   }
 
-  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage, 
-      executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
+  private def createReport(
+      reportFormat: FormattedReport,
+      bundleCoverage: IBundleCoverage,
+      executionDataStore: ExecutionDataStore,
+      sessionInfoStore: SessionInfoStore) = {
 
     val visitor = reportFormat.visitor(reportDirectory)
-    
+
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
-    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
+    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth))
 
     visitor.visitEnd()
   }
