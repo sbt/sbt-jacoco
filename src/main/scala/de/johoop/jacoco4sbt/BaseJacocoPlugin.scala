@@ -28,7 +28,7 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
   lazy val submoduleSettings =
     submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, pluginConfig)))
 
-  lazy val submoduleCoverTasks = (cover in pluginConfig).all(ScopeFilter(inAggregates(ThisProject)))
+  lazy val submoduleCoverTasks = (jacoco in pluginConfig).all(ScopeFilter(inAggregates(ThisProject)))
 
   def srcConfig: Configuration
 
@@ -62,9 +62,9 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
         outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
         definedTests := (definedTests in srcConfig).value,
         definedTestNames := (definedTestNames in srcConfig).value,
-        cover := (report dependsOn check).value,
-        aggregateCover := (aggregateReport dependsOn submoduleCoverTasks).value,
-        check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value,
+        jacoco := (jacocoReport dependsOn jacocoCheck).value,
+        jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
+        jacocoCheck := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value,
         (executionDataFile in pluginConfig) := (outputDirectory in pluginConfig).value / "jacoco.exec"
       ))
 

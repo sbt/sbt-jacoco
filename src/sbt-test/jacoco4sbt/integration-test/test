@@ -1,8 +1,8 @@
 > clean
 
 # coverage should pass
-> jacoco:cover
-> it-jacoco:cover
+> jacoco:jacoco
+> it-jacoco:jacoco
 
 # unit tests
 $ exists target/scala-2.10/jacoco/classes

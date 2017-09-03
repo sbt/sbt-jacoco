@@ -18,7 +18,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
     excludes := Seq(),
     coveredSources := (sourceDirectories in Compile).value,
     instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
-    report := reportAction(
+    jacocoReport := reportAction(
       outputDirectory.value,
       executionDataFile.value,
       reportFormats.value,
@@ -30,7 +30,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       thresholds.value,
       streams.value
     ),
-    aggregateReport := aggregateReportAction(
+    jacocoAggregateReport := aggregateReportAction(
       aggregateReportDirectory.value,
       aggregateExecutionDataFiles.value,
       reportFormats.value,

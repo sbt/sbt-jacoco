@@ -9,7 +9,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
   object autoImport {
     lazy val ItJacoco: Configuration = config("it-jacoco").extend(IntegrationTest).hide
 
-    lazy val merge: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
+    lazy val jacocoMerge: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
 
     lazy val mergedExecutionDataFile: SettingKey[File] =
       settingKey[File]("Execution data file contain unit test and integration test data.")
@@ -43,11 +43,11 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
   override def projectSettings: Seq[Setting[_]] =
     super.projectSettings ++
       Seq(
-        report in ItJacoco := ((report in ItJacoco) dependsOn conditionalMerge).value,
-        merge := forceMerge.value,
+        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value,
+        jacocoMerge := forceMerge.value,
         mergeReports := true,
         (mergedExecutionDataFile in ItJacoco) := (outputDirectory in ItJacoco).value / "jacoco-merged.exec",
-        (report in ItJacoco) := reportAction(
+        (jacocoReport in ItJacoco) := reportAction(
           (outputDirectory in ItJacoco).value,
           (mergedExecutionDataFile in ItJacoco).value,
           (reportFormats in ItJacoco).value,
@@ -59,6 +59,6 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
           (thresholds in ItJacoco).value,
           (streams in ItJacoco).value
         ),
-        report in ItJacoco := ((report in ItJacoco) dependsOn conditionalMerge).value
+        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value
       )
 }
