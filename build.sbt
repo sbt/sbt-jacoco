@@ -2,7 +2,7 @@ lazy val root = (project in file(".")).enablePlugins(BuildInfoPlugin).settings(
 
   name := "jacoco4sbt",
   organization := "de.johoop",
-  version := "2.4.0-SNAPSHOT",
+  version := "3.0.0-SNAPSHOT",
   scalaVersion := "2.10.6",
 
   crossSbtVersions := Vector("0.13.16", "1.0.0"),
