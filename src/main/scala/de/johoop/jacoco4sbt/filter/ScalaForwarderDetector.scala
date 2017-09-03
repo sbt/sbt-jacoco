@@ -43,8 +43,14 @@ object ScalaForwarderDetector {
     hasForwarderCall
   }
 
-  def isScalaForwarder(className: String, methodName: String, opcode: Int, calledMethodOwner: String,
-                       calledMethodName: String, desc: String, hasJump: Boolean): Boolean = {
+  def isScalaForwarder(
+      className: String,
+      methodName: String,
+      opcode: Int,
+      calledMethodOwner: String,
+      calledMethodName: String,
+      desc: String,
+      hasJump: Boolean): Boolean = {
     def callingCompanionModule = calledMethodOwner == (className + "$")
     val callingImplClass = calledMethodOwner.endsWith("$class")
     val callingImplicitClass = calledMethodOwner.endsWith("$" + methodName) || calledMethodOwner == methodName
@@ -57,8 +63,8 @@ object ScalaForwarderDetector {
     val implicitClassFactory = opcode == INVOKESPECIAL && callingImplicitClass && calledMethodName == "<init>"
     val lazyAccessor = opcode == INVOKESPECIAL && calledMethodName.endsWith(LazyComputeSuffix)
     val forwards = (
-         (staticForwarder || traitForwarder || extensionMethodForwarder || implicitClassFactory) && !hasJump // second condition a sanity check
-      || lazyAccessor
+      (staticForwarder || traitForwarder || extensionMethodForwarder || implicitClassFactory) && !hasJump // second condition a sanity check
+        || lazyAccessor
     )
     forwards
   }

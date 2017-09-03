@@ -17,17 +17,19 @@ object ScalaSyntheticMethod {
     val isModuleClass = owner.endsWith("$")
     val isOneLiner = firstLine == lastLine
     isOneLiner && (
-         (isModuleClass && isSyntheticObjectMethodName(name))
+      (isModuleClass && isSyntheticObjectMethodName(name))
       || isSyntheticInstanceMethodName(name)
     )
   }
 
   private def isSyntheticInstanceMethodName(name: String): Boolean = isCaseInstanceMethod(name)
-  private def isSyntheticObjectMethodName(name: String): Boolean = isCaseCompanionMethod(name) || isAnyValCompanionMethod(name)
+  private def isSyntheticObjectMethodName(name: String): Boolean =
+    isCaseCompanionMethod(name) || isAnyValCompanionMethod(name)
 
   private def isCaseInstanceMethod(name: String) = name match {
-    case "canEqual" | "copy" | "equals" | "hashCode" |"productPrefix" |
-         "productArity" | "productElement" | "productIterator" | "toString" => true
+    case "canEqual" | "copy" | "equals" | "hashCode" | "productPrefix" | "productArity" | "productElement" |
+        "productIterator" | "toString" =>
+      true
     case _ if name.startsWith("copy$default") => true
     case _ => false
   }

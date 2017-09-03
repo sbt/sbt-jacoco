@@ -21,7 +21,8 @@ import Opcodes._
 object AccessorDetector {
   def isAccessor(node: MethodNode): Boolean = {
     (node.instructions.size() < 10) && {
-      val insn: List[AbstractInsnNode] = node.instructions.iterator().asInstanceOf[java.util.ListIterator[AbstractInsnNode]].asScala.toList
+      val insn: List[AbstractInsnNode] =
+        node.instructions.iterator().asInstanceOf[java.util.ListIterator[AbstractInsnNode]].asScala.toList
       val filtered = insn.filter {
         case _: LabelNode | _: LineNumberNode => false
         case _ => true

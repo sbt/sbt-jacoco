@@ -21,8 +21,8 @@ import java.io.File
 import java.io.FileOutputStream
 
 sealed abstract class FormattedReport {
-  val encoding : String
-  def visitor(directory: File) : IReportVisitor
+  val encoding: String
+  def visitor(directory: File): IReportVisitor
 }
 
 case class HTMLReport(encoding: String = "utf-8") extends FormattedReport {
