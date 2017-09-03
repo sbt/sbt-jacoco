@@ -12,57 +12,43 @@
 
 package de.johoop.jacoco4sbt
 
-import org.specs2.Specification
+import org.scalatest.{FlatSpec, Matchers}
 
-class ReportSpec extends Specification {
-  def is = args(sequential = true) ^ s2"""
-  Report Unit Test
-
-  Report.checkCounter should
-    return false if coverage is less than required           $e1
-    return true if coverage is more than required            $e2
-    return true if coverage is equals ro required            $e3
-    return true if required coverage is 0 and ratio is NaN   $e4
-    return true if required coverage is 0 and ratio is 0     $e5
-  Report.checkCoverage should
-    return true if all required coverage metrics are met     $e6
-    return false if at least one metric is not met           $e7
-"""
-
+class ReportSpec extends FlatSpec with Matchers {
   val testCounters = new TestCounters()
 
-  def e1 = {
+  "Report.checkCounter" should "return false if coverage is less than required" in {
     testCounters.stubCounters(30, 40, 0.25)
-    testCounters.checkCounter(50) mustEqual false
+    testCounters.checkCounter(50) shouldBe false
   }
 
-  def e2 = {
+  it should "return true if coverage is more than required" in {
     testCounters.stubCounters(10, 40, 0.75)
-    testCounters.checkCounter(50) mustEqual true
+    testCounters.checkCounter(50) shouldBe true
   }
 
-  def e3 = {
+  it should "if coverage is equals to required" in {
     testCounters.stubCounters(20, 40, 0.50)
-    testCounters.checkCounter(50) mustEqual true
+    testCounters.checkCounter(50) shouldBe true
   }
 
-  def e4 = {
+  it should "return true if required coverage is 0 and ratio is NaN" in {
     testCounters.stubCounters(0, 0, Double.NaN)
-    testCounters.checkCounter(0) mustEqual true
+    testCounters.checkCounter(0) shouldBe true
   }
 
-  def e5 = {
+  it should "return true if required coverage is 0 and ratio is 0" in {
     testCounters.stubCounters(40, 0, 0)
-    testCounters.checkCounter(0) mustEqual true
+    testCounters.checkCounter(0) shouldBe true
   }
 
-  def e6 = {
+  "Report.checkCoverage" should "return true if all required coverage metrics are met" in {
     testCounters.stubCounters(10, 40, 0.75)
-    testCounters.checkBundle() mustEqual true
+    testCounters.checkBundle() shouldBe true
   }
 
-  def e7 = {
+  it should "return false if at least one metric is not met" in {
     testCounters.stubCounters(Seq(10, 30), Seq(40), Seq(0.75, 0.25))
-    testCounters.checkBundle() mustEqual false
+    testCounters.checkBundle() shouldBe false
   }
 }
