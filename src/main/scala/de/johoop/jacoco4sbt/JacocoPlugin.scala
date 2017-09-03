@@ -17,13 +17,13 @@ import sbt._
 object JacocoPlugin extends BaseJacocoPlugin {
 
   object autoImport extends CommonKeys {
-    lazy val Jacoco = config("jacoco").extend(Test).hide
+    lazy val Jacoco: Configuration = config("jacoco").extend(Test).hide
   }
 
   import autoImport._
 
   override protected val pluginConfig: Configuration = Jacoco
-  lazy val srcConfig = Test
+  lazy val srcConfig: Configuration = Test
 
   override def trigger: PluginTrigger = allRequirements
 }
