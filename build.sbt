@@ -15,8 +15,13 @@ libraryDependencies ++= Seq(
   "org.mockito"   %  "mockito-all"          % "1.10.19"       % Test
 )
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:_")
-scalacOptions in Test ++= Seq("-Yrangepos")
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-feature",
+  "-Xfuture",
+  "-Ywarn-adapted-args",
+  "-Ywarn-dead-code")
 
 enablePlugins(BuildInfoPlugin)
 buildInfoPackage := "de.johoop.jacoco4sbt.build"

@@ -16,7 +16,6 @@ import org.jacoco.core.analysis.ICoverageNode
 import org.jacoco.report.html.HTMLFormatter
 import org.jacoco.report.internal.html.resources.Styles
 import org.jacoco.report.internal.html.table._
-import scala.Some
 
 /**
   * Omits displaying instruction and branch coverage in the coverage tables,
@@ -53,7 +52,7 @@ class ScalaHtmlFormatter(withBranchCoverage: Boolean) extends HTMLFormatter {
     t
   }
 
-  private def addMissedTotalColumns(table: Table, label: String, entity: ICoverageNode.CounterEntity) {
+  private def addMissedTotalColumns(table: Table, label: String, entity: ICoverageNode.CounterEntity): Unit = {
     table.add("Missed", Styles.CTR1, CounterColumn.newMissed(entity, getLocale), false)
     table.add(label, Styles.CTR2, CounterColumn.newTotal(entity, getLocale), false)
   }
