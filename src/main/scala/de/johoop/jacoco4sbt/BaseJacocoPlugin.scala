@@ -41,7 +41,9 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
           "jar",
           "jar")
     ) ++ inConfig(pluginConfig)(
-      Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
+      Defaults.testSettings ++
+      JacocoDefaults.settings ++
+      Seq(
         classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
         aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
         aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
@@ -62,7 +64,8 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
         definedTestNames := (definedTestNames in srcConfig).value,
         cover := (report dependsOn check).value,
         aggregateCover := (aggregateReport dependsOn submoduleCoverTasks).value,
-        check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value
+        check := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value,
+        (executionDataFile in pluginConfig) := (outputDirectory in pluginConfig).value / "jacoco.exec"
       ))
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
