@@ -8,9 +8,8 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-jacoco.settings
-fork in jacoco.Config := false
-jacoco.thresholds in jacoco.Config := Thresholds(
+fork in Jacoco := false
+thresholds in Jacoco := Thresholds(
   instruction = 100,
   method = 100,
   branch = 100,
