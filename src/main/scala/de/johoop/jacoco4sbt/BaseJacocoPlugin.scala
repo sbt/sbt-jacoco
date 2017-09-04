@@ -1,3 +1,15 @@
+/*
+ * This file is part of jacoco4sbt.
+ *
+ * Copyright (c) Joachim Hofer & contributors
+ * All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package de.johoop.jacoco4sbt
 
 import java.io.File
@@ -38,35 +50,38 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
       libraryDependencies += "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % pluginConfig
     ) ++ inConfig(pluginConfig)(
       Defaults.testSettings ++
-      JacocoDefaults.settings ++
-      Seq(
-        classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
-        aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
-        aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
-        aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
-        fullClasspath := instrumentAction(
-          (products in Compile).value,
-          (fullClasspath in srcConfig).value,
-          instrumentedClassDirectory.value,
-          update.value,
-          fork.value,
-          streams.value),
-        javaOptions ++= {
-          val dir = outputDirectory.value
-          if (fork.value) {
-            Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
-          } else {
-            Nil
-          }
-        },
-        outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
-        definedTests := (definedTests in srcConfig).value,
-        definedTestNames := (definedTestNames in srcConfig).value,
-        jacoco := (jacocoReport dependsOn jacocoCheck).value,
-        jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
-        jacocoCheck := Def.task(saveDataAction(executionDataFile.value, fork.value, streams.value)).dependsOn(test).value,
-        (executionDataFile in pluginConfig) := (outputDirectory in pluginConfig).value / "jacoco.exec"
-      ))
+        JacocoDefaults.settings ++
+        Seq(
+          classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
+          aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
+          aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
+          aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
+          fullClasspath := instrumentAction(
+            (products in Compile).value,
+            (fullClasspath in srcConfig).value,
+            instrumentedClassDirectory.value,
+            update.value,
+            fork.value,
+            streams.value),
+          javaOptions ++= {
+            val dir = outputDirectory.value
+            if (fork.value) {
+              Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
+            } else {
+              Nil
+            }
+          },
+          outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
+          definedTests := (definedTests in srcConfig).value,
+          definedTestNames := (definedTestNames in srcConfig).value,
+          jacoco := (jacocoReport dependsOn jacocoCheck).value,
+          jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
+          jacocoCheck := Def
+            .task(saveDataAction(executionDataFile.value, fork.value, streams.value))
+            .dependsOn(test)
+            .value,
+          (executionDataFile in pluginConfig) := (outputDirectory in pluginConfig).value / "jacoco.exec"
+        ))
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
     val inclFilters = incl map GlobFilter.apply
