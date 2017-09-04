@@ -12,20 +12,21 @@
 
 package de.johoop.jacoco4sbt
 
-import org.jacoco.report.DirectorySourceFileLocator
-import org.jacoco.report.ISourceFileLocator
+import java.io.{File, Reader}
 
-import java.io.File
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import org.jacoco.report.{DirectorySourceFileLocator, ISourceFileLocator}
 
-class DirectoriesSourceFileLocator(directories: Seq[File], sourceEncoding: String, tabWidth: Int)
+class DirectoriesSourceFileLocator(directories: Seq[File], sourceSettings: JacocoSourceSettings)
     extends ISourceFileLocator {
 
-  override def getSourceFile(packageName: String, fileName: String) = {
+  override def getSourceFile(packageName: String, fileName: String): Reader = {
     def findInDirectory(dir: File) = Option(dirSourceLocator(dir).getSourceFile(packageName, fileName))
-    def dirSourceLocator(dir: File) = new DirectorySourceFileLocator(dir, sourceEncoding, tabWidth)
+    def dirSourceLocator(dir: File) =
+      new DirectorySourceFileLocator(dir, sourceSettings.fileEncoding, sourceSettings.tabWidth)
 
-    (directories flatMap findInDirectory).headOption getOrElse null
+    (directories flatMap findInDirectory).headOption.orNull
   }
 
-  override def getTabWidth = tabWidth
+  override def getTabWidth: Int = sourceSettings.tabWidth
 }

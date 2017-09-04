@@ -120,7 +120,8 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor
 
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
     val data = Option(executionData get classid)
-    val (noMatch, probes) = data.map(data => (false, data.getProbes))
+    val (noMatch, probes) = data
+      .map(data => (false, data.getProbes))
       .getOrElse((executionData contains className, null))
     val classCoverageAnalyzer = new ClassCoverageImpl(className, classid, noMatch)
     val analyzer =
