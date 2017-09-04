@@ -16,6 +16,7 @@ import java.io.File
 import java.text.DecimalFormat
 
 import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import org.jacoco.core.analysis._
 import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
@@ -25,8 +26,7 @@ class Report(
     executionDataFiles: Seq[File],
     classDirectories: Seq[File],
     sourceDirectories: Seq[File],
-    sourceEncoding: String,
-    tabWidth: Int,
+    sourceSettings: JacocoSourceSettings,
     reportFormats: Seq[FormattedReport],
     reportTitle: String,
     reportDirectory: File,
@@ -105,7 +105,7 @@ class Report(
     val visitor = reportFormat.visitor(reportDirectory)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
-    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth))
+    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceSettings))
 
     visitor.visitEnd()
   }

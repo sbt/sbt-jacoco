@@ -14,6 +14,7 @@ package de.johoop.jacoco4sbt
 
 import java.io.FileOutputStream
 
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import org.jacoco.core.data.ExecutionDataWriter
 import sbt.Keys._
 import sbt._
@@ -45,8 +46,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       reportTitle: String,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
-      sourceEncoding: String,
-      tabWidth: Int,
+      sourceSettings: JacocoSourceSettings,
       thresholds: Thresholds,
       streams: TaskStreams): Unit = {
 
@@ -57,8 +57,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       reportTitle = reportTitle,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
-      tabWidth = tabWidth,
-      sourceEncoding = sourceEncoding,
+      sourceSettings = sourceSettings,
       thresholds = thresholds,
       streams = streams
     )
@@ -73,8 +72,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       reportTitle: String,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
-      sourceEncoding: String,
-      tabWidth: Int,
+      sourceSettings: JacocoSourceSettings,
       thresholds: Thresholds,
       streams: TaskStreams): Unit = {
 
@@ -85,8 +83,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       reportTitle = reportTitle,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
-      tabWidth = tabWidth,
-      sourceEncoding = sourceEncoding,
+      sourceSettings = sourceSettings,
       thresholds = thresholds,
       streams = streams
     )

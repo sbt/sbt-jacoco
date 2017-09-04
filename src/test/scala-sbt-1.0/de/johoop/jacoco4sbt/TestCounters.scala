@@ -1,5 +1,6 @@
 package de.johoop.jacoco4sbt
 
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import org.jacoco.core.analysis.{IBundleCoverage, ICounter}
 import org.mockito.Mockito.{mock, when}
 import sbt.Keys.TaskStreams
@@ -11,18 +12,18 @@ class TestCounters {
   private val mockBundle = mock(classOf[IBundleCoverage])
   private val mockLog = mock(classOf[ManagedLogger])
 
-  private val report = new Report(
-    null,
-    null,
-    null,
-    null,
-    0,
-    null,
-    null,
-    null,
-    Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40),
-    mockStreams)
-
+  private val report =
+    new Report(
+      thresholds = Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40),
+      streams = mockStreams,
+      sourceSettings = JacocoSourceSettings(),
+      reportDirectory = null,
+      executionDataFiles = Nil,
+      reportFormats = Nil,
+      reportTitle = "Test Report",
+      classDirectories = Nil,
+      sourceDirectories = Nil
+    )
 
   when[ManagedLogger](mockStreams.log).thenReturn(mockLog)
   when(mockBundle.getLineCounter).thenReturn(mockICounter)

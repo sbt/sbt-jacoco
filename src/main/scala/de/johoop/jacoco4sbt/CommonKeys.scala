@@ -12,6 +12,8 @@
 
 package de.johoop.jacoco4sbt
 
+//import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import sbt._
 
 private[jacoco4sbt] trait CommonKeys {
@@ -50,11 +52,8 @@ private[jacoco4sbt] trait CommonKeys {
     "report-formats",
     "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
 
-  val sourceTabWidth: SettingKey[Int] =
-    settingKey[Int]("Tab width of the sources to display in the JaCoCo reports.")
-  val sourceEncoding: SettingKey[String] =
-    settingKey[String]("Encoding of the source files (for JaCoCo reporting).")
-
+  val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
+    settingKey[JacocoSourceSettings]("Input source code settings (encoding etc) for reporting.")
 
   val includes: SettingKey[Seq[String]] = settingKey[Seq[String]](
     "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
@@ -72,4 +71,7 @@ private[jacoco4sbt] trait CommonKeys {
   val thresholds: SettingKey[Thresholds] = settingKey[Thresholds]("Required coverage ratios.")
   val aggregateThresholds: SettingKey[Thresholds] =
     settingKey[Thresholds]("Required coverage ratios for the aggregate report.")
+
+  // type aliases for auto import
+  val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
 }
