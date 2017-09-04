@@ -1,5 +1,18 @@
+/*
+ * This file is part of jacoco4sbt.
+ *
+ * Copyright (c) Joachim Hofer & contributors
+ * All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package de.johoop.jacoco4sbt
 
+import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import sbt.Keys._
 import sbt._
 
@@ -10,8 +23,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
     reportFormats := Seq(ScalaHTMLReport()),
     reportTitle := "Jacoco Coverage Report",
     aggregateReportTitle := "Jacoco Aggregate Coverage Report",
-    sourceTabWidth := 2,
-    sourceEncoding := "utf-8",
+    jacocoSourceSettings := JacocoSourceSettings(),
     thresholds := Thresholds(),
     aggregateThresholds := Thresholds(),
     includes := Seq("*"),
@@ -25,8 +37,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       reportTitle.value,
       coveredSources.value,
       classesToCover.value,
-      sourceEncoding.value,
-      sourceTabWidth.value,
+      jacocoSourceSettings.value,
       thresholds.value,
       streams.value
     ),
@@ -37,8 +48,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       aggregateReportTitle.value,
       aggregateCoveredSources.value,
       aggregateClassesToCover.value,
-      sourceEncoding.value,
-      sourceTabWidth.value,
+      jacocoSourceSettings.value,
       aggregateThresholds.value,
       streams.value
     ),
