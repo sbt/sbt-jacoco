@@ -18,6 +18,7 @@ class TestCounters {
       streams = mockStreams,
       sourceSettings = JacocoSourceSettings(),
       reportDirectory = null,
+      reportEncoding = "utf-8",
       executionDataFiles = Nil,
       reportFormats = Nil,
       reportTitle = "Test Report",
