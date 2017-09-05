@@ -64,6 +64,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
           (mergedExecutionDataFile in ItJacoco).value,
           (reportFormats in ItJacoco).value,
           (reportTitle in ItJacoco).value,
+          (reportEncoding in ItJacoco).value,
           (coveredSources in ItJacoco).value,
           (classesToCover in ItJacoco).value,
           (jacocoSourceSettings in ItJacoco).value,

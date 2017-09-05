@@ -15,6 +15,7 @@ package de.johoop.jacoco4sbt
 import java.io.FileOutputStream
 
 import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 import org.jacoco.core.data.ExecutionDataWriter
 import sbt.Keys._
 import sbt._
@@ -42,8 +43,9 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
   def reportAction(
       reportDirectory: File,
       executionDataFile: File,
-      reportFormats: Seq[FormattedReport],
+      reportFormats: Seq[JacocoReportFormat],
       reportTitle: String,
+      reportEncoding: String,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
@@ -55,6 +57,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       executionDataFiles = Seq(executionDataFile),
       reportFormats = reportFormats,
       reportTitle = reportTitle,
+      reportEncoding = reportEncoding,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
@@ -68,8 +71,9 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
   def aggregateReportAction(
       reportDirectory: File,
       executionDataFiles: Seq[File],
-      reportFormats: Seq[FormattedReport],
+      reportFormats: Seq[JacocoReportFormat],
       reportTitle: String,
+      reportEncoding: String,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
@@ -81,6 +85,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
       executionDataFiles = executionDataFiles,
       reportFormats = reportFormats,
       reportTitle = reportTitle,
+      reportEncoding = reportEncoding,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
