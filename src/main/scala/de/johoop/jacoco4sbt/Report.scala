@@ -16,7 +16,7 @@ import java.io.File
 import java.text.DecimalFormat
 
 import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
-import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 import org.jacoco.core.analysis._
 import org.jacoco.core.data._
@@ -28,10 +28,8 @@ class Report(
     classDirectories: Seq[File],
     sourceDirectories: Seq[File],
     sourceSettings: JacocoSourceSettings,
-    reportFormats: Seq[JacocoReportFormat],
-    reportTitle: String,
+    reportSettings: JacocoReportSettings,
     reportDirectory: File,
-    reportEncoding: String,
     thresholds: Thresholds,
     streams: TaskStreams) {
 
@@ -41,7 +39,7 @@ class Report(
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
 
-    reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
+    reportSettings.formats.foreach(createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
     if (!checkCoverage(bundleCoverage)) {
       streams.log error "Required coverage is not met"
@@ -52,7 +50,7 @@ class Report(
 
   private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) = {
     streams.log info ""
-    streams.log info s"------- $reportTitle --------"
+    streams.log info s"------- ${reportSettings.title} --------"
     streams.log info ""
     val checkResult = checkCounter("Lines", bundle.getLineCounter, thresholds.line) ::
       checkCounter("Instructions", bundle.getInstructionCounter, thresholds.instruction) ::
@@ -95,7 +93,7 @@ class Report(
 
     classDirectories.foreach(analyzer.analyzeAll)
 
-    coverageBuilder.getBundle(reportTitle)
+    coverageBuilder.getBundle(reportSettings.title)
   }
 
   private def createReport(
@@ -104,7 +102,7 @@ class Report(
       executionDataStore: ExecutionDataStore,
       sessionInfoStore: SessionInfoStore): Unit = {
 
-    val visitor = reportFormat.createVisitor(reportDirectory, reportEncoding)
+    val visitor = reportFormat.createVisitor(reportDirectory, reportSettings.fileEncoding)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceSettings))
