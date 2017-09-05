@@ -17,6 +17,7 @@ import java.text.DecimalFormat
 
 import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
 import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 import org.jacoco.core.analysis._
 import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
@@ -27,13 +28,14 @@ class Report(
     classDirectories: Seq[File],
     sourceDirectories: Seq[File],
     sourceSettings: JacocoSourceSettings,
-    reportFormats: Seq[FormattedReport],
+    reportFormats: Seq[JacocoReportFormat],
     reportTitle: String,
     reportDirectory: File,
+    reportEncoding: String,
     thresholds: Thresholds,
     streams: TaskStreams) {
 
-  private val format = new DecimalFormat("#.##")
+  private val percentageFormat = new DecimalFormat("#.##")
 
   def generate(): Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
@@ -72,7 +74,7 @@ class Report(
     val success = ratioPercent >= required
     val sign = if (success) ">=" else "<"
     val status = if (success) "OK" else "NOK"
-    val formattedRatio = format.format(ratioPercent)
+    val formattedRatio = percentageFormat.format(ratioPercent)
     streams.log info s"$unit: $formattedRatio% ($sign required $required%) covered, $missedCount of $totalCount missed, $status"
     success
   }
@@ -97,12 +99,12 @@ class Report(
   }
 
   private def createReport(
-      reportFormat: FormattedReport,
+      reportFormat: JacocoReportFormat,
       bundleCoverage: IBundleCoverage,
       executionDataStore: ExecutionDataStore,
       sessionInfoStore: SessionInfoStore): Unit = {
 
-    val visitor = reportFormat.visitor(reportDirectory)
+    val visitor = reportFormat.createVisitor(reportDirectory, reportEncoding)
 
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
     visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceSettings))

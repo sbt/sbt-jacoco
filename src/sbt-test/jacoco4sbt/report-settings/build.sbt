@@ -6,4 +6,8 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-jacocoSourceSettings in Jacoco := JacocoSourceSettings(tabWidth = 4, fileEncoding = "ISO-8859-1")
+reportFormats in Jacoco := Seq(
+  JacocoReportFormats.ScalaHTML.withoutBranches,
+  JacocoReportFormats.XML,
+  JacocoReportFormats.CSV
+)
