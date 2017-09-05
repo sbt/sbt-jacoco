@@ -15,6 +15,7 @@ package de.johoop.jacoco4sbt.report
 import de.johoop.jacoco4sbt.report.formats.{CSVReportFormat, HTMLReportFormat, ScalaHTMLReportFormat, XMLReportFormat}
 
 object JacocoReportFormats {
+
   /** HTML report containing detailed metrics at instruction level and embedded source code. */
   val ScalaHTML = new ScalaHTMLReportFormat()
 

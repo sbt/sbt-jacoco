@@ -14,8 +14,7 @@ package de.johoop.jacoco4sbt
 
 import java.io.FileOutputStream
 
-import de.johoop.jacoco4sbt.report.JacocoSourceSettings
-import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import org.jacoco.core.data.ExecutionDataWriter
 import sbt.Keys._
 import sbt._
@@ -43,9 +42,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
   def reportAction(
       reportDirectory: File,
       executionDataFile: File,
-      reportFormats: Seq[JacocoReportFormat],
-      reportTitle: String,
-      reportEncoding: String,
+      reportSettings: JacocoReportSettings,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
@@ -55,12 +52,10 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
     val report = new Report(
       reportDirectory = reportDirectory,
       executionDataFiles = Seq(executionDataFile),
-      reportFormats = reportFormats,
-      reportTitle = reportTitle,
-      reportEncoding = reportEncoding,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
+      reportSettings = reportSettings,
       thresholds = thresholds,
       streams = streams
     )
@@ -71,9 +66,7 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
   def aggregateReportAction(
       reportDirectory: File,
       executionDataFiles: Seq[File],
-      reportFormats: Seq[JacocoReportFormat],
-      reportTitle: String,
-      reportEncoding: String,
+      reportSettings: JacocoReportSettings,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
@@ -83,12 +76,10 @@ private[jacoco4sbt] trait Reporting extends JaCoCoRuntime {
     val report = new Report(
       reportDirectory = reportDirectory,
       executionDataFiles = executionDataFiles,
-      reportFormats = reportFormats,
-      reportTitle = reportTitle,
-      reportEncoding = reportEncoding,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
+      reportSettings = reportSettings,
       thresholds = thresholds,
       streams = streams
     )
