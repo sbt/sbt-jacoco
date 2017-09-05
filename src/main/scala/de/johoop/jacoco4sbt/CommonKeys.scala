@@ -13,7 +13,7 @@
 package de.johoop.jacoco4sbt
 
 //import de.johoop.jacoco4sbt.report.JacocoSourceSettings
-import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 import sbt._
 
@@ -46,15 +46,14 @@ private[jacoco4sbt] trait CommonKeys {
   val aggregateReportDirectory: SettingKey[File] =
     settingKey[File]("Where JaCoCo should store its aggregate reports.")
   val executionDataFile: SettingKey[File] = settingKey[File]("Execution data output file.")
-  val reportTitle: SettingKey[String] = settingKey[String]("Title of the JacoCo report to generate.")
-  val aggregateReportTitle: SettingKey[String] =
-    settingKey[String]("Title of the JacoCo aggregate report to generate.")
-  val reportFormats: SettingKey[Seq[JacocoReportFormat]] =
-    settingKey[Seq[JacocoReportFormat]]("Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
-  val reportEncoding: SettingKey[String] = settingKey[String]("temp file encoding")
 
   val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
     settingKey[JacocoSourceSettings]("Input source code settings (encoding etc) for reporting.")
+
+  val jacocoReportSettings: SettingKey[JacocoReportSettings] =
+    settingKey[JacocoReportSettings]("Settings for JaCoCo report (format, title etc)")
+  val jacocoAggregateReportSettings: SettingKey[JacocoReportSettings] =
+    settingKey[JacocoReportSettings]("Settings for aggregate JaCoCo report (format, title etc)")
 
   val includes: SettingKey[Seq[String]] = settingKey[Seq[String]](
     "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
@@ -75,5 +74,6 @@ private[jacoco4sbt] trait CommonKeys {
 
   // type aliases for auto import
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
+  val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
   val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
 }
