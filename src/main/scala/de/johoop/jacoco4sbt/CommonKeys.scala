@@ -14,6 +14,7 @@ package de.johoop.jacoco4sbt
 
 //import de.johoop.jacoco4sbt.report.JacocoSourceSettings
 import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 import sbt._
 
 private[jacoco4sbt] trait CommonKeys {
@@ -48,9 +49,9 @@ private[jacoco4sbt] trait CommonKeys {
   val reportTitle: SettingKey[String] = settingKey[String]("Title of the JacoCo report to generate.")
   val aggregateReportTitle: SettingKey[String] =
     settingKey[String]("Title of the JacoCo aggregate report to generate.")
-  val reportFormats: SettingKey[Seq[FormattedReport]] = SettingKey[Seq[FormattedReport]](
-    "report-formats",
-    "Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
+  val reportFormats: SettingKey[Seq[JacocoReportFormat]] =
+    settingKey[Seq[JacocoReportFormat]]("Set of formats (XML, CSV, HTML) of the JaCoCo reports to generate.")
+  val reportEncoding: SettingKey[String] = settingKey[String]("temp file encoding")
 
   val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
     settingKey[JacocoSourceSettings]("Input source code settings (encoding etc) for reporting.")
@@ -74,4 +75,5 @@ private[jacoco4sbt] trait CommonKeys {
 
   // type aliases for auto import
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
+  val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
 }

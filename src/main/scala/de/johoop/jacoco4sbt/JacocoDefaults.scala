@@ -12,7 +12,7 @@
 
 package de.johoop.jacoco4sbt
 
-import de.johoop.jacoco4sbt.report.JacocoSourceSettings
+import de.johoop.jacoco4sbt.report.JacocoReportFormats
 import sbt.Keys._
 import sbt._
 
@@ -20,8 +20,9 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
   val settings = Seq(
     outputDirectory := crossTarget.value / "jacoco",
     aggregateReportDirectory := outputDirectory.value / "aggregate",
-    reportFormats := Seq(ScalaHTMLReport()),
+    reportFormats := Seq(JacocoReportFormats.ScalaHTML),
     reportTitle := "Jacoco Coverage Report",
+    reportEncoding := "utf-8",
     aggregateReportTitle := "Jacoco Aggregate Coverage Report",
     jacocoSourceSettings := JacocoSourceSettings(),
     thresholds := Thresholds(),
@@ -35,6 +36,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       executionDataFile.value,
       reportFormats.value,
       reportTitle.value,
+      reportEncoding.value,
       coveredSources.value,
       classesToCover.value,
       jacocoSourceSettings.value,
@@ -46,6 +48,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       aggregateExecutionDataFiles.value,
       reportFormats.value,
       aggregateReportTitle.value,
+      reportEncoding.value,
       aggregateCoveredSources.value,
       aggregateClassesToCover.value,
       jacocoSourceSettings.value,
