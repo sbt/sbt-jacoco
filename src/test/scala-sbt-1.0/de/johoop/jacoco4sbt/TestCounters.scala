@@ -1,6 +1,6 @@
 package de.johoop.jacoco4sbt
 
-import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
 import org.jacoco.core.analysis.{IBundleCoverage, ICounter}
 import org.mockito.Mockito.{mock, when}
 import sbt.Keys.TaskStreams
@@ -14,10 +14,11 @@ class TestCounters {
 
   private val report =
     new Report(
-      thresholds = Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40),
       streams = mockStreams,
       sourceSettings = JacocoSourceSettings(),
-      reportSettings = JacocoReportSettings(),
+      reportSettings = JacocoReportSettings(
+        thresholds =
+          JacocoThresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)),
       reportDirectory = null,
       executionDataFiles = Nil,
       classDirectories = Nil,

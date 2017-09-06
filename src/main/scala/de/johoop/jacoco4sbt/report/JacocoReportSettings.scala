@@ -16,11 +16,16 @@ import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
 
 case class JacocoReportSettings(
     title: String = "Jacoco Coverage Report",
+    thresholds: JacocoThresholds = JacocoThresholds(),
     formats: Seq[JacocoReportFormat] = Seq(JacocoReportFormats.ScalaHTML),
     fileEncoding: String = "utf-8") {
 
   def withTitle(title: String): JacocoReportSettings = {
     copy(title = title)
+  }
+
+  def withThresholds(thresholds: JacocoThresholds): JacocoReportSettings = {
+    copy(thresholds = thresholds)
   }
 
   def withFormats(formats: JacocoReportFormat*): JacocoReportSettings = {
