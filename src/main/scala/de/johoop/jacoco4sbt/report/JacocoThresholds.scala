@@ -10,9 +10,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package de.johoop.jacoco4sbt
+package de.johoop.jacoco4sbt.report
 
-case class Thresholds(
+case class JacocoThresholds(
     instruction: Double = 0,
     method: Double = 0,
     branch: Double = 0,

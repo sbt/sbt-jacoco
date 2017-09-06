@@ -12,6 +12,7 @@
 
 package de.johoop.jacoco4sbt
 
+import de.johoop.jacoco4sbt.report.JacocoThresholds
 import sbt.Keys._
 import sbt._
 
@@ -22,8 +23,6 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
     jacocoSourceSettings := JacocoSourceSettings(),
     jacocoReportSettings := JacocoReportSettings(),
     jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
-    thresholds := Thresholds(),
-    aggregateThresholds := Thresholds(),
     includes := Seq("*"),
     excludes := Seq(),
     coveredSources := (sourceDirectories in Compile).value,
@@ -35,7 +34,6 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       coveredSources.value,
       classesToCover.value,
       jacocoSourceSettings.value,
-      thresholds.value,
       streams.value
     ),
     jacocoAggregateReport := aggregateReportAction(
@@ -45,7 +43,6 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       aggregateCoveredSources.value,
       aggregateClassesToCover.value,
       jacocoSourceSettings.value,
-      aggregateThresholds.value,
       streams.value
     ),
     clean := outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
