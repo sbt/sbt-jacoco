@@ -12,9 +12,7 @@
 
 package de.johoop.jacoco4sbt
 
-//import de.johoop.jacoco4sbt.report.JacocoSourceSettings
-import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
-import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
 import sbt._
 
 private[jacoco4sbt] trait CommonKeys {
@@ -64,15 +62,8 @@ private[jacoco4sbt] trait CommonKeys {
   val instrumentedClassDirectory: SettingKey[File] =
     settingKey[File]("Directory containing the instrumented classes.")
 
-  /**
-    * Example - in build.sbt add
-    * jacoco.thresholds in jacoco.Config := Thresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)
-    */
-  val thresholds: SettingKey[Thresholds] = settingKey[Thresholds]("Required coverage ratios.")
-  val aggregateThresholds: SettingKey[Thresholds] =
-    settingKey[Thresholds]("Required coverage ratios for the aggregate report.")
-
   // type aliases for auto import
+  val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
   val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
   val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats

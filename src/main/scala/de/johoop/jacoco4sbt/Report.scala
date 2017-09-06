@@ -16,8 +16,8 @@ import java.io.File
 import java.text.DecimalFormat
 
 import de.johoop.jacoco4sbt.filter.FilteringAnalyzer
-import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import de.johoop.jacoco4sbt.report.formats.JacocoReportFormat
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import org.jacoco.core.analysis._
 import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
@@ -30,7 +30,6 @@ class Report(
     sourceSettings: JacocoSourceSettings,
     reportSettings: JacocoReportSettings,
     reportDirectory: File,
-    thresholds: Thresholds,
     streams: TaskStreams) {
 
   private val percentageFormat = new DecimalFormat("#.##")
@@ -52,12 +51,12 @@ class Report(
     streams.log info ""
     streams.log info s"------- ${reportSettings.title} --------"
     streams.log info ""
-    val checkResult = checkCounter("Lines", bundle.getLineCounter, thresholds.line) ::
-      checkCounter("Instructions", bundle.getInstructionCounter, thresholds.instruction) ::
-      checkCounter("Branches", bundle.getBranchCounter, thresholds.branch) ::
-      checkCounter("Methods", bundle.getMethodCounter, thresholds.method) ::
-      checkCounter("Complexity", bundle.getComplexityCounter, thresholds.complexity) ::
-      checkCounter("Class", bundle.getClassCounter, thresholds.clazz) ::
+    val checkResult = checkCounter("Lines", bundle.getLineCounter, reportSettings.thresholds.line) ::
+      checkCounter("Instructions", bundle.getInstructionCounter, reportSettings.thresholds.instruction) ::
+      checkCounter("Branches", bundle.getBranchCounter, reportSettings.thresholds.branch) ::
+      checkCounter("Methods", bundle.getMethodCounter, reportSettings.thresholds.method) ::
+      checkCounter("Complexity", bundle.getComplexityCounter, reportSettings.thresholds.complexity) ::
+      checkCounter("Class", bundle.getClassCounter, reportSettings.thresholds.clazz) ::
       Nil
     streams.log info s"Check $reportDirectory for detail report"
     streams.log info ""
