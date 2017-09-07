@@ -72,7 +72,8 @@ class Report(
     val sign = if (success) ">=" else "<"
     val status = if (success) "OK" else "NOK"
     val formattedRatio = percentageFormat.format(ratioPercent)
-    streams.log info s"$unit: $formattedRatio% ($sign required $required%) covered, $missedCount of $totalCount missed, $status"
+    streams.log.info(
+      s"$unit: $formattedRatio% ($sign required $required%) covered, $missedCount of $totalCount missed, $status")
     success
   }
 

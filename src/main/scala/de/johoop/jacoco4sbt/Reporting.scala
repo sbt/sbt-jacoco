@@ -14,7 +14,7 @@ package de.johoop.jacoco4sbt
 
 import java.io.FileOutputStream
 
-import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import org.jacoco.core.data.ExecutionDataWriter
 import sbt.Keys._
 import sbt._

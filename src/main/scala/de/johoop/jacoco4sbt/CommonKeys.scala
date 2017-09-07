@@ -15,6 +15,7 @@ package de.johoop.jacoco4sbt
 import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import sbt._
 
+// scalastyle:off line.size.limit
 private[jacoco4sbt] trait CommonKeys {
   val jacoco: TaskKey[Unit] = taskKey[Unit]("Executes the tests and creates a JaCoCo coverage report.")
 
