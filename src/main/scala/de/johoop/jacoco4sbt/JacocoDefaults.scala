@@ -18,18 +18,18 @@ import sbt._
 
 private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
   val settings = Seq(
-    outputDirectory := crossTarget.value / "jacoco",
-    aggregateReportDirectory := outputDirectory.value / "aggregate",
+    jacocoOutputDirectory := crossTarget.value / "jacoco",
+    jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
     jacocoSourceSettings := JacocoSourceSettings(),
     jacocoReportSettings := JacocoReportSettings(),
     jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
-    includes := Seq("*"),
-    excludes := Seq(),
+    jacocoIncludes := Seq("*"),
+    jacocoExcludes := Seq(),
     coveredSources := (sourceDirectories in Compile).value,
-    instrumentedClassDirectory := outputDirectory.value / (classDirectory in Compile).value.getName,
+    jacocoInstrumentedDirectory := jacocoOutputDirectory.value / (classDirectory in Compile).value.getName,
     jacocoReport := reportAction(
-      outputDirectory.value,
-      executionDataFile.value,
+      jacocoOutputDirectory.value,
+      jacocoDataFile.value,
       jacocoReportSettings.value,
       coveredSources.value,
       classesToCover.value,
@@ -37,7 +37,7 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       streams.value
     ),
     jacocoAggregateReport := aggregateReportAction(
-      aggregateReportDirectory.value,
+      jacocoAggregateReportDirectory.value,
       aggregateExecutionDataFiles.value,
       jacocoAggregateReportSettings.value,
       aggregateCoveredSources.value,
@@ -45,6 +45,6 @@ private[jacoco4sbt] object JacocoDefaults extends Reporting with CommonKeys {
       jacocoSourceSettings.value,
       streams.value
     ),
-    clean := outputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
+    clean := jacocoOutputDirectory map (dir => if (dir.exists) IO delete dir.listFiles)
   )
 }
