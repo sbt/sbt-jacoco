@@ -8,7 +8,7 @@ This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [J
 Install the plugin by adding the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("de.johoop" % "jacoco4sbt" % "3.0.0-M?")
+addSbtPlugin("org.scala-sbt" % "sbt-jacoco" % "3.0.0-M1")
 ```
 
 And then execute the plugin with `sbt jacoco:jacoco`.
