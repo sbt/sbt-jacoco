@@ -34,7 +34,7 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
     (
       (classesToCover in pluginConfig).?.value,
       (sourceDirectory in Compile).?.value,
-      (executionDataFile in pluginConfig).?.value)
+      (jacocoDataFile in pluginConfig).?.value)
   }
 
   lazy val submoduleSettings =
@@ -52,35 +52,35 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
       Defaults.testSettings ++
         JacocoDefaults.settings ++
         Seq(
-          classesToCover := filterClassesToCover((classDirectory in Compile).value, includes.value, excludes.value),
+          classesToCover := filterClassesToCover((classDirectory in Compile).value, jacocoIncludes.value, jacocoExcludes.value),
           aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
           aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
           aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
           fullClasspath := instrumentAction(
             (products in Compile).value,
             (fullClasspath in srcConfig).value,
-            instrumentedClassDirectory.value,
+            jacocoInstrumentedDirectory.value,
             update.value,
             fork.value,
             streams.value),
           javaOptions ++= {
-            val dir = outputDirectory.value
+            val dir = jacocoOutputDirectory.value
             if (fork.value) {
               Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
             } else {
               Nil
             }
           },
-          outputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
+          jacocoOutputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
           definedTests := (definedTests in srcConfig).value,
           definedTestNames := (definedTestNames in srcConfig).value,
           jacoco := (jacocoReport dependsOn jacocoCheck).value,
           jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
           jacocoCheck := Def
-            .task(saveDataAction(executionDataFile.value, fork.value, streams.value))
+            .task(saveDataAction(jacocoDataFile.value, fork.value, streams.value))
             .dependsOn(test)
             .value,
-          (executionDataFile in pluginConfig) := (outputDirectory in pluginConfig).value / "jacoco.exec"
+          (jacocoDataFile in pluginConfig) := (jacocoOutputDirectory in pluginConfig).value / "jacoco.exec"
         ))
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {

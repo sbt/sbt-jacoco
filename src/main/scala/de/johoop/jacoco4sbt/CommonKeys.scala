@@ -12,7 +12,7 @@
 
 package de.johoop.jacoco4sbt
 
-import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
+import de.johoop.jacoco4sbt.report.{JacocoReportSettings, JacocoSourceSettings}
 import sbt._
 
 private[jacoco4sbt] trait CommonKeys {
@@ -27,6 +27,34 @@ private[jacoco4sbt] trait CommonKeys {
 
   val jacocoAggregateReport: TaskKey[Unit] = taskKey[Unit]("Generates an aggregated JaCoCo report.")
 
+  val jacocoOutputDirectory: SettingKey[File] =
+    settingKey[File]("Where JaCoCo should store its execution data and reports.")
+  val jacocoAggregateReportDirectory: SettingKey[File] =
+    settingKey[File]("Where JaCoCo should store its aggregate reports.")
+  val jacocoDataFile: SettingKey[File] = settingKey[File]("Execution data output file.")
+
+  val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
+    settingKey[JacocoSourceSettings]("Input source code settings (encoding etc) for reporting.")
+
+  val jacocoReportSettings: SettingKey[JacocoReportSettings] =
+    settingKey[JacocoReportSettings]("Settings for JaCoCo report (format, title etc)")
+  val jacocoAggregateReportSettings: SettingKey[JacocoReportSettings] =
+    settingKey[JacocoReportSettings]("Settings for aggregate JaCoCo report (format, title etc)")
+
+  val jacocoIncludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
+    "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
+  val jacocoExcludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
+    "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
+
+  val jacocoInstrumentedDirectory: SettingKey[File] =
+    settingKey[File]("Directory containing the instrumented classes.")
+
+  // type aliases for auto import
+  val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
+  val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
+  val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
+  val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
+
   private[jacoco4sbt] val coveredSources: TaskKey[Seq[File]] = taskKey[Seq[File]]("Covered Sources.")
 
   private[jacoco4sbt] val aggregateCoveredSources: TaskKey[Seq[File]] =
@@ -38,33 +66,4 @@ private[jacoco4sbt] trait CommonKeys {
 
   private[jacoco4sbt] val aggregateExecutionDataFiles: TaskKey[Seq[File]] =
     taskKey[Seq[File]]("All execution data output files for aggregated modules.")
-
-  val outputDirectory: SettingKey[File] =
-    settingKey[File]("Where JaCoCo should store its execution data and reports.")
-  val aggregateReportDirectory: SettingKey[File] =
-    settingKey[File]("Where JaCoCo should store its aggregate reports.")
-  val executionDataFile: SettingKey[File] = settingKey[File]("Execution data output file.")
-
-  val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
-    settingKey[JacocoSourceSettings]("Input source code settings (encoding etc) for reporting.")
-
-  val jacocoReportSettings: SettingKey[JacocoReportSettings] =
-    settingKey[JacocoReportSettings]("Settings for JaCoCo report (format, title etc)")
-  val jacocoAggregateReportSettings: SettingKey[JacocoReportSettings] =
-    settingKey[JacocoReportSettings]("Settings for aggregate JaCoCo report (format, title etc)")
-
-  val includes: SettingKey[Seq[String]] = settingKey[Seq[String]](
-    "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
-
-  val excludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
-    "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
-
-  val instrumentedClassDirectory: SettingKey[File] =
-    settingKey[File]("Directory containing the instrumented classes.")
-
-  // type aliases for auto import
-  val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
-  val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
-  val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
-  val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
 }

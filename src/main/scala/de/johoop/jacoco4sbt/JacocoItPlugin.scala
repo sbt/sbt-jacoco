@@ -37,8 +37,8 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   lazy val conditionalMerge: Def.Initialize[Task[Unit]] = Def.task {
     conditionalMergeAction(
-      (executionDataFile in Jacoco).value,
-      (executionDataFile in ItJacoco).value,
+      (jacocoDataFile in Jacoco).value,
+      (jacocoDataFile in ItJacoco).value,
       (mergedExecutionDataFile in ItJacoco).value,
       streams.value,
       mergeReports.value)
@@ -46,8 +46,8 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   lazy val forceMerge: Def.Initialize[Task[Unit]] = Def.task {
     mergeAction(
-      (executionDataFile in Jacoco).value,
-      (executionDataFile in ItJacoco).value,
+      (jacocoDataFile in Jacoco).value,
+      (jacocoDataFile in ItJacoco).value,
       (mergedExecutionDataFile in ItJacoco).value,
       streams.value)
   }
@@ -58,9 +58,9 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
         jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value,
         jacocoMerge := forceMerge.value,
         mergeReports := true,
-        (mergedExecutionDataFile in ItJacoco) := (outputDirectory in ItJacoco).value / "jacoco-merged.exec",
+        (mergedExecutionDataFile in ItJacoco) := (jacocoOutputDirectory in ItJacoco).value / "jacoco-merged.exec",
         (jacocoReport in ItJacoco) := reportAction(
-          (outputDirectory in ItJacoco).value,
+          (jacocoOutputDirectory in ItJacoco).value,
           (mergedExecutionDataFile in ItJacoco).value,
           (jacocoReportSettings in ItJacoco).value,
           (coveredSources in ItJacoco).value,
