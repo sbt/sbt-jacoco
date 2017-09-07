@@ -13,7 +13,7 @@
 package de.johoop.jacoco4sbt.filter
 
 object ScalaSyntheticMethod {
-  def isSyntheticMethod(owner: String, name: String, firstLine: Int, lastLine: Int) = {
+  def isSyntheticMethod(owner: String, name: String, firstLine: Int, lastLine: Int): Boolean = {
     val isModuleClass = owner.endsWith("$")
     val isOneLiner = firstLine == lastLine
     isOneLiner && (

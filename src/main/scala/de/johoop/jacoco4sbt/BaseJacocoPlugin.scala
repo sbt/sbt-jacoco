@@ -52,7 +52,10 @@ private[jacoco4sbt] abstract class BaseJacocoPlugin
       Defaults.testSettings ++
         JacocoDefaults.settings ++
         Seq(
-          classesToCover := filterClassesToCover((classDirectory in Compile).value, jacocoIncludes.value, jacocoExcludes.value),
+          classesToCover := filterClassesToCover(
+            (classDirectory in Compile).value,
+            jacocoIncludes.value,
+            jacocoExcludes.value),
           aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
           aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
           aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
