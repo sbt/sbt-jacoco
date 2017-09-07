@@ -12,8 +12,9 @@
 
 package de.johoop.jacoco4sbt.filter
 
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.tree.{JumpInsnNode, MethodNode, MethodInsnNode}
+import org.objectweb.asm.Opcodes._
+import org.objectweb.asm.tree.{JumpInsnNode, MethodInsnNode, MethodNode}
+
 import scala.collection.JavaConverters._
 
 /** Detects forwarder methods added by Scala
@@ -28,19 +29,21 @@ import scala.collection.JavaConverters._
 object ScalaForwarderDetector {
   val LazyComputeSuffix: String = "$lzycompute"
   def isScalaForwarder(className: String, node: MethodNode): Boolean = {
-    if (node.instructions.size() > 100) return false
-
-    val insn = node.instructions.iterator().asScala.toList
-    val hasJump = insn.exists {
-      case insn: JumpInsnNode => true
-      case _ => false
+    if (node.instructions.size() <= 100) {
+      val insn = node.instructions.iterator().asScala.toList
+      val hasJump = insn.exists {
+        case _: JumpInsnNode => true
+        case _ => false
+      }
+      val hasForwarderCall = insn.exists {
+        case minsn: MethodInsnNode =>
+          isScalaForwarder(className, node.name, minsn.getOpcode, minsn.owner, minsn.name, minsn.desc, hasJump)
+        case _ => false
+      }
+      hasForwarderCall
+    } else {
+      false
     }
-    val hasForwarderCall = insn.exists {
-      case insn: MethodInsnNode =>
-        isScalaForwarder(className, node.name, insn.getOpcode, insn.owner, insn.name, insn.desc, hasJump)
-      case _ => false
-    }
-    hasForwarderCall
   }
 
   def isScalaForwarder(
@@ -51,19 +54,21 @@ object ScalaForwarderDetector {
       calledMethodName: String,
       desc: String,
       hasJump: Boolean): Boolean = {
-    def callingCompanionModule = calledMethodOwner == (className + "$")
+    val callingCompanionModule = calledMethodOwner == (className + "$")
     val callingImplClass = calledMethodOwner.endsWith("$class")
     val callingImplicitClass = calledMethodOwner.endsWith("$" + methodName) || calledMethodOwner == methodName
-    def extensionName = methodName + "$extension"
-    import Opcodes._
+    val extensionName = methodName + "$extension"
 
     val staticForwarder = opcode == INVOKEVIRTUAL && callingCompanionModule && calledMethodName == methodName
     val traitForwarder = opcode == INVOKESTATIC && callingImplClass && calledMethodName == methodName
-    val extensionMethodForwarder = opcode == INVOKEVIRTUAL && callingCompanionModule && calledMethodName == extensionName
+    val extensionMethodForwarder = opcode == INVOKEVIRTUAL &&
+      callingCompanionModule &&
+      calledMethodName == extensionName
     val implicitClassFactory = opcode == INVOKESPECIAL && callingImplicitClass && calledMethodName == "<init>"
     val lazyAccessor = opcode == INVOKESPECIAL && calledMethodName.endsWith(LazyComputeSuffix)
     val forwards = (
-      (staticForwarder || traitForwarder || extensionMethodForwarder || implicitClassFactory) && !hasJump // second condition a sanity check
+      (staticForwarder || traitForwarder || extensionMethodForwarder || implicitClassFactory) &&
+        !hasJump // second condition a sanity check
         || lazyAccessor
     )
     forwards

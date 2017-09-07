@@ -28,7 +28,7 @@ private[jacoco4sbt] trait Instrumentation extends JaCoCoRuntime {
       instrumentedClassDirectory: File,
       resolved: UpdateReport,
       forked: Boolean,
-      streams: TaskStreams) = {
+      streams: TaskStreams): Seq[Attributed[File]] = {
 
     streams.log debug s"instrumenting products: $compileProducts"
 
@@ -41,7 +41,7 @@ private[jacoco4sbt] trait Instrumentation extends JaCoCoRuntime {
       (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
 
     } else {
-      runtime.shutdown
+      runtime.shutdown()
       runtime startup runtimeData
       (Seq(), new Instrumenter(runtime))
     }
@@ -52,8 +52,11 @@ private[jacoco4sbt] trait Instrumentation extends JaCoCoRuntime {
       classFile <- (PathFinder(compileProducts) ** "*.class").get
       _ = streams.log debug ("instrumenting " + classFile)
       classStream = new FileInputStream(classFile)
-      instrumentedClass = try instrumenter instrument (classStream, classFile.name)
-      finally classStream.close
+      instrumentedClass = try {
+        instrumenter instrument (classStream, classFile.name)
+      } finally {
+        classStream.close()
+      }
     } {
       IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }

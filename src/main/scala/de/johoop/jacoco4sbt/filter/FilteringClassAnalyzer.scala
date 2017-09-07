@@ -58,15 +58,16 @@ private final class FilteringClassAnalyzer(
       signature: String,
       exceptions: Array[String]): MethodProbesVisitor = {
     InstrSupport.assertNotInstrumented(name, classCoverage.getName)
-    if ((access & Opcodes.ACC_SYNTHETIC) != 0)
+    if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
       null
-    else {
+    } else {
       new MethodAnalyzer(stringPool.get(name), stringPool.get(desc), stringPool.get(signature), probes) {
         override def visitEnd(): Unit = {
           super.visitEnd()
           val hasInstructions = getCoverage.getInstructionCounter.getTotalCount > 0
-          if (hasInstructions)
+          if (hasInstructions) {
             coverages += getCoverage
+          }
         }
       }
     }
@@ -101,7 +102,8 @@ private final class FilteringClassAnalyzer(
 
     (
       isSyntheticMethod(classCoverage.getName, name, mc.getFirstLine, mc.getLastLine) // equals/hashCode/unapply et al
-      || isModuleStaticInit // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
+      // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
+      || isModuleStaticInit
       || isScalaForwarder(classCoverage.getName, node)
       || isAccessor(node)
     )
