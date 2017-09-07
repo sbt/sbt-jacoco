@@ -1,7 +1,7 @@
-name := "jacoco4sbt"
-organization := "de.johoop"
+name := "sbt-jacoco"
+organization := "org.scala-sbt"
 
-version := "3.0.0-SNAPSHOT"
+version := "3.0.0-M1"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.1")
