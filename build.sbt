@@ -1,7 +1,7 @@
 name := "sbt-jacoco"
 organization := "org.scala-sbt"
 
-version := "3.0.0-M2"
+version := "3.0.0-M3-SNAPSHOT"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.1")

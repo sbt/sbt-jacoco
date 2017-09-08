@@ -1,14 +1,15 @@
 # sbt-jacoco - Code Coverage via JaCoCo in sbt
 
 [![Build Status](https://travis-ci.org/sbt/jacoco4sbt.svg?branch=master)](https://travis-ci.org/sbt/jacoco4sbt)
-![Latest Version](https://api.bintray.com/packages/sbt/sbt-plugin-releases/jacoco4sbt/images/download.svg)
+[![SBT 0.13 version](https://img.shields.io/badge/sbt_0.13-3.0.0--M2-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
+[![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.0.0--M2-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
 
 This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
 
 Install the plugin by adding the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.scala-sbt" % "sbt-jacoco" % "3.0.0-M1")
+addSbtPlugin("org.scala-sbt" % "sbt-jacoco" % "3.0.0-M2")
 ```
 
 And then execute the plugin with `sbt jacoco:jacoco`.
