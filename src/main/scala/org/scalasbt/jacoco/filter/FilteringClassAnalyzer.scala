@@ -1,5 +1,5 @@
 /*
- * This file is part of jacoco4sbt.
+ * This file is part of sbt-jacoco.
  *
  * Copyright (c) Joachim Hofer & contributors
  * All rights reserved.
