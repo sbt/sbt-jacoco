@@ -24,7 +24,7 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code")
 
 enablePlugins(BuildInfoPlugin)
-buildInfoPackage := "de.johoop.jacoco4sbt.build"
+buildInfoPackage := "org.scalasbt.jacoco.build"
 buildInfoKeys := Seq[BuildInfoKey](
   resourceDirectory in Test,
   version,
