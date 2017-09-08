@@ -1,4 +1,4 @@
-# jacoco4sbt - Code Coverage via JaCoCo in sbt
+# sbt-jacoco - Code Coverage via JaCoCo in sbt
 
 [![Build Status](https://travis-ci.org/sbt/jacoco4sbt.svg?branch=master)](https://travis-ci.org/sbt/jacoco4sbt)
 ![Latest Version](https://api.bintray.com/packages/sbt/sbt-plugin-releases/jacoco4sbt/images/download.svg)
