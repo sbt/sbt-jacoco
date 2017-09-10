@@ -14,19 +14,18 @@ package org.scalasbt.jacoco
 
 import java.io.File
 
+import org.jacoco.core.runtime.{LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
 import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
 
-private[jacoco] abstract class BaseJacocoPlugin
-    extends AutoPlugin
-    with Reporting
-    with SavingData
-    with Instrumentation
-    with CommonKeys {
+private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with CommonKeys {
 
   protected def pluginConfig: Configuration
+
+  private implicit val runtimeData = new RuntimeData()
+  private implicit val loggerRuntime = new LoggerRuntime()
 
   override def requires: Plugins = JvmPlugin
 
@@ -50,8 +49,35 @@ private[jacoco] abstract class BaseJacocoPlugin
       libraryDependencies += "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % pluginConfig
     ) ++ inConfig(pluginConfig)(
       Defaults.testSettings ++
-        JacocoDefaults.settings ++
         Seq(
+          jacocoOutputDirectory := crossTarget.value / "jacoco",
+          jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
+          jacocoSourceSettings := JacocoSourceSettings(),
+          jacocoReportSettings := JacocoReportSettings(),
+          jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
+          jacocoIncludes := Seq("*"),
+          jacocoExcludes := Seq(),
+          coveredSources := (sourceDirectories in Compile).value,
+          jacocoInstrumentedDirectory := jacocoOutputDirectory.value / (classDirectory in Compile).value.getName,
+          jacocoReport := Reporting.reportAction(
+            jacocoOutputDirectory.value,
+            jacocoDataFile.value,
+            jacocoReportSettings.value,
+            coveredSources.value,
+            classesToCover.value,
+            jacocoSourceSettings.value,
+            streams.value
+          ),
+          jacocoAggregateReport := Reporting.aggregateReportAction(
+            jacocoAggregateReportDirectory.value,
+            aggregateExecutionDataFiles.value,
+            jacocoAggregateReportSettings.value,
+            aggregateCoveredSources.value,
+            aggregateClassesToCover.value,
+            jacocoSourceSettings.value,
+            streams.value
+          ),
+          clean := jacocoOutputDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
           classesToCover := filterClassesToCover(
             (classDirectory in Compile).value,
             jacocoIncludes.value,
@@ -59,7 +85,7 @@ private[jacoco] abstract class BaseJacocoPlugin
           aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
           aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
           aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
-          fullClasspath := instrumentAction(
+          fullClasspath := Instrumentation.instrumentAction(
             (products in Compile).value,
             (fullClasspath in srcConfig).value,
             jacocoInstrumentedDirectory.value,
@@ -80,7 +106,7 @@ private[jacoco] abstract class BaseJacocoPlugin
           jacoco := (jacocoReport dependsOn jacocoCheck).value,
           jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
           jacocoCheck := Def
-            .task(saveDataAction(jacocoDataFile.value, fork.value, streams.value))
+            .task(SavingData.saveDataAction(jacocoDataFile.value, fork.value, streams.value))
             .dependsOn(test)
             .value,
           (jacocoDataFile in pluginConfig) := (jacocoOutputDirectory in pluginConfig).value / "jacoco.exec"
