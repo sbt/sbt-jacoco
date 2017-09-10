@@ -15,11 +15,11 @@ package org.scalasbt.jacoco
 import java.io.FileInputStream
 
 import org.jacoco.core.instr.Instrumenter
-import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
+import org.jacoco.core.runtime.{IRuntime, OfflineInstrumentationAccessGenerator, RuntimeData}
 import sbt.Keys._
 import sbt._
 
-private[jacoco] trait Instrumentation extends JaCoCoRuntime {
+private[jacoco] object Instrumentation {
 
   def instrumentAction(
       compileProducts: Seq[File],
@@ -27,7 +27,7 @@ private[jacoco] trait Instrumentation extends JaCoCoRuntime {
       instrumentedClassDirectory: File,
       resolved: UpdateReport,
       forked: Boolean,
-      streams: TaskStreams): Seq[Attributed[File]] = {
+      streams: TaskStreams)(implicit runtime: IRuntime, runtimeData: RuntimeData): Seq[Attributed[File]] = {
 
     streams.log debug s"instrumenting products: $compileProducts"
 
@@ -41,7 +41,7 @@ private[jacoco] trait Instrumentation extends JaCoCoRuntime {
 
     } else {
       runtime.shutdown()
-      runtime startup runtimeData
+      runtime.startup(runtimeData)
       (Seq(), new Instrumenter(runtime))
     }
 

@@ -59,7 +59,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
         jacocoMerge := forceMerge.value,
         mergeReports := true,
         (mergedExecutionDataFile in ItJacoco) := (jacocoOutputDirectory in ItJacoco).value / "jacoco-merged.exec",
-        (jacocoReport in ItJacoco) := reportAction(
+        (jacocoReport in ItJacoco) := Reporting.reportAction(
           (jacocoOutputDirectory in ItJacoco).value,
           (mergedExecutionDataFile in ItJacoco).value,
           (jacocoReportSettings in ItJacoco).value,

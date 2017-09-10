@@ -19,7 +19,7 @@ import org.jacoco.core.tools.ExecFileLoader
 import sbt.Keys._
 import sbt._
 
-private[jacoco] trait Merging extends JaCoCoRuntime {
+private[jacoco] trait Merging {
   def conditionalMergeAction(
       utExecutionData: File,
       itExecutionData: File,
