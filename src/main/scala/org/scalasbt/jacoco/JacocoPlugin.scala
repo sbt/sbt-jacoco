@@ -26,4 +26,9 @@ object JacocoPlugin extends BaseJacocoPlugin {
   lazy val srcConfig: Configuration = Test
 
   override def trigger: PluginTrigger = allRequirements
+
+  override def projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
+    jacoco in Compile := (jacoco in Jacoco).value,
+    jacoco in Test := (jacoco in Jacoco).value
+  )
 }
