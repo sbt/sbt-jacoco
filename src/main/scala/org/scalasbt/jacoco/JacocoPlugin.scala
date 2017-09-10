@@ -16,7 +16,7 @@ import sbt._
 
 object JacocoPlugin extends BaseJacocoPlugin {
 
-  object autoImport extends CommonKeys {
+  object autoImport extends JacocoKeys {
     lazy val Jacoco: Configuration = config("jacoco").extend(Test).hide
   }
 

@@ -20,7 +20,7 @@ import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
 
-private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with CommonKeys {
+private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
 
   protected def pluginConfig: Configuration
 
@@ -49,68 +49,74 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with CommonKe
       libraryDependencies += "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % pluginConfig
     ) ++ inConfig(pluginConfig)(
       Defaults.testSettings ++
-        Seq(
-          jacocoOutputDirectory := crossTarget.value / "jacoco",
-          jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
-          jacocoSourceSettings := JacocoSourceSettings(),
-          jacocoReportSettings := JacocoReportSettings(),
-          jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
-          jacocoIncludes := Seq("*"),
-          jacocoExcludes := Seq(),
-          coveredSources := (sourceDirectories in Compile).value,
-          jacocoInstrumentedDirectory := jacocoOutputDirectory.value / (classDirectory in Compile).value.getName,
-          jacocoReport := Reporting.reportAction(
-            jacocoOutputDirectory.value,
-            jacocoDataFile.value,
-            jacocoReportSettings.value,
-            coveredSources.value,
-            classesToCover.value,
-            jacocoSourceSettings.value,
-            streams.value
-          ),
-          jacocoAggregateReport := Reporting.aggregateReportAction(
-            jacocoAggregateReportDirectory.value,
-            aggregateExecutionDataFiles.value,
-            jacocoAggregateReportSettings.value,
-            aggregateCoveredSources.value,
-            aggregateClassesToCover.value,
-            jacocoSourceSettings.value,
-            streams.value
-          ),
-          clean := jacocoOutputDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
-          classesToCover := filterClassesToCover(
-            (classDirectory in Compile).value,
-            jacocoIncludes.value,
-            jacocoExcludes.value),
-          aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
-          aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
-          aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct,
-          fullClasspath := Instrumentation.instrumentAction(
-            (products in Compile).value,
-            (fullClasspath in srcConfig).value,
-            jacocoInstrumentedDirectory.value,
-            update.value,
-            fork.value,
-            streams.value),
-          javaOptions ++= {
-            val dir = jacocoOutputDirectory.value
-            if (fork.value) {
-              Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
-            } else {
-              Nil
-            }
-          },
-          jacocoOutputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
-          definedTests := (definedTests in srcConfig).value,
-          definedTestNames := (definedTestNames in srcConfig).value,
-          jacoco := (jacocoReport dependsOn jacocoCheck).value,
-          jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
-          jacocoCheck := Def
-            .task(SavingData.saveDataAction(jacocoDataFile.value, fork.value, streams.value))
-            .dependsOn(test)
-            .value,
-          (jacocoDataFile in pluginConfig) := (jacocoOutputDirectory in pluginConfig).value / "jacoco.exec"
-        ))
+        settingValues ++
+        taskValues)
+
+  private def settingValues = Seq(
+    jacocoOutputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
+    jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
+    jacocoSourceSettings := JacocoSourceSettings(),
+    jacocoReportSettings := JacocoReportSettings(),
+    jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
+    jacocoIncludes := Seq("*"),
+    jacocoExcludes := Seq(),
+    jacocoInstrumentedDirectory := jacocoOutputDirectory.value / (classDirectory in Compile).value.getName,
+    (jacocoDataFile in pluginConfig) := (jacocoOutputDirectory in pluginConfig).value / "jacoco.exec",
+    javaOptions ++= {
+      val dir = jacocoOutputDirectory.value
+      if (fork.value) {
+        Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
+      } else {
+        Nil
+      }
+    }
+  )
+
+  private def taskValues = Seq(
+    jacoco := (jacocoReport dependsOn jacocoCheck).value,
+    jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
+    jacocoCheck := Def
+      .task(SavingData.saveDataAction(jacocoDataFile.value, fork.value, streams.value))
+      .dependsOn(test)
+      .value,
+    jacocoReport := Reporting.reportAction(
+      jacocoOutputDirectory.value,
+      jacocoDataFile.value,
+      jacocoReportSettings.value,
+      coveredSources.value,
+      classesToCover.value,
+      jacocoSourceSettings.value,
+      streams.value
+    ),
+    jacocoAggregateReport := Reporting.aggregateReportAction(
+      jacocoAggregateReportDirectory.value,
+      aggregateExecutionDataFiles.value,
+      jacocoAggregateReportSettings.value,
+      aggregateCoveredSources.value,
+      aggregateClassesToCover.value,
+      jacocoSourceSettings.value,
+      streams.value
+    ),
+    clean := jacocoOutputDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
+    fullClasspath := Instrumentation.instrumentAction(
+      (products in Compile).value,
+      (fullClasspath in srcConfig).value,
+      jacocoInstrumentedDirectory.value,
+      update.value,
+      fork.value,
+      streams.value),
+    definedTests := (definedTests in srcConfig).value,
+    definedTestNames := (definedTestNames in srcConfig).value,
+    // internal tasks
+    coveredSources := (sourceDirectories in Compile).value,
+    classesToCover := filterClassesToCover(
+      (classDirectory in Compile).value,
+      jacocoIncludes.value,
+      jacocoExcludes.value),
+    aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
+    aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
+    aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct
+  )
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
     val inclFilters = incl map GlobFilter.apply

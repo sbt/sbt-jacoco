@@ -16,7 +16,9 @@ import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings}
 import sbt._
 
 // scalastyle:off line.size.limit
-private[jacoco] trait CommonKeys {
+object JacocoKeys extends JacocoKeys
+
+trait JacocoKeys {
   val jacoco: TaskKey[Unit] = taskKey[Unit]("Executes the tests and creates a JaCoCo coverage report.")
 
   val jacocoCheck: TaskKey[Unit] = taskKey[Unit]("Executes the tests and saves the execution data in 'jacoco.exec'.")
