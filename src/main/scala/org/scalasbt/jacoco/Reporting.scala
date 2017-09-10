@@ -15,14 +15,17 @@ package org.scalasbt.jacoco
 import java.io.FileOutputStream
 
 import org.jacoco.core.data.ExecutionDataWriter
+import org.jacoco.core.runtime.RuntimeData
 import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings}
 import sbt.Keys._
 import sbt._
 
 import scala.language.implicitConversions
 
-private[jacoco] trait SavingData extends JaCoCoRuntime {
-  def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams): Unit = {
+private[jacoco] object SavingData {
+  def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams)(
+      implicit runtimeData: RuntimeData): Unit = {
+
     if (!forked) {
       IO createDirectory jacocoFile.getParentFile
       val executionDataStream = new FileOutputStream(jacocoFile)
@@ -38,7 +41,7 @@ private[jacoco] trait SavingData extends JaCoCoRuntime {
   }
 }
 
-private[jacoco] trait Reporting extends JaCoCoRuntime {
+private[jacoco] object Reporting {
   def reportAction(
       reportDirectory: File,
       executionDataFile: File,
