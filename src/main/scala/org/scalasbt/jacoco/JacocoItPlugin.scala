@@ -68,6 +68,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
           (jacocoSourceSettings in ItJacoco).value,
           (streams in ItJacoco).value
         ),
-        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value
+        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value,
+        jacoco in IntegrationTest := (jacoco in ItJacoco).value
       )
 }
