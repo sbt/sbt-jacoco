@@ -29,7 +29,12 @@ private[jacoco] object Instrumentation {
       forked: Boolean,
       streams: TaskStreams)(implicit runtime: IRuntime, runtimeData: RuntimeData): Seq[Attributed[File]] = {
 
-    streams.log debug s"instrumenting products: $compileProducts"
+    val classCount = compileProducts.foldLeft(0) { (acc, p) =>
+      acc + (p ** "*.class").get.size
+    }
+
+    streams.log.info(s"Instrumenting $classCount classes to $instrumentedClassDirectory")
+    streams.log.debug(s"instrumenting products: $compileProducts")
 
     val (jacocoAgent, instrumenter) = if (forked) {
       val agentJars = resolved select (module = moduleFilter(name = "org.jacoco.agent"))

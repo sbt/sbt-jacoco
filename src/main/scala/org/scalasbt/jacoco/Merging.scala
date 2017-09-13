@@ -48,6 +48,8 @@ private[jacoco] trait Merging {
 
     streams.log.debug("Writing merged data to: %s".format(mergedExecutionData.getAbsolutePath))
 
+    IO.createDirectory(mergedExecutionData.getParentFile)
+
     writeToFile(mergedExecutionData) { outputStream =>
       val dataWriter = new ExecutionDataWriter(outputStream)
       loader.getSessionInfoStore accept dataWriter

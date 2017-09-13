@@ -16,19 +16,9 @@ import sbt._
 
 object JacocoPlugin extends BaseJacocoPlugin {
 
-  object autoImport extends JacocoKeys {
-    lazy val Jacoco: Configuration = config("jacoco").extend(Test).hide
-  }
+  object autoImport extends JacocoKeys
 
-  import autoImport._
-
-  override protected val pluginConfig: Configuration = Jacoco
   lazy val srcConfig: Configuration = Test
 
   override def trigger: PluginTrigger = allRequirements
-
-  override def projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
-    jacoco in Compile := (jacoco in Jacoco).value,
-    jacoco in Test := (jacoco in Jacoco).value
-  )
 }

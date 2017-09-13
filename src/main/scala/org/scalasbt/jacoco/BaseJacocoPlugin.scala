@@ -14,58 +14,57 @@ package org.scalasbt.jacoco
 
 import java.io.File
 
-import org.jacoco.core.runtime.{LoggerRuntime, RuntimeData}
+import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
 import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
 
 private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
-
-  protected def pluginConfig: Configuration
-
-  private implicit val runtimeData = new RuntimeData()
-  private implicit val loggerRuntime = new LoggerRuntime()
+  protected implicit val runtimeData: RuntimeData = new RuntimeData()
+  protected implicit val loggerRuntime: IRuntime = new LoggerRuntime()
 
   override def requires: Plugins = JvmPlugin
 
-  lazy val submoduleSettingsTask = Def.task {
-    (
-      (classesToCover in pluginConfig).?.value,
-      (sourceDirectory in Compile).?.value,
-      (jacocoDataFile in pluginConfig).?.value)
+  private lazy val submoduleSettingsTask = Def.task {
+    ((classesToCover in srcConfig).?.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)
   }
 
-  lazy val submoduleSettings =
-    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, pluginConfig)))
+  private lazy val submoduleSettings =
+    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, srcConfig)))
 
-  lazy val submoduleCoverTasks = (jacoco in pluginConfig).all(ScopeFilter(inAggregates(ThisProject)))
+  private lazy val submoduleCoverTasks = (jacoco in srcConfig).all(ScopeFilter(inAggregates(ThisProject)))
 
   def srcConfig: Configuration
 
   override def projectSettings: Seq[Setting[_]] =
     Seq(
-      ivyConfigurations += pluginConfig,
-      libraryDependencies += "org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % pluginConfig
-    ) ++ inConfig(pluginConfig)(
-      Defaults.testSettings ++
-        settingValues ++
-        taskValues)
+      libraryDependencies ++= {
+        if ((fork in srcConfig).value) {
+          // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
+          Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test classifier "runtime")
+        } else {
+          Nil
+        }
+      }
+    ) ++ inConfig(srcConfig)(settingValues ++ taskValues)
 
   private def settingValues = Seq(
-    jacocoOutputDirectory in pluginConfig := crossTarget.value / pluginConfig.name,
+    jacocoOutputDirectory := crossTarget.value / "jacoco",
     jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
     jacocoSourceSettings := JacocoSourceSettings(),
     jacocoReportSettings := JacocoReportSettings(),
     jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
     jacocoIncludes := Seq("*"),
     jacocoExcludes := Seq(),
-    jacocoInstrumentedDirectory := jacocoOutputDirectory.value / (classDirectory in Compile).value.getName,
-    (jacocoDataFile in pluginConfig) := (jacocoOutputDirectory in pluginConfig).value / "jacoco.exec",
-    javaOptions ++= {
-      val dir = jacocoOutputDirectory.value
+    jacocoInstrumentedDirectory := crossTarget.value / "instrumented-classes",
+    jacocoDataFile := crossTarget.value / "jacoco.exec",
+    javaOptions in (srcConfig, test) ++= {
+      val dest = jacocoDataFile.value
       if (fork.value) {
-        Seq(s"-Djacoco-agent.destfile=${(dir / "jacoco.exec").absolutePath}")
+        Seq(
+          s"-Djacoco-agent.destfile=${dest.absolutePath}"
+        )
       } else {
         Nil
       }
@@ -123,7 +122,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     val exclFilters = excl map GlobFilter.apply
 
     (PathFinder(classes) ** new FileFilter {
-      def accept(f: File) = IO.relativize(classes, f) match {
+      def accept(f: File): Boolean = IO.relativize(classes, f) match {
         case Some(file) if !f.isDirectory && file.endsWith(".class") =>
           val name = toClassName(file)
           inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)

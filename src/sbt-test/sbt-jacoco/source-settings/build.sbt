@@ -6,4 +6,4 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-jacocoSourceSettings in Jacoco := JacocoSourceSettings(tabWidth = 4, fileEncoding = "ISO-8859-1")
+jacocoSourceSettings in Test := JacocoSourceSettings(tabWidth = 4, fileEncoding = "ISO-8859-1")

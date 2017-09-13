@@ -1,13 +1,13 @@
 > clean
 
 # coverage should pass
-> jacoco:jacoco
+> jacoco
 
 # instrumented classes
-$ exists target/scala-2.12/jacoco/classes
+$ exists target/scala-2.12/instrumented-classes
 
 # results
-$ exists target/scala-2.12/jacoco/jacoco.exec
+$ exists target/scala-2.12/jacoco.exec
 
 # html report
 $ exists target/scala-2.12/jacoco/html/index.html
