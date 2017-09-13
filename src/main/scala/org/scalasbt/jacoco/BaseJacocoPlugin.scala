@@ -27,7 +27,10 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   override def requires: Plugins = JvmPlugin
 
   private lazy val submoduleSettingsTask = Def.task {
-    ((classesToCover in srcConfig).?.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)
+    (
+      (classesToCover in srcConfig).?.value,
+      (sourceDirectory in Compile).?.value,
+      (jacocoDataFile in srcConfig).?.value)
   }
 
   private lazy val submoduleSettings =
@@ -35,7 +38,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
 
   private lazy val submoduleCoverTasks = (jacoco in srcConfig).all(ScopeFilter(inAggregates(ThisProject)))
 
-  def srcConfig: Configuration
+  protected def srcConfig: Configuration
 
   override def projectSettings: Seq[Setting[_]] =
     Seq(
@@ -50,15 +53,17 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     ) ++ inConfig(srcConfig)(settingValues ++ taskValues)
 
   private def settingValues = Seq(
-    jacocoOutputDirectory := crossTarget.value / "jacoco",
-    jacocoAggregateReportDirectory := jacocoOutputDirectory.value / "aggregate",
+    jacocoDirectory := crossTarget.value / "jacoco",
+    jacocoDataDirectory := jacocoDirectory.value / "data",
+    jacocoReportDirectory := jacocoDirectory.value / "report",
+    jacocoAggregateReportDirectory := jacocoDirectory.value / "report" / "aggregate",
     jacocoSourceSettings := JacocoSourceSettings(),
     jacocoReportSettings := JacocoReportSettings(),
     jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
     jacocoIncludes := Seq("*"),
     jacocoExcludes := Seq(),
-    jacocoInstrumentedDirectory := crossTarget.value / "instrumented-classes",
-    jacocoDataFile := crossTarget.value / "jacoco.exec",
+    jacocoInstrumentedDirectory := jacocoDirectory.value / "instrumented-classes",
+    jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec",
     javaOptions in (srcConfig, test) ++= {
       val dest = jacocoDataFile.value
       if (fork.value) {
@@ -79,7 +84,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       .dependsOn(test)
       .value,
     jacocoReport := Reporting.reportAction(
-      jacocoOutputDirectory.value,
+      jacocoReportDirectory.value,
       jacocoDataFile.value,
       jacocoReportSettings.value,
       coveredSources.value,
@@ -96,7 +101,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       jacocoSourceSettings.value,
       streams.value
     ),
-    clean := jacocoOutputDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
+    clean := jacocoDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
     fullClasspath := Instrumentation.instrumentAction(
       (products in Compile).value,
       (fullClasspath in srcConfig).value,

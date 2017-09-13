@@ -3,16 +3,20 @@
 # coverage should pass
 > jacoco
 
-$ exists common/target/scala-2.12/jacoco.exec
-$ exists common/target/scala-2.12/jacoco/html/index.html
-$ exists extras/target/scala-2.12/jacoco.exec
-$ exists extras/target/scala-2.12/jacoco/html/index.html
+# project results
+$ exists common/target/scala-2.12/jacoco/data/jacoco.exec
+$ exists common/target/scala-2.12/jacoco/report/html/index.html
+$ exists extras/target/scala-2.12/jacoco/data/jacoco.exec
+$ exists extras/target/scala-2.12/jacoco/report/html/index.html
 
-# fixme
-$ absent target/scala-2.12/jacoco/aggregate
+$ absent target/scala-2.12/jacoco/report/aggregate
 
 > clean
 > jacocoAggregate
-$ exists common/target/scala-2.12/jacoco.exec
-$ exists extras/target/scala-2.12/jacoco.exec
-$ exists target/scala-2.12/jacoco/aggregate/html/index.html
+
+# project results
+$ exists common/target/scala-2.12/jacoco/data/jacoco.exec
+$ exists extras/target/scala-2.12/jacoco/data/jacoco.exec
+
+# aggregated results
+$ exists target/scala-2.12/jacoco/report/aggregate/html/index.html

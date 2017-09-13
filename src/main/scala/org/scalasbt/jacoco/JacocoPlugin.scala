@@ -18,7 +18,7 @@ object JacocoPlugin extends BaseJacocoPlugin {
 
   object autoImport extends JacocoKeys
 
-  lazy val srcConfig: Configuration = Test
+  protected lazy val srcConfig: Configuration = Test
 
   override def trigger: PluginTrigger = allRequirements
 }
