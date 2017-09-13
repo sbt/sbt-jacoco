@@ -12,15 +12,12 @@
 
 package org.scalasbt.jacoco
 
-import org.scalasbt.jacoco.JacocoPlugin.autoImport.Jacoco
 import sbt.Keys._
 import sbt._
 
 object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   object autoImport {
-    lazy val ItJacoco: Configuration = config("it-jacoco").extend(IntegrationTest).hide
-
     lazy val jacocoMerge: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
 
     lazy val mergedExecutionDataFile: SettingKey[File] =
@@ -32,43 +29,43 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   import autoImport._
 
-  override protected val pluginConfig: Configuration = ItJacoco
   lazy val srcConfig: Configuration = IntegrationTest
 
   lazy val conditionalMerge: Def.Initialize[Task[Unit]] = Def.task {
     conditionalMergeAction(
-      (jacocoDataFile in Jacoco).value,
-      (jacocoDataFile in ItJacoco).value,
-      (mergedExecutionDataFile in ItJacoco).value,
+      (jacocoDataFile in Test).value,
+      (jacocoDataFile in IntegrationTest).value,
+      (mergedExecutionDataFile in IntegrationTest).value,
       streams.value,
       mergeReports.value)
   }
 
   lazy val forceMerge: Def.Initialize[Task[Unit]] = Def.task {
     mergeAction(
-      (jacocoDataFile in Jacoco).value,
-      (jacocoDataFile in ItJacoco).value,
-      (mergedExecutionDataFile in ItJacoco).value,
+      (jacocoDataFile in Test).value,
+      (jacocoDataFile in IntegrationTest).value,
+      (mergedExecutionDataFile in IntegrationTest).value,
       streams.value)
   }
 
   override def projectSettings: Seq[Setting[_]] =
+    Defaults.itSettings ++
     super.projectSettings ++
       Seq(
-        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value,
+        (jacocoDataFile in IntegrationTest) := crossTarget.value / "jacoco-it.exec",
         jacocoMerge := forceMerge.value,
         mergeReports := true,
-        (mergedExecutionDataFile in ItJacoco) := (jacocoOutputDirectory in ItJacoco).value / "jacoco-merged.exec",
-        (jacocoReport in ItJacoco) := Reporting.reportAction(
-          (jacocoOutputDirectory in ItJacoco).value,
-          (mergedExecutionDataFile in ItJacoco).value,
-          (jacocoReportSettings in ItJacoco).value,
-          (coveredSources in ItJacoco).value,
-          (classesToCover in ItJacoco).value,
-          (jacocoSourceSettings in ItJacoco).value,
-          (streams in ItJacoco).value
+        (mergedExecutionDataFile in IntegrationTest) := crossTarget.value / "jacoco-merged.exec",
+        (jacocoReport in IntegrationTest) := Reporting.reportAction(
+          (jacocoOutputDirectory in IntegrationTest).value,
+          (mergedExecutionDataFile in IntegrationTest).value,
+          (jacocoReportSettings in IntegrationTest).value,
+          (coveredSources in IntegrationTest).value,
+          (classesToCover in IntegrationTest).value,
+          (jacocoSourceSettings in IntegrationTest).value,
+          (streams in IntegrationTest).value
         ),
-        jacocoReport in ItJacoco := ((jacocoReport in ItJacoco) dependsOn conditionalMerge).value,
-        jacoco in IntegrationTest := (jacoco in ItJacoco).value
+        jacocoReport in IntegrationTest := ((jacocoReport in IntegrationTest) dependsOn conditionalMerge).value,
+        jacoco in IntegrationTest := (jacoco in IntegrationTest).value
       )
 }

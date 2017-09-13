@@ -1,7 +1,7 @@
 name := "sbt-jacoco"
 organization := "org.scala-sbt"
 
-version := "3.0.0-M3"
+version := "3.0.0-M4-SNAPSHOT"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.1")
@@ -32,6 +32,7 @@ buildInfoKeys := Seq[BuildInfoKey](
   "sbtVersion" -> (sbtVersion in pluginCrossBuild).value
 )
 
+licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 headerLicense := Some(HeaderLicense.Custom(
   """|This file is part of sbt-jacoco.
      |

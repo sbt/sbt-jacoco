@@ -6,7 +6,7 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-jacocoReportSettings in Jacoco := JacocoReportSettings()
+jacocoReportSettings in Test := JacocoReportSettings()
   .withFormats(
     JacocoReportFormats.ScalaHTML.withoutBranches,
     JacocoReportFormats.XML,

@@ -6,4 +6,4 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-fork in Jacoco := true
+fork in Test := true
