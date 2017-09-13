@@ -64,7 +64,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacocoExcludes := Seq(),
     jacocoInstrumentedDirectory := jacocoDirectory.value / "instrumented-classes",
     jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec",
-    javaOptions in (srcConfig, test) ++= {
+    javaOptions in srcConfig ++= {
       val dest = jacocoDataFile.value
       if (fork.value) {
         Seq(
