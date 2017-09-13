@@ -12,60 +12,78 @@
 
 package org.scalasbt.jacoco
 
+import org.scalasbt.jacoco.report.JacocoReportSettings
 import sbt.Keys._
-import sbt._
+import sbt.{Def, _}
+import sbt.plugins.JvmPlugin
 
 object JacocoItPlugin extends BaseJacocoPlugin with Merging {
 
   object autoImport {
-    lazy val jacocoMerge: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
+    lazy val jacocoMergeData: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
 
-    lazy val mergedExecutionDataFile: SettingKey[File] =
+    lazy val jacocoMergedDataFile: SettingKey[File] =
       settingKey[File]("Execution data file contain unit test and integration test data.")
 
-    lazy val mergeReports: SettingKey[Boolean] =
+    lazy val jacocoMergedReportSettings: SettingKey[JacocoReportSettings] =
+      settingKey[JacocoReportSettings]("todo")
+
+    lazy val jacocoAutoMerge: SettingKey[Boolean] =
       settingKey[Boolean]("Indication whether to merge the unittest and integration test reports. Defaults to true.")
+
+    lazy val jacocoMergedReport: TaskKey[Unit] =
+      taskKey[Unit]("generates a merged report")
   }
 
   import autoImport._
 
-  lazy val srcConfig: Configuration = IntegrationTest
+  override def requires: Plugins = JvmPlugin && JacocoPlugin
 
-  lazy val conditionalMerge: Def.Initialize[Task[Unit]] = Def.task {
-    conditionalMergeAction(
-      (jacocoDataFile in Test).value,
-      (jacocoDataFile in IntegrationTest).value,
-      (mergedExecutionDataFile in IntegrationTest).value,
-      streams.value,
-      mergeReports.value)
-  }
+  protected lazy val srcConfig: Configuration = IntegrationTest
 
-  lazy val forceMerge: Def.Initialize[Task[Unit]] = Def.task {
-    mergeAction(
-      (jacocoDataFile in Test).value,
-      (jacocoDataFile in IntegrationTest).value,
-      (mergedExecutionDataFile in IntegrationTest).value,
-      streams.value)
+  private val autoMerge: Def.Initialize[Task[Unit]] = Def.taskDyn {
+    if (jacocoAutoMerge.value) {
+      Def.task {
+        jacocoMergedReport.value
+      }
+    } else {
+      Def.task {}
+    }
   }
 
   override def projectSettings: Seq[Setting[_]] =
     Defaults.itSettings ++
-    super.projectSettings ++
-      Seq(
-        (jacocoDataFile in IntegrationTest) := crossTarget.value / "jacoco-it.exec",
-        jacocoMerge := forceMerge.value,
-        mergeReports := true,
-        (mergedExecutionDataFile in IntegrationTest) := crossTarget.value / "jacoco-merged.exec",
-        (jacocoReport in IntegrationTest) := Reporting.reportAction(
-          (jacocoOutputDirectory in IntegrationTest).value,
-          (mergedExecutionDataFile in IntegrationTest).value,
-          (jacocoReportSettings in IntegrationTest).value,
-          (coveredSources in IntegrationTest).value,
-          (classesToCover in IntegrationTest).value,
-          (jacocoSourceSettings in IntegrationTest).value,
-          (streams in IntegrationTest).value
-        ),
-        jacocoReport in IntegrationTest := ((jacocoReport in IntegrationTest) dependsOn conditionalMerge).value,
-        jacoco in IntegrationTest := (jacoco in IntegrationTest).value
-      )
+      super.projectSettings ++
+      // move the test reports to a subdirectory to disambiguate
+      Seq(jacocoReportDirectory in Test := (jacocoDirectory in Test).value / "report" / "test") ++
+      inConfig(IntegrationTest) {
+        Seq(
+          jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
+          jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
+          jacocoMergeData := mergeAction(
+            (jacocoDataFile in Test).value,
+            (jacocoDataFile in IntegrationTest).value,
+            (jacocoMergedDataFile in IntegrationTest).value,
+            streams.value),
+          jacocoAutoMerge := true,
+          jacocoMergedDataFile := jacocoDataDirectory.value / "jacoco-merged.exec",
+          jacocoReportSettings := JacocoReportSettings("Jacoco Integration Test Coverage Report"),
+          jacocoMergedReportSettings := JacocoReportSettings("Jacoco Merged Coverage Report"),
+          jacocoMergedReport := Def
+            .task(
+              Reporting.reportAction(
+                jacocoDirectory.value / "report" / "merged",
+                jacocoMergedDataFile.value,
+                jacocoMergedReportSettings.value,
+                coveredSources.value,
+                classesToCover.value,
+                jacocoSourceSettings.value,
+                streams.value
+              )
+            )
+            .dependsOn(jacocoMergeData)
+            .value,
+          jacocoReport := Def.sequential(jacocoReport, autoMerge).value
+        )
+      }
 }

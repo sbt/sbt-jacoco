@@ -20,20 +20,6 @@ import sbt.Keys._
 import sbt._
 
 private[jacoco] trait Merging {
-  def conditionalMergeAction(
-      utExecutionData: File,
-      itExecutionData: File,
-      mergedExecutionData: File,
-      streams: TaskStreams,
-      mergeReports: Boolean): Unit = {
-
-    if (mergeReports) {
-      mergeAction(utExecutionData, itExecutionData, mergedExecutionData, streams)
-    } else {
-      streams.log debug "Not merging execution data!"
-    }
-  }
-
   def mergeAction(
       utExecutionData: File,
       itExecutionData: File,

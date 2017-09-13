@@ -30,7 +30,7 @@ trait JacocoKeys {
 
   val jacocoAggregateReport: TaskKey[Unit] = taskKey[Unit]("Generates an aggregated JaCoCo report.")
 
-  val jacocoOutputDirectory: SettingKey[File] =
+  val jacocoDirectory: SettingKey[File] =
     settingKey[File]("Where JaCoCo should store its execution data and reports.")
   val jacocoAggregateReportDirectory: SettingKey[File] =
     settingKey[File]("Where JaCoCo should store its aggregate reports.")
@@ -57,6 +57,9 @@ trait JacocoKeys {
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
   val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
   val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
+
+  private[jacoco] val jacocoReportDirectory: SettingKey[File] = settingKey[File]("todo")
+  private[jacoco] val jacocoDataDirectory: SettingKey[File] = settingKey[File]("todo")
 
   private[jacoco] val coveredSources: TaskKey[Seq[File]] = taskKey[Seq[File]]("Covered Sources.")
 

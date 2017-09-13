@@ -5,17 +5,21 @@
 > it:jacoco
 
 # instrumented classes - common to both tests
-$ exists target/scala-2.10/instrumented-classes
+$ exists target/scala-2.10/jacoco/instrumented-classes
 
 # unit tests
-$ exists target/scala-2.10/jacoco.exec
-$ exists target/scala-2.10/jacoco/html/index.html
+$ exists target/scala-2.10/jacoco/data/jacoco.exec
+$ exists target/scala-2.10/jacoco/report/test/html/index.html
 
 # integration tests
-$ exists target/scala-2.10/jacoco-it.exec
-
-# fixme
-# $ exists target/scala-2.10/it-jacoco/html/index.html
+$ exists target/scala-2.10/jacoco/data/jacoco-it.exec
+$ exists target/scala-2.10/jacoco/report/it/html/index.html
 
 # should not have a merged report
-$ absent target/scala-2.10/jacoco-merged.exec
+$ absent target/scala-2.10/jacoco/data/jacoco-merged.exec
+$ absent target/scala-2.10/jacoco/report/merged
+
+# manually trigger report merge
+> it:jacocoMergedReport
+$ exists target/scala-2.10/jacoco/data/jacoco-merged.exec
+$ exists target/scala-2.10/jacoco/report/merged/html/index.html

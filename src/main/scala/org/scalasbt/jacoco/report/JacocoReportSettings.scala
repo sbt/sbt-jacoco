@@ -16,12 +16,17 @@ import org.scalasbt.jacoco.report.formats.JacocoReportFormat
 
 case class JacocoReportSettings(
     title: String = "Jacoco Coverage Report",
+    subDirectory: Option[String] = None,
     thresholds: JacocoThresholds = JacocoThresholds(),
     formats: Seq[JacocoReportFormat] = Seq(JacocoReportFormats.ScalaHTML),
     fileEncoding: String = "utf-8") {
 
   def withTitle(title: String): JacocoReportSettings = {
     copy(title = title)
+  }
+
+  def withSubDirectory(subDirectory: String): JacocoReportSettings = {
+    copy(subDirectory = Some(subDirectory))
   }
 
   def withThresholds(thresholds: JacocoThresholds): JacocoReportSettings = {

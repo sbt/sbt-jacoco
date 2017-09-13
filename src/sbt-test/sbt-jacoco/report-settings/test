@@ -4,12 +4,12 @@
 > jacoco
 
 # instrumented classes
-$ exists target/scala-2.10/instrumented-classes
+$ exists target/scala-2.10/jacoco/instrumented-classes
 
 # results
-$ exists target/scala-2.10/jacoco.exec
+$ exists target/scala-2.10/jacoco/data/jacoco.exec
 
 # report formats
-$ exists target/scala-2.10/jacoco/html/index.html
-$ exists target/scala-2.10/jacoco/jacoco.xml
-$ exists target/scala-2.10/jacoco/jacoco.csv
+$ exists target/scala-2.10/jacoco/report/html/index.html
+$ exists target/scala-2.10/jacoco/report/jacoco.xml
+$ exists target/scala-2.10/jacoco/report/jacoco.csv
