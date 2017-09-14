@@ -48,22 +48,29 @@ class Report(
   }
 
   private[jacoco] def checkCoverage(bundle: IBundleCoverage) = {
-    streams.log info ""
-    streams.log info s"------- ${reportSettings.title} --------"
-    streams.log info ""
-    val checkResult = checkCounter("Lines", bundle.getLineCounter, reportSettings.thresholds.line) ::
-      checkCounter("Instructions", bundle.getInstructionCounter, reportSettings.thresholds.instruction) ::
-      checkCounter("Branches", bundle.getBranchCounter, reportSettings.thresholds.branch) ::
-      checkCounter("Methods", bundle.getMethodCounter, reportSettings.thresholds.method) ::
-      checkCounter("Complexity", bundle.getComplexityCounter, reportSettings.thresholds.complexity) ::
-      checkCounter("Class", bundle.getClassCounter, reportSettings.thresholds.clazz) ::
+    val sb = StringBuilder.newBuilder
+
+    sb ++= "\n------- "
+    sb ++= reportSettings.title
+    sb ++= " -------\n\n"
+
+    val checkResult = checkCounter("Lines", bundle.getLineCounter, reportSettings.thresholds.line, sb) ::
+      checkCounter("Instructions", bundle.getInstructionCounter, reportSettings.thresholds.instruction, sb) ::
+      checkCounter("Branches", bundle.getBranchCounter, reportSettings.thresholds.branch, sb) ::
+      checkCounter("Methods", bundle.getMethodCounter, reportSettings.thresholds.method, sb) ::
+      checkCounter("Complexity", bundle.getComplexityCounter, reportSettings.thresholds.complexity, sb) ::
+      checkCounter("Class", bundle.getClassCounter, reportSettings.thresholds.clazz, sb) ::
       Nil
-    streams.log info s"Check $reportDirectory for detail report"
-    streams.log info ""
+
+    sb ++= "\nCheck "
+    sb ++= reportDirectory.getAbsolutePath
+    sb ++= " for detailed report\n "
+    streams.log.info(sb.toString())
+
     !(checkResult contains false)
   }
 
-  private[jacoco] def checkCounter(unit: String, c: ICounter, required: Double) = {
+  def checkCounter(unit: String, c: ICounter, required: Double, summaryBuilder: StringBuilder): Boolean = {
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
     val coveredRatio = if (c.getCoveredRatio.isNaN) 0 else c.getCoveredRatio
@@ -72,8 +79,22 @@ class Report(
     val sign = if (success) ">=" else "<"
     val status = if (success) "OK" else "NOK"
     val formattedRatio = percentageFormat.format(ratioPercent)
-    streams.log.info(
-      s"$unit: $formattedRatio% ($sign required $required%) covered, $missedCount of $totalCount missed, $status")
+
+    summaryBuilder ++= unit
+    summaryBuilder ++= ": "
+    summaryBuilder ++= formattedRatio
+    summaryBuilder ++= "% ("
+    summaryBuilder ++= sign
+    summaryBuilder ++= " required "
+    summaryBuilder ++= required.toString
+    summaryBuilder ++= "%) covered, "
+    summaryBuilder ++= missedCount.toString
+    summaryBuilder ++= " of "
+    summaryBuilder ++= totalCount.toString
+    summaryBuilder ++= " missed, "
+    summaryBuilder ++= status
+    summaryBuilder ++= "\n"
+
     success
   }
 
