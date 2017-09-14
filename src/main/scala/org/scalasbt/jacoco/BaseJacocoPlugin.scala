@@ -17,26 +17,14 @@ import java.io.File
 import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
 import sbt.Keys._
-import sbt._
 import sbt.plugins.JvmPlugin
+import sbt.{Def, _}
 
 private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
   protected implicit val runtimeData: RuntimeData = new RuntimeData()
   protected implicit val loggerRuntime: IRuntime = new LoggerRuntime()
 
   override def requires: Plugins = JvmPlugin
-
-  private lazy val submoduleSettingsTask = Def.task {
-    (
-      (classesToCover in srcConfig).?.value,
-      (sourceDirectory in Compile).?.value,
-      (jacocoDataFile in srcConfig).?.value)
-  }
-
-  private lazy val submoduleSettings =
-    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, srcConfig)))
-
-  private lazy val submoduleCoverTasks = (jacoco in srcConfig).all(ScopeFilter(inAggregates(ThisProject)))
 
   protected def srcConfig: Configuration
 
@@ -54,9 +42,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
 
   private def settingValues = Seq(
     jacocoDirectory := crossTarget.value / "jacoco",
-    jacocoDataDirectory := jacocoDirectory.value / "data",
     jacocoReportDirectory := jacocoDirectory.value / "report",
-    jacocoAggregateReportDirectory := jacocoDirectory.value / "report" / "aggregate",
     jacocoSourceSettings := JacocoSourceSettings(),
     jacocoReportSettings := JacocoReportSettings(),
     jacocoAggregateReportSettings := JacocoReportSettings(title = "Jacoco Aggregate Coverage Report"),
@@ -93,7 +79,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       streams.value
     ),
     jacocoAggregateReport := Reporting.aggregateReportAction(
-      jacocoAggregateReportDirectory.value,
+      jacocoReportDirectory.value / "aggregate",
       aggregateExecutionDataFiles.value,
       jacocoAggregateReportSettings.value,
       aggregateCoveredSources.value,
@@ -110,16 +96,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       fork.value,
       streams.value),
     definedTests := (definedTests in srcConfig).value,
-    definedTestNames := (definedTestNames in srcConfig).value,
-    // internal tasks
-    coveredSources := (sourceDirectories in Compile).value,
-    classesToCover := filterClassesToCover(
-      (classDirectory in Compile).value,
-      jacocoIncludes.value,
-      jacocoExcludes.value),
-    aggregateClassesToCover := submoduleSettings.value.flatMap(_._1).flatten.distinct,
-    aggregateCoveredSources := submoduleSettings.value.flatMap(_._2).distinct,
-    aggregateExecutionDataFiles := submoduleSettings.value.flatMap(_._3).distinct
+    definedTestNames := (definedTestNames in srcConfig).value
   )
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
@@ -140,4 +117,42 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     entry.stripSuffix(ClassExt).replace('/', '.')
 
   private val ClassExt = ".class"
+
+  protected lazy val submoduleSettingsTask: Def.Initialize[Task[(Seq[File], Option[File], Option[File])]] = Def.task {
+    (classesToCover.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)
+  }
+
+  protected lazy val submoduleSettings: Def.Initialize[Task[Seq[(Seq[File], Option[File], Option[File])]]] =
+    submoduleSettingsTask.all(ScopeFilter(inAggregates(ThisProject), inConfigurations(Compile, srcConfig)))
+
+  protected lazy val aggregateCoveredSources: Def.Initialize[Task[Seq[File]]] = Def.task {
+    submoduleSettings.value.flatMap(_._2).distinct
+  }
+
+  protected lazy val classesToCover: Def.Initialize[Task[Seq[File]]] = Def.task {
+    filterClassesToCover(
+      (classDirectory in Compile).value,
+      (jacocoIncludes in srcConfig).value,
+      (jacocoExcludes in srcConfig).value)
+  }
+
+  protected lazy val aggregateClassesToCover: Def.Initialize[Task[Seq[File]]] = Def.task {
+    submoduleSettings.value.flatMap(_._1).distinct
+  }
+
+  protected lazy val aggregateExecutionDataFiles: Def.Initialize[Task[Seq[File]]] = Def.task {
+    submoduleSettings.value.flatMap(_._3).distinct
+  }
+
+  protected lazy val coveredSources: Def.Initialize[Task[Seq[File]]] = Def.task {
+    (sourceDirectories in Compile).value
+  }
+
+  protected lazy val jacocoDataDirectory: Def.Initialize[File] = Def.setting {
+    jacocoDirectory.value / "data"
+  }
+
+  protected lazy val submoduleCoverTasks: Def.Initialize[Task[Seq[Unit]]] = {
+    (jacoco in srcConfig).all(ScopeFilter(inAggregates(ThisProject)))
+  }
 }

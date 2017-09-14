@@ -32,8 +32,9 @@ trait JacocoKeys {
 
   val jacocoDirectory: SettingKey[File] =
     settingKey[File]("Where JaCoCo should store its execution data and reports.")
-  val jacocoAggregateReportDirectory: SettingKey[File] =
-    settingKey[File]("Where JaCoCo should store its aggregate reports.")
+
+  val jacocoReportDirectory: SettingKey[File] = settingKey[File]("Where JaCoCo should output reports to.")
+
   val jacocoDataFile: SettingKey[File] = settingKey[File]("Execution data output file.")
 
   val jacocoSourceSettings: SettingKey[JacocoSourceSettings] =
@@ -49,27 +50,11 @@ trait JacocoKeys {
   val jacocoExcludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
     "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
 
-  val jacocoInstrumentedDirectory: SettingKey[File] =
-    settingKey[File]("Directory containing the instrumented classes.")
+  val jacocoInstrumentedDirectory: SettingKey[File] = settingKey[File]("Directory containing the instrumented classes.")
 
   // type aliases for auto import
   val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
   val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
   val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
-
-  private[jacoco] val jacocoReportDirectory: SettingKey[File] = settingKey[File]("todo")
-  private[jacoco] val jacocoDataDirectory: SettingKey[File] = settingKey[File]("todo")
-
-  private[jacoco] val coveredSources: TaskKey[Seq[File]] = taskKey[Seq[File]]("Covered Sources.")
-
-  private[jacoco] val aggregateCoveredSources: TaskKey[Seq[File]] =
-    taskKey[Seq[File]]("Covered Sources across all aggregated projects.")
-  private[jacoco] val classesToCover: TaskKey[Seq[File]] =
-    taskKey[Seq[File]]("compiled classes (filtered by includes and excludes) that will be covered")
-  private[jacoco] val aggregateClassesToCover: TaskKey[Seq[File]] = taskKey[Seq[File]](
-    "compiled classes (filtered by includes and excludes) that will be covered across all aggregated project")
-
-  private[jacoco] val aggregateExecutionDataFiles: TaskKey[Seq[File]] =
-    taskKey[Seq[File]]("All execution data output files for aggregated modules.")
 }
