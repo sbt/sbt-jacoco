@@ -12,6 +12,8 @@
 
 package org.scalasbt.jacoco
 
+import java.io.File
+
 import org.jacoco.core.analysis.{IBundleCoverage, ICounter}
 import org.mockito.Mockito.{mock, when}
 import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
@@ -31,7 +33,7 @@ class TestCounters {
       reportSettings = JacocoReportSettings(
         thresholds =
           JacocoThresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)),
-      reportDirectory = null,
+      reportDirectory = new File("."),
       executionDataFiles = Nil,
       classDirectories = Nil,
       sourceDirectories = Nil
@@ -58,7 +60,7 @@ class TestCounters {
   }
 
   def checkCounter(required: Double): Boolean = {
-    report.checkCounter("foo", mockICounter, required)
+    report.checkCounter("foo", mockICounter, required, StringBuilder.newBuilder)
   }
 
   def checkBundle(): Boolean = {
