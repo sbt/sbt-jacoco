@@ -16,15 +16,15 @@ import java.io.File
 
 import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
-import org.scalasbt.jacoco.data.ExecutionDataUtils
+import org.scalasbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils}
 import org.scalasbt.jacoco.report.Reporting
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbt.{Def, _}
 
 private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
-  protected implicit val runtimeData: RuntimeData = new RuntimeData()
-  protected implicit val loggerRuntime: IRuntime = new LoggerRuntime()
+  protected val runtimeData: RuntimeData = new RuntimeData()
+  protected val loggerRuntime: IRuntime = new LoggerRuntime()
 
   override def requires: Plugins = JvmPlugin
 
@@ -90,13 +90,16 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       streams.value
     ),
     clean := jacocoDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
-    fullClasspath := Instrumentation.instrumentAction(
+    fullClasspath := InstrumentationUtils.instrumentClasses(
       (products in Compile).value,
       (fullClasspath in srcConfig).value,
       jacocoInstrumentedDirectory.value,
       update.value,
       fork.value,
-      streams.value),
+      loggerRuntime,
+      runtimeData,
+      streams.value
+    ),
     definedTests := (definedTests in srcConfig).value,
     definedTestNames := (definedTestNames in srcConfig).value
   )

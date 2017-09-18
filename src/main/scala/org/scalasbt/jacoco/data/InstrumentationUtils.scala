@@ -10,51 +10,55 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.scalasbt.jacoco
+package org.scalasbt.jacoco.data
 
 import java.io.FileInputStream
 
 import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.{IRuntime, OfflineInstrumentationAccessGenerator, RuntimeData}
+import resource._
 import sbt.Keys._
 import sbt._
-import resource._
 
-private[jacoco] object Instrumentation {
+object InstrumentationUtils {
 
-  def instrumentAction(
-      compileProducts: Seq[File],
-      fullClasspath: Classpath,
-      instrumentedClassDirectory: File,
-      resolved: UpdateReport,
+  def instrumentClasses(
+      classFiles: Seq[File],
+      classpath: Classpath,
+      destDirectory: File,
+      updateReport: UpdateReport,
       forked: Boolean,
-      streams: TaskStreams)(implicit runtime: IRuntime, runtimeData: RuntimeData): Seq[Attributed[File]] = {
+      runtime: IRuntime,
+      runtimeData: RuntimeData,
+      streams: TaskStreams): Seq[Attributed[File]] = {
 
-    val classCount = compileProducts.foldLeft(0) { (acc, p) =>
+    val classCount = classFiles.foldLeft(0) { (acc, p) =>
       acc + (p ** "*.class").get.size
     }
 
-    streams.log.info(s"Instrumenting $classCount classes to $instrumentedClassDirectory")
-    streams.log.debug(s"instrumenting products: $compileProducts")
+    streams.log.info(s"Instrumenting $classCount classes to $destDirectory")
+    streams.log.debug(s"instrumenting products: ${classFiles.mkString(",")}")
 
     val (jacocoAgent, instrumenter) = if (forked) {
-      val agentJars = resolved select (module = moduleFilter(name = "org.jacoco.agent"))
+      val agentJars = updateReport.select(module = moduleFilter(name = "org.jacoco.agent"))
 
       val tmp = IO.temporaryDirectory
-      val jacocoAgent = agentJars flatMap (IO.unzip(_, tmp, (_: String) endsWith ".jar")) map Attributed.blank
-      streams.log debug s"Found jacoco agent: $jacocoAgent"
-      (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
+      val jacocoAgent = agentJars
+        .flatMap(IO.unzip(_, tmp, (_: String).endsWith(".jar")))
+        .map(Attributed.blank)
 
+      streams.log.debug(s"Found jacoco agent: $jacocoAgent")
+      (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
     } else {
       runtime.shutdown()
       runtime.startup(runtimeData)
-      (Seq(), new Instrumenter(runtime))
+      (Nil, new Instrumenter(runtime))
     }
 
-    val rebaseClassFiles = Path.rebase(compileProducts, instrumentedClassDirectory)
+    val rebaseClassFiles = Path.rebase(classFiles, destDirectory)
 
     for {
-      classFile <- (PathFinder(compileProducts) ** "*.class").get
+      classFile <- (PathFinder(classFiles) ** "*.class").get
       classStream <- managed(new FileInputStream(classFile))
     } {
       streams.log.debug(s"instrumenting $classFile")
@@ -62,6 +66,6 @@ private[jacoco] object Instrumentation {
       IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
 
-    jacocoAgent ++ (Attributed.blank(instrumentedClassDirectory) +: fullClasspath)
+    jacocoAgent ++ (Attributed.blank(destDirectory) +: classpath)
   }
 }
