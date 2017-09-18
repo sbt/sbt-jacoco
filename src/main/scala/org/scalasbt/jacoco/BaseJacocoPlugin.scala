@@ -16,6 +16,8 @@ import java.io.File
 
 import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
+import org.scalasbt.jacoco.data.SavingData
+import org.scalasbt.jacoco.report.Reporting
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbt.{Def, _}

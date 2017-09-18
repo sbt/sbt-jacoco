@@ -12,12 +12,13 @@
 
 package org.scalasbt.jacoco
 
-import org.scalasbt.jacoco.report.JacocoReportSettings
+import org.scalasbt.jacoco.data.Merging
+import org.scalasbt.jacoco.report.{JacocoReportSettings, Reporting}
 import sbt.Keys._
-import sbt.{Def, _}
 import sbt.plugins.JvmPlugin
+import sbt.{Def, _}
 
-object JacocoItPlugin extends BaseJacocoPlugin with Merging {
+object JacocoItPlugin extends BaseJacocoPlugin {
 
   object autoImport {
     lazy val jacocoMergeData: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
@@ -60,7 +61,7 @@ object JacocoItPlugin extends BaseJacocoPlugin with Merging {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
           jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
-          jacocoMergeData := mergeAction(
+          jacocoMergeData := Merging.mergeAction(
             (jacocoDataFile in Test).value,
             (jacocoDataFile in IntegrationTest).value,
             (jacocoMergedDataFile in IntegrationTest).value,
