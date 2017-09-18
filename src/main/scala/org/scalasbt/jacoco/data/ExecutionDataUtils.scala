@@ -12,17 +12,30 @@
 
 package org.scalasbt.jacoco.data
 
-import java.io._
+import java.io.FileOutputStream
 
 import org.jacoco.core.data.ExecutionDataWriter
+import org.jacoco.core.runtime.RuntimeData
 import org.jacoco.core.tools.ExecFileLoader
 import resource._
-import sbt.Keys._
+import sbt.Keys.TaskStreams
 import sbt._
 
-private[jacoco] object Merging {
-  def mergeExecutionData(sources: Seq[File], destination: File, streams: TaskStreams): Unit = {
+object ExecutionDataUtils {
+  def saveRuntimeData(data: RuntimeData, dest: File, forked: Boolean, streams: TaskStreams): Unit = {
 
+    if (!forked) {
+      streams.log.debug(s"writing execution data to $dest")
+      IO.createDirectory(dest.getParentFile)
+
+      for (os <- managed(new FileOutputStream(dest))) {
+        val executionDataWriter = new ExecutionDataWriter(os)
+        data.collect(executionDataWriter, executionDataWriter, true)
+      }
+    }
+  }
+
+  def mergeExecutionData(sources: Seq[File], destination: File, streams: TaskStreams): Unit = {
     val files = sources.filter(_.exists())
     streams.log.debug(s"Found data files: ${files.map(_.absolutePath).mkString(", ")}")
 
