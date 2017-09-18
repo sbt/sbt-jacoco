@@ -4,23 +4,21 @@ import java.io.FileOutputStream
 
 import org.jacoco.core.data.ExecutionDataWriter
 import org.jacoco.core.runtime.RuntimeData
-import sbt.{File, IO}
+import resource._
 import sbt.Keys.TaskStreams
+import sbt.{File, IO}
 
 object SavingData {
   def saveDataAction(jacocoFile: File, forked: Boolean, streams: TaskStreams)(
       implicit runtimeData: RuntimeData): Unit = {
 
     if (!forked) {
-      IO createDirectory jacocoFile.getParentFile
-      val executionDataStream = new FileOutputStream(jacocoFile)
-      try {
-        streams.log debug ("writing execution data to " + jacocoFile)
-        val executionDataWriter = new ExecutionDataWriter(executionDataStream)
-        runtimeData collect (executionDataWriter, executionDataWriter, true)
-        executionDataStream.flush()
-      } finally {
-        executionDataStream.close()
+      streams.log.debug(s"writing execution data to $jacocoFile")
+      IO.createDirectory(jacocoFile.getParentFile)
+
+      for (os <- managed(new FileOutputStream(jacocoFile))) {
+        val executionDataWriter = new ExecutionDataWriter(os)
+        runtimeData.collect(executionDataWriter, executionDataWriter, true)
       }
     }
   }

@@ -11,6 +11,7 @@ val jacocoVersion = "0.7.9"
 libraryDependencies ++= Seq(
   "org.jacoco"    %  "org.jacoco.core"      % jacocoVersion,
   "org.jacoco"    %  "org.jacoco.report"    % jacocoVersion,
+  "com.jsuereth"  %% "scala-arm"            % "2.0",
   "org.scalatest" %% "scalatest"            % "3.0.4"         % Test,
   "org.mockito"   %  "mockito-all"          % "1.10.19"       % Test
 )
