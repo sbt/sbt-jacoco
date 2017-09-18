@@ -61,9 +61,11 @@ object JacocoItPlugin extends BaseJacocoPlugin {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
           jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
-          jacocoMergeData := Merging.mergeAction(
-            (jacocoDataFile in Test).value,
-            (jacocoDataFile in IntegrationTest).value,
+          jacocoMergeData := Merging.mergeExecutionData(
+            Seq(
+              (jacocoDataFile in Test).value,
+              (jacocoDataFile in IntegrationTest).value
+            ),
             (jacocoMergedDataFile in IntegrationTest).value,
             streams.value),
           jacocoAutoMerge := true,

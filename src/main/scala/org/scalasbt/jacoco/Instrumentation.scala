@@ -18,6 +18,7 @@ import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.{IRuntime, OfflineInstrumentationAccessGenerator, RuntimeData}
 import sbt.Keys._
 import sbt._
+import resource._
 
 private[jacoco] object Instrumentation {
 
@@ -54,14 +55,10 @@ private[jacoco] object Instrumentation {
 
     for {
       classFile <- (PathFinder(compileProducts) ** "*.class").get
-      _ = streams.log debug ("instrumenting " + classFile)
-      classStream = new FileInputStream(classFile)
-      instrumentedClass = try {
-        instrumenter instrument (classStream, classFile.name)
-      } finally {
-        classStream.close()
-      }
+      classStream <- managed(new FileInputStream(classFile))
     } {
+      streams.log.debug(s"instrumenting $classFile")
+      val instrumentedClass = instrumenter.instrument(classStream, classFile.name)
       IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
     }
 

@@ -16,46 +16,27 @@ import java.io._
 
 import org.jacoco.core.data.ExecutionDataWriter
 import org.jacoco.core.tools.ExecFileLoader
+import resource._
 import sbt.Keys._
 import sbt._
 
 private[jacoco] object Merging {
-  def mergeAction(
-      utExecutionData: File,
-      itExecutionData: File,
-      mergedExecutionData: File,
-      streams: TaskStreams): Unit = {
+  def mergeExecutionData(sources: Seq[File], destination: File, streams: TaskStreams): Unit = {
 
-    val sources = Seq(utExecutionData, itExecutionData).filter(_.exists())
-    streams.log.debug("Found data files: %s".format(sources.map(_.absolutePath).mkString(", ")))
+    val files = sources.filter(_.exists())
+    streams.log.debug(s"Found data files: ${files.map(_.absolutePath).mkString(", ")}")
 
     val loader = new ExecFileLoader()
-    sources.foreach(loader.load)
+    files.foreach(loader.load)
 
-    streams.log.debug("Writing merged data to: %s".format(mergedExecutionData.getAbsolutePath))
+    streams.log.debug(s"Writing merged data to: ${destination.getAbsolutePath}")
 
-    IO.createDirectory(mergedExecutionData.getParentFile)
+    IO.createDirectory(destination.getParentFile)
 
-    writeToFile(mergedExecutionData) { outputStream =>
-      val dataWriter = new ExecutionDataWriter(outputStream)
-      loader.getSessionInfoStore accept dataWriter
-      loader.getExecutionDataStore accept dataWriter
-    }
-  }
-
-  private def writeToFile(f: File)(writeFn: OutputStream => Unit): Unit = {
-    try {
-      val out = new BufferedOutputStream(new FileOutputStream(f))
-      try {
-        writeFn(out)
-      } catch {
-        case e: IOException => sys.error("Error merging Jacoco files: %s".format(e.getMessage))
-      } finally {
-        out.close()
-      }
-    } catch {
-      case e: IOException =>
-        sys.error("Unable to write out Jacoco file during merge: %s".format(e.getMessage))
+    for (os <- managed(new FileOutputStream(destination))) {
+      val dataWriter = new ExecutionDataWriter(os)
+      loader.getSessionInfoStore.accept(dataWriter)
+      loader.getExecutionDataStore.accept(dataWriter)
     }
   }
 }
