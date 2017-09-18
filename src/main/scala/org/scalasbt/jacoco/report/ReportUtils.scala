@@ -15,12 +15,10 @@ package org.scalasbt.jacoco.report
 import sbt.Keys._
 import sbt._
 
-import scala.language.implicitConversions
-
-private[jacoco] object Reporting {
-  def reportAction(
-      reportDirectory: File,
-      executionDataFile: File,
+object ReportUtils {
+  def generateReport(
+      destinationDirectory: File,
+      executionData: File,
       reportSettings: JacocoReportSettings,
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
@@ -28,8 +26,8 @@ private[jacoco] object Reporting {
       streams: TaskStreams): Unit = {
 
     val report = new Report(
-      reportDirectory = reportDirectory,
-      executionDataFiles = Seq(executionDataFile),
+      reportDirectory = destinationDirectory,
+      executionDataFiles = Seq(executionData),
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
@@ -40,8 +38,8 @@ private[jacoco] object Reporting {
     report.generate()
   }
 
-  def aggregateReportAction(
-      reportDirectory: File,
+  def generateAggregateReport(
+      destinationDirectory: File,
       executionDataFiles: Seq[File],
       reportSettings: JacocoReportSettings,
       sourceDirectories: Seq[File],
@@ -50,7 +48,7 @@ private[jacoco] object Reporting {
       streams: TaskStreams): Unit = {
 
     val report = new Report(
-      reportDirectory = reportDirectory,
+      reportDirectory = destinationDirectory,
       executionDataFiles = executionDataFiles,
       classDirectories = classDirectories,
       sourceDirectories = sourceDirectories,
@@ -61,9 +59,4 @@ private[jacoco] object Reporting {
 
     report.generate()
   }
-
-  class FileWithOrElse(file: File) {
-    def orElse(otherFileName: String): File = if (file.exists) file else new File(file.getParent, otherFileName)
-  }
-  implicit def fileToFileWithOrElse(f: File): FileWithOrElse = new FileWithOrElse(f)
 }

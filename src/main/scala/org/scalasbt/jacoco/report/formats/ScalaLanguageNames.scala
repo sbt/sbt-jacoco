@@ -10,14 +10,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.scalasbt.jacoco
+package org.scalasbt.jacoco.report.formats
 
 import org.jacoco.report.JavaNames
 import org.scalasbt.jacoco.filter.ScalaForwarderDetector
 
 import scala.reflect.NameTransformer._
 
-class ScalaLanguageNames extends JavaNames {
+private[formats] class ScalaLanguageNames extends JavaNames {
   override def getPackageName(vmname: String): String =
     super.getPackageName(decode(vmname))
 

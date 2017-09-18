@@ -13,7 +13,7 @@
 package org.scalasbt.jacoco
 
 import org.scalasbt.jacoco.data.ExecutionDataUtils
-import org.scalasbt.jacoco.report.{JacocoReportSettings, Reporting}
+import org.scalasbt.jacoco.report.{JacocoReportSettings, ReportUtils}
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbt.{Def, _}
@@ -74,7 +74,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
           jacocoMergedReportSettings := JacocoReportSettings("Jacoco Merged Coverage Report"),
           jacocoMergedReport := Def
             .task(
-              Reporting.reportAction(
+              ReportUtils.generateReport(
                 jacocoDirectory.value / "report" / "merged",
                 jacocoMergedDataFile.value,
                 jacocoMergedReportSettings.value,

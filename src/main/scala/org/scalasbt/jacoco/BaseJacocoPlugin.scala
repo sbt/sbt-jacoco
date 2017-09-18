@@ -17,7 +17,7 @@ import java.io.File
 import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
 import org.scalasbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils}
-import org.scalasbt.jacoco.report.Reporting
+import org.scalasbt.jacoco.report.ReportUtils
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbt.{Def, _}
@@ -71,7 +71,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       .task(ExecutionDataUtils.saveRuntimeData(runtimeData, jacocoDataFile.value, fork.value, streams.value))
       .dependsOn(test)
       .value,
-    jacocoReport := Reporting.reportAction(
+    jacocoReport := ReportUtils.generateReport(
       jacocoReportDirectory.value,
       jacocoDataFile.value,
       jacocoReportSettings.value,
@@ -80,7 +80,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       jacocoSourceSettings.value,
       streams.value
     ),
-    jacocoAggregateReport := Reporting.aggregateReportAction(
+    jacocoAggregateReport := ReportUtils.generateAggregateReport(
       jacocoReportDirectory.value / "aggregate",
       aggregateExecutionDataFiles.value,
       jacocoAggregateReportSettings.value,
