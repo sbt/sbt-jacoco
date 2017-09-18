@@ -16,7 +16,7 @@ import java.io.File
 
 import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import org.scalasbt.jacoco.build.BuildInfo
-import org.scalasbt.jacoco.data.SavingData
+import org.scalasbt.jacoco.data.ExecutionDataUtils
 import org.scalasbt.jacoco.report.Reporting
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
@@ -68,7 +68,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacoco := (jacocoReport dependsOn jacocoCheck).value,
     jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
     jacocoCheck := Def
-      .task(SavingData.saveDataAction(jacocoDataFile.value, fork.value, streams.value))
+      .task(ExecutionDataUtils.saveRuntimeData(runtimeData, jacocoDataFile.value, fork.value, streams.value))
       .dependsOn(test)
       .value,
     jacocoReport := Reporting.reportAction(

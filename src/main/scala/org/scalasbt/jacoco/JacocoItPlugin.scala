@@ -12,7 +12,7 @@
 
 package org.scalasbt.jacoco
 
-import org.scalasbt.jacoco.data.Merging
+import org.scalasbt.jacoco.data.ExecutionDataUtils
 import org.scalasbt.jacoco.report.{JacocoReportSettings, Reporting}
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
@@ -61,7 +61,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
           jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
-          jacocoMergeData := Merging.mergeExecutionData(
+          jacocoMergeData := ExecutionDataUtils.mergeExecutionData(
             Seq(
               (jacocoDataFile in Test).value,
               (jacocoDataFile in IntegrationTest).value

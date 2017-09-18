@@ -50,7 +50,8 @@ trait JacocoKeys {
   val jacocoExcludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
     "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
 
-  val jacocoInstrumentedDirectory: SettingKey[File] = settingKey[File]("Directory containing the instrumented classes.")
+  val jacocoInstrumentedDirectory: SettingKey[File] =
+    settingKey[File]("Directory containing the instrumented classes.")
 
   // type aliases for auto import
   val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
