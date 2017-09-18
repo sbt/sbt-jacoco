@@ -10,7 +10,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.scalasbt.jacoco
+package org.scalasbt.jacoco.report
 
 import java.io.File
 import java.text.DecimalFormat
@@ -20,7 +20,6 @@ import org.jacoco.core.data._
 import org.jacoco.core.tools.ExecFileLoader
 import org.scalasbt.jacoco.filter.FilteringAnalyzer
 import org.scalasbt.jacoco.report.formats.JacocoReportFormat
-import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings}
 import sbt.Keys._
 
 class Report(
@@ -47,7 +46,7 @@ class Report(
     }
   }
 
-  private[jacoco] def checkCoverage(bundle: IBundleCoverage) = {
+  def checkCoverage(bundle: IBundleCoverage): Boolean = {
     val sb = StringBuilder.newBuilder
 
     sb ++= "\n------- "
@@ -70,7 +69,12 @@ class Report(
     !(checkResult contains false)
   }
 
-  def checkCounter(unit: String, c: ICounter, required: Double, summaryBuilder: StringBuilder): Boolean = {
+  private[jacoco] def checkCounter(
+      unit: String,
+      c: ICounter,
+      required: Double,
+      summaryBuilder: StringBuilder): Boolean = {
+
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
     val coveredRatio = if (c.getCoveredRatio.isNaN) 0 else c.getCoveredRatio
@@ -130,5 +134,4 @@ class Report(
 
     visitor.visitEnd()
   }
-
 }

@@ -10,12 +10,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.scalasbt.jacoco
+package org.scalasbt.jacoco.report
 
 import java.io.{File, Reader}
 
 import org.jacoco.report.{DirectorySourceFileLocator, ISourceFileLocator}
-import org.scalasbt.jacoco.report.JacocoSourceSettings
 
 class DirectoriesSourceFileLocator(directories: Seq[File], sourceSettings: JacocoSourceSettings)
     extends ISourceFileLocator {

@@ -10,7 +10,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.scalasbt.jacoco
+package org.scalasbt.jacoco.data
 
 import java.io._
 
@@ -19,7 +19,7 @@ import org.jacoco.core.tools.ExecFileLoader
 import sbt.Keys._
 import sbt._
 
-private[jacoco] trait Merging {
+private[jacoco] object Merging {
   def mergeAction(
       utExecutionData: File,
       itExecutionData: File,

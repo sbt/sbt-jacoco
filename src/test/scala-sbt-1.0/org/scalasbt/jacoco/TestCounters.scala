@@ -16,7 +16,7 @@ import java.io.File
 
 import org.jacoco.core.analysis.{IBundleCoverage, ICounter}
 import org.mockito.Mockito.{mock, when}
-import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds}
+import org.scalasbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings, JacocoThresholds, Report}
 import sbt.Keys.TaskStreams
 import sbt.internal.util.ManagedLogger
 
