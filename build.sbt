@@ -1,10 +1,10 @@
 name := "sbt-jacoco"
 organization := "org.scala-sbt"
 
-version := "3.0.0"
+version := "3.1.0-SNAPSHOT"
 
 sbtPlugin := true
-crossSbtVersions := Seq("0.13.16", "1.0.1")
+crossSbtVersions := Seq("0.13.16", "1.0.2")
 
 val jacocoVersion = "0.7.9"
 
