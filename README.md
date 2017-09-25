@@ -9,7 +9,7 @@ This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [J
 Install the plugin by adding the following to `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.scala-sbt" % "sbt-jacoco" % "3.0.0")
+addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "3.0.0")
 ```
 
 And then execute the plugin with `sbt jacoco`. This will instrument and run the unit tests and output the coverage

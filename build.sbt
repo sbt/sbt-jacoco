@@ -1,7 +1,7 @@
 name := "sbt-jacoco"
-organization := "org.scala-sbt"
+organization := "com.github.sbt"
 
-version := "3.1.0-SNAPSHOT"
+version := "3.0.1-SNAPSHOT"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.2")
@@ -25,7 +25,7 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code")
 
 enablePlugins(BuildInfoPlugin)
-buildInfoPackage := "org.scalasbt.jacoco.build"
+buildInfoPackage := "com.github.sbt.jacoco.build"
 buildInfoKeys := Seq[BuildInfoKey](
   resourceDirectory in Test,
   version,
