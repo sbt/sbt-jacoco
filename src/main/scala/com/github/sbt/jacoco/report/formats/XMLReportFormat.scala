@@ -16,9 +16,12 @@ import java.io.{File, FileOutputStream}
 
 import org.jacoco.report.IReportVisitor
 import org.jacoco.report.xml.XMLFormatter
+import sbt.io.IO
 
 class XMLReportFormat extends JacocoReportFormat {
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {
+    IO.createDirectory(directory)
+
     val formatter = new XMLFormatter()
     formatter.setOutputEncoding(encoding)
     formatter.createVisitor(new FileOutputStream(new File(directory, "jacoco.xml")))
