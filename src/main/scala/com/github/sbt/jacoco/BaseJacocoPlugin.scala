@@ -14,18 +14,14 @@ package com.github.sbt.jacoco
 
 import java.io.File
 
-import org.jacoco.core.runtime.{IRuntime, LoggerRuntime, RuntimeData}
 import com.github.sbt.jacoco.build.BuildInfo
-import com.github.sbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils}
+import com.github.sbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils, ProjectData}
 import com.github.sbt.jacoco.report.ReportUtils
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import sbt.{Def, _}
 
 private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
-  protected val runtimeData: RuntimeData = new RuntimeData()
-  protected val loggerRuntime: IRuntime = new LoggerRuntime()
-
   override def requires: Plugins = JvmPlugin
 
   protected def srcConfig: Configuration
@@ -68,7 +64,8 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacoco := (jacocoReport dependsOn jacocoCheck).value,
     jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
     jacocoCheck := Def
-      .task(ExecutionDataUtils.saveRuntimeData(runtimeData, jacocoDataFile.value, fork.value, streams.value))
+      .task(ExecutionDataUtils
+        .saveRuntimeData(projectData(thisProject.value), jacocoDataFile.value, fork.value, streams.value))
       .dependsOn(test)
       .value,
     jacocoReport := ReportUtils.generateReport(
@@ -96,8 +93,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       jacocoInstrumentedDirectory.value,
       update.value,
       fork.value,
-      loggerRuntime,
-      runtimeData,
+      projectData(thisProject.value),
       streams.value
     ),
     definedTests := (definedTests in srcConfig).value,
@@ -122,6 +118,10 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     entry.stripSuffix(ClassExt).replace('/', '.')
 
   private val ClassExt = ".class"
+
+  private def projectData(project: ResolvedProject): ProjectData = {
+    ProjectData(project.id)
+  }
 
   protected lazy val submoduleSettingsTask: Def.Initialize[Task[(Seq[File], Option[File], Option[File])]] = Def.task {
     (classesToCover.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)

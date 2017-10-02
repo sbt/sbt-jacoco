@@ -22,14 +22,14 @@ import sbt.Keys.TaskStreams
 import sbt._
 
 object ExecutionDataUtils {
-  def saveRuntimeData(data: RuntimeData, destination: File, forked: Boolean, streams: TaskStreams): Unit = {
+  def saveRuntimeData(data: ProjectData, destination: File, forked: Boolean, streams: TaskStreams): Unit = {
     if (!forked) {
       streams.log.debug(s"writing execution data to $destination")
       IO.createDirectory(destination.getParentFile)
 
       for (os <- managed(new FileOutputStream(destination))) {
         val executionDataWriter = new ExecutionDataWriter(os)
-        data.collect(executionDataWriter, executionDataWriter, true)
+        data.data.collect(executionDataWriter, executionDataWriter, true)
       }
     }
   }

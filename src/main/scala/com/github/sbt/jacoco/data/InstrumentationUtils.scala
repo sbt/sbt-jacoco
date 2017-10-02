@@ -15,7 +15,7 @@ package com.github.sbt.jacoco.data
 import java.io.FileInputStream
 
 import org.jacoco.core.instr.Instrumenter
-import org.jacoco.core.runtime.{IRuntime, OfflineInstrumentationAccessGenerator, RuntimeData}
+import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
 import resource._
 import sbt.Keys._
 import sbt._
@@ -28,8 +28,7 @@ object InstrumentationUtils {
       destDirectory: File,
       updateReport: UpdateReport,
       forked: Boolean,
-      runtime: IRuntime,
-      runtimeData: RuntimeData,
+      projectData: ProjectData,
       streams: TaskStreams): Seq[Attributed[File]] = {
 
     val classCount = classFiles.foldLeft(0) { (acc, p) =>
@@ -50,9 +49,9 @@ object InstrumentationUtils {
       streams.log.debug(s"Found jacoco agent: $jacocoAgent")
       (jacocoAgent, new Instrumenter(new OfflineInstrumentationAccessGenerator))
     } else {
-      runtime.shutdown()
-      runtime.startup(runtimeData)
-      (Nil, new Instrumenter(runtime))
+      projectData.runtime.shutdown()
+      projectData.runtime.startup(projectData.data)
+      (Nil, new Instrumenter(projectData.runtime))
     }
 
     val rebaseClassFiles = Path.rebase(classFiles, destDirectory)
