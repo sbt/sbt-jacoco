@@ -12,6 +12,7 @@
 
 package com.github.sbt.jacoco
 
+import com.github.sbt.jacoco.build.BuildInfo
 import com.github.sbt.jacoco.data.ExecutionDataUtils
 import com.github.sbt.jacoco.report.{JacocoReportSettings, ReportUtils}
 import sbt.Keys._
@@ -51,6 +52,17 @@ object JacocoItPlugin extends BaseJacocoPlugin {
       Def.task {}
     }
   }
+
+  override protected def dependencyValues: Seq[Setting[_]] = Seq(
+    libraryDependencies ++= {
+      if ((fork in Test).value || (fork in IntegrationTest).value) {
+        // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
+        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "test,it" classifier "runtime")
+      } else {
+        Nil
+      }
+    }
+  )
 
   override def projectSettings: Seq[Setting[_]] =
     Defaults.itSettings ++

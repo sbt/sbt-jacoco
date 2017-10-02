@@ -1,0 +1,20 @@
+> clean
+
+# coverage should pass
+> jacoco
+> it:jacoco
+
+# instrumented classes - common to both tests
+$ exists target/scala-2.10/jacoco/instrumented-classes
+
+# unit tests
+$ exists target/scala-2.10/jacoco/data/jacoco.exec
+$ exists target/scala-2.10/jacoco/report/test/html/index.html
+
+# integration tests
+$ exists target/scala-2.10/jacoco/data/jacoco-it.exec
+$ exists target/scala-2.10/jacoco/data/jacoco-merged.exec
+$ exists target/scala-2.10/jacoco/report/it/html/index.html
+
+# combined html report
+$ exists target/scala-2.10/jacoco/report/merged/html/index.html

@@ -27,16 +27,18 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   protected def srcConfig: Configuration
 
   override def projectSettings: Seq[Setting[_]] =
-    Seq(
-      libraryDependencies ++= {
-        if ((fork in srcConfig).value) {
-          // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
-          Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test classifier "runtime")
-        } else {
-          Nil
-        }
+    dependencyValues ++ inConfig(srcConfig)(settingValues ++ taskValues)
+
+  protected def dependencyValues: Seq[Setting[_]] = Seq(
+    libraryDependencies ++= {
+      if ((fork in Test).value) {
+        // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
+        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test classifier "runtime")
+      } else {
+        Nil
       }
-    ) ++ inConfig(srcConfig)(settingValues ++ taskValues)
+    }
+  )
 
   private def settingValues = Seq(
     jacocoDirectory := crossTarget.value / "jacoco",
@@ -48,8 +50,9 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacocoExcludes := Seq(),
     jacocoInstrumentedDirectory := jacocoDirectory.value / "instrumented-classes",
     jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec",
-    javaOptions in srcConfig ++= {
+    javaOptions ++= {
       val dest = jacocoDataFile.value
+
       if (fork.value) {
         Seq(
           s"-Djacoco-agent.destfile=${dest.absolutePath}"
