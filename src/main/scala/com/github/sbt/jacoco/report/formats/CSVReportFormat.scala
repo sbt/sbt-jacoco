@@ -16,9 +16,12 @@ import java.io.{File, FileOutputStream}
 
 import org.jacoco.report.IReportVisitor
 import org.jacoco.report.csv.CSVFormatter
+import sbt._
 
 class CSVReportFormat extends JacocoReportFormat {
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {
+    IO.createDirectory(directory)
+
     val formatter = new CSVFormatter()
     formatter.setOutputEncoding(encoding)
     formatter.createVisitor(new FileOutputStream(new File(directory, "jacoco.csv")))

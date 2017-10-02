@@ -19,9 +19,12 @@ import org.jacoco.report.html.HTMLFormatter
 import org.jacoco.report.internal.html.resources.Styles
 import org.jacoco.report.internal.html.table._
 import org.jacoco.report.{FileMultiReportOutput, IReportVisitor}
+import sbt._
 
 class ScalaHTMLReportFormat(withBranchCoverage: Boolean = true) extends JacocoReportFormat {
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {
+    IO.createDirectory(directory)
+
     val formatter = new ScalaHtmlFormatter(withBranchCoverage)
     formatter.setOutputEncoding(encoding)
     formatter.createVisitor(new FileMultiReportOutput(new File(directory, "html")))
