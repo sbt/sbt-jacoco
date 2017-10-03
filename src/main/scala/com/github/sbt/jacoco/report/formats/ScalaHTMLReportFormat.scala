@@ -40,21 +40,15 @@ class ScalaHTMLReportFormat(withBranchCoverage: Boolean = true) extends JacocoRe
   * TODO: Find a way to remove them from the annotated source code reports, too.
   */
 class ScalaHtmlFormatter(withBranchCoverage: Boolean) extends HTMLFormatter {
-  private var table: Option[Table] = None
+  private val table: Table = createTable
 
   setLanguageNames(new ScalaLanguageNames)
 
-  override def getTable: Table = {
-    table getOrElse {
-      val newTable = createTable
-      table = Some(newTable)
-      newTable
-    }
-  }
+  override def getTable: Table = table
 
   private def createTable: Table = {
     val t: Table = new Table
-    t.add("Element", null, new LabelColumn, false)
+    t.add("Element", null, new LabelColumn, false) // scalastyle:ignore null
     t.add("Missed Lines", Styles.BAR, new BarColumn(ICoverageNode.CounterEntity.LINE, getLocale), true)
     t.add("Total Lines", Styles.CTR1, CounterColumn.newTotal(ICoverageNode.CounterEntity.LINE, getLocale), false)
     t.add("Cov.", Styles.CTR2, new PercentageColumn(ICoverageNode.CounterEntity.LINE, getLocale), false)

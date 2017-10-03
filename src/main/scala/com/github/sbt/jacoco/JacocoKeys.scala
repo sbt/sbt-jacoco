@@ -53,9 +53,11 @@ trait JacocoKeys {
   val jacocoInstrumentedDirectory: SettingKey[File] =
     settingKey[File]("Directory containing the instrumented classes.")
 
+  // scalastyle:off field.name
   // type aliases for auto import
   val JacocoThresholds: report.JacocoThresholds.type = report.JacocoThresholds
   val JacocoSourceSettings: report.JacocoSourceSettings.type = report.JacocoSourceSettings
   val JacocoReportSettings: report.JacocoReportSettings.type = report.JacocoReportSettings
   val JacocoReportFormats: report.JacocoReportFormats.type = report.JacocoReportFormats
+  // scalastyle:on
 }

@@ -12,6 +12,9 @@
 
 package com.github.sbt.jacoco.filter
 
+import com.github.sbt.jacoco.filter.AccessorDetector._
+import com.github.sbt.jacoco.filter.ScalaForwarderDetector._
+import com.github.sbt.jacoco.filter.ScalaSyntheticMethod._
 import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
 import org.jacoco.core.data.ExecutionDataStore
 import org.jacoco.core.internal.analysis.{ClassAnalyzer, ClassCoverageImpl, MethodAnalyzer, StringPool}
@@ -59,7 +62,7 @@ private final class FilteringClassAnalyzer(
       exceptions: Array[String]): MethodProbesVisitor = {
     InstrSupport.assertNotInstrumented(name, classCoverage.getName)
     if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
-      null
+      null // scalastyle:ignore null
     } else {
       new MethodAnalyzer(stringPool.get(name), stringPool.get(desc), stringPool.get(signature), probes) {
         override def visitEnd(): Unit = {
@@ -94,14 +97,12 @@ private final class FilteringClassAnalyzer(
   }
 
   private def ignore(mc: IMethodCoverage, node: MethodNode): Boolean = {
-    import AccessorDetector._
-    import ScalaForwarderDetector._
-    import ScalaSyntheticMethod._
-    import node.name
-    def isModuleStaticInit = isModuleClass && name == "<clinit>"
+
+    def isModuleStaticInit = isModuleClass && node.name == "<clinit>"
 
     (
-      isSyntheticMethod(classCoverage.getName, name, mc.getFirstLine, mc.getLastLine) // equals/hashCode/unapply et al
+      // equals/hashCode/unapply et al
+      isSyntheticMethod(classCoverage.getName, node.name, mc.getFirstLine, mc.getLastLine)
       // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
       || isModuleStaticInit
       || isScalaForwarder(classCoverage.getName, node)
@@ -121,10 +122,9 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor
   }
 
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
-    val data = Option(executionData get classid)
-    val (noMatch, probes) = data
-      .map(data => (false, data.getProbes))
-      .getOrElse((executionData contains className, null))
+    val data = Option(executionData.get(classid))
+    val noMatch = data.isEmpty || executionData.contains(className)
+    val probes = data.map(_.getProbes).orNull
     val classCoverageAnalyzer = new ClassCoverageImpl(className, classid, noMatch)
     val analyzer =
       new FilteringClassAnalyzer(classCoverageAnalyzer, classNode, probes, new StringPool, coverageVisitor)

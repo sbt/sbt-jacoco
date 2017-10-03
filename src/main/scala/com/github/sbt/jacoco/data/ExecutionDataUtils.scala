@@ -15,7 +15,6 @@ package com.github.sbt.jacoco.data
 import java.io.FileOutputStream
 
 import org.jacoco.core.data.ExecutionDataWriter
-import org.jacoco.core.runtime.RuntimeData
 import org.jacoco.core.tools.ExecFileLoader
 import resource._
 import sbt.Keys.TaskStreams
@@ -27,7 +26,9 @@ object ExecutionDataUtils {
       streams.log.debug(s"writing execution data to $destination")
       IO.createDirectory(destination.getParentFile)
 
-      for (os <- managed(new FileOutputStream(destination))) {
+      for {
+        os <- managed(new FileOutputStream(destination))
+      } {
         val executionDataWriter = new ExecutionDataWriter(os)
         data.data.collect(executionDataWriter, executionDataWriter, true)
       }
@@ -45,7 +46,9 @@ object ExecutionDataUtils {
 
     IO.createDirectory(destination.getParentFile)
 
-    for (os <- managed(new FileOutputStream(destination))) {
+    for {
+      os <- managed(new FileOutputStream(destination))
+    } {
       val dataWriter = new ExecutionDataWriter(os)
       loader.getSessionInfoStore.accept(dataWriter)
       loader.getExecutionDataStore.accept(dataWriter)

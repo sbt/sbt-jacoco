@@ -118,9 +118,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   }
 
   private def toClassName(entry: String): String =
-    entry.stripSuffix(ClassExt).replace('/', '.')
-
-  private val ClassExt = ".class"
+    entry.stripSuffix(".class").replace('/', '.')
 
   private def projectData(project: ResolvedProject): ProjectData = {
     ProjectData(project.id)

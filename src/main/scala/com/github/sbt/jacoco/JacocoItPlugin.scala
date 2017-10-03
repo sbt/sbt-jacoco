@@ -37,7 +37,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
       taskKey[Unit]("generates a merged report")
   }
 
-  import autoImport._
+  import autoImport._ // scalastyle:ignore import.grouping
 
   override def requires: Plugins = JvmPlugin && JacocoPlugin
 
