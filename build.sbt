@@ -1,7 +1,7 @@
 name := "sbt-jacoco"
 organization := "com.github.sbt"
 
-version := "3.0.3-SNAPSHOT"
+version in ThisBuild := "3.0.3-SNAPSHOT"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.2")
@@ -46,3 +46,10 @@ headerLicense := Some(HeaderLicense.Custom(
      |http://www.eclipse.org/legal/epl-v10.html
      |""".stripMargin
 ))
+
+lazy val docs = (project in file("docs"))
+  .enablePlugins(ParadoxPlugin)
+.settings(
+  name := "Hello Project",
+    paradoxNavigationDepth := 3
+)

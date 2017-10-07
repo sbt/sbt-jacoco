@@ -1,0 +1,27 @@
+# Getting Started
+
+## Setup
+
+Install the plugin by adding the following to `project/plugins.sbt`:
+
+```scala
+addSbtPlugin("com.github.sbt" % "sbt-jacoco" % "<version>")
+```
+
+And then execute the plugin with `sbt jacoco`. This will instrument and run the unit tests and output the coverage
+metrics:
+
+```
+[info] ------- Jacoco Coverage Report --------
+[info]
+[info] Lines: 66.67% (>= required 0.0%) covered, 2 of 6 missed, OK
+[info] Instructions: 83.54% (>= required 0.0%) covered, 13 of 79 missed, OK
+[info] Branches: 0% (>= required 0.0%) covered, 0 of 0 missed, OK
+[info] Methods: 57.14% (>= required 0.0%) covered, 3 of 7 missed, OK
+[info] Complexity: 57.14% (>= required 0.0%) covered, 3 of 7 missed, OK
+[info] Class: 50% (>= required 0.0%) covered, 2 of 4 missed, OK
+[info]
+[info] Check /home/example/jacoco-test/target/scala-2.11/jacoco/report for detailed report
+```
+
+A detailed HTML report will also be generated in the directory shown that includes line level details of coverage.
