@@ -37,6 +37,7 @@
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="integration-tests.html" class="active page">Integration Tests</a></li>
+  <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
   <li><a href="settings.html" class="page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -77,6 +78,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="integration-tests.html" class="active page">Integration Tests</a></li>
+  <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
   <li><a href="settings.html" class="page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -105,41 +107,21 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p><em>sbt-jacoco</em> supports coverage of integration tests using an opt-in plugin which can be enabled by adding the following to your build config:</p>
 <pre class="prettyprint"><code class="language-scala">enablePlugins(JacocoItPlugin)
 </code></pre>
-<p>Once this has been added you can cover your integration tests using <code>it:jacoco</code>. If you have previously run <code>jacoco</code> to cover your unit tests the two coverage reports will get merged into a single report showing you the full coverage.</p>
-<h2><a href="#combining-unit-and-integration-test-results" name="combining-unit-and-integration-test-results" class="anchor"><span class="anchor-link"></span></a>Combining Unit and Integration Test Results</h2>
-<hr/><div class="callout warning "><div class="callout-title">Warning</div>
-<p><em>sbt-jacoco</em> adds settings to the <code>IntegrationTest</code> configuration which get overwritten if</p>
-<p>If you have</p>
+<p>Once this has been added you can cover your integration tests using <code>it:jacoco</code>. If you have previously run <code>jacoco</code> to cover your unit tests the two coverage reports will get merged into a single report showing you the full coverage.</p><div class="callout warning "><div class="callout-title">Warning</div>
+<p>The <code>JacocoItPlugin</code> adds settings to the <code>IntegrationTest</code> configuration which get overwritten if you have the following in your build:</p>
 <pre class="prettyprint"><code class="language-scala">configs(IntegrationTest)
 Defaults.itSettings
-</code></pre></div>
-<p>For integration testing enable the the plugin using:</p>
-<p>enablePlugins(JacocoItPlugin) You will also need to remove the following lines from your config if you have them:</p>
-<p>configs(IntegrationTest) Defaults.itSettings (this is due to a limitation in SBT where it&rsquo;s difficult for plugins to configure themselves for integration tests).</p>
-<p>Once you have enabled the integration test plugin you will be able to cover the integration tests using sbt it:jacoco. Unit and integration tests will get merged automatically leaving you with the following reports:</p>
-<p>target/scala-2.10/jacoco/report/test/html/index.html target/scala-2.10/jacoco/report/it/html/index.html target/scala-2.10/jacoco/report/merged/html/index.html</p>
+</code></pre>
+<p>These get added automatically by the <code>JacocoItPlugin</code> in a way that they don&rsquo;t overwrite the extra settings.</p></div>
 <div class="source-github">
 The source code for this page can be found <a href="https://github.com/sbt/sbt-jacoco/tree/master/src/paradox/integration-tests.md">here</a>.
 </div>
 
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="settings.html">Settings Reference</a></p>
+<p><strong>Next:</strong> <a href="multi-project.html">Multi-Project Builds</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
-<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
-<div class="page-nav">
-<div class="nav-title">On this page:</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="integration-tests.html#integration-tests" class="header">Integration Tests</a>
-  <ul>
-    <li><a href="integration-tests.html#combining-unit-and-integration-test-results" class="header">Combining Unit and Integration Test Results</a></li>
-  </ul></li>
-</ul>
-</div>
-</div>
-</nav>
 </div>
 </div>
 
