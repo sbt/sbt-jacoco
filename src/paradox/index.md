@@ -7,13 +7,13 @@ Key features of _sbt-jacoco_ include:
 
 * Coverage of Scala and Java code.
 * Aggregation of multi-project builds.
-
-
+* Support for unit and @ref:[integration](integration-tests.md) tests.
 
 @@@ index
 
 * [Getting Started](getting-started.md)
 * [Integration Tests](integration-tests.md)
+* [Multi-Project Builds](multi-project.md)
 * [Settings Reference](settings.md)
 * [Contributors](contributors.md)
 
