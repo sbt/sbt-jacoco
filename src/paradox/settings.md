@@ -9,17 +9,22 @@ page.subheaders: true
 
 ### Common
 
+These are apply to both unit and integration tests.
+
 #### jacocoDirectory
+
 * **Description:** Where JaCoCo should store its execution data and reports.
 * **Accepts:** `java.io.File`
 * **Default:** `crossTarget / "jacoco"`
 
 #### jacocoReportDirectory
+
 * **Description:** Where JaCoCo should output reports to.
 * **Accepts:** `java.io.File`
 * **Default:** `jacocoDirectory / "report"`
 
 #### jacocoDataFile
+
 * **Description:** Execution data output file.
 * **Accepts:** `java.io.File`
 * **Default:** `jacocoDirectory / "data" / "jacoco.exec"`
@@ -84,6 +89,9 @@ JacocoReportSettings(
 
 ### Multi-Project Tests
 
+These should be defined in the root project of a multi-project build and control the way that reports for sub-projects
+should be aggregated.
+
 #### jacocoAggregateReportSettings
 
 * **Description:** Settings for aggregate JaCoCo report (format, title etc).
@@ -101,9 +109,11 @@ JacocoReportSettings(
 
 ### Integration Tests
 
+These are only defined for integration tests and configure merging of unit and integration results.
+
 #### jacocoMergedDataFile
 
-* **Description:** Execution data file contain unit test and integration test data.
+* **Description:** Execution data file containing combined unit test and integration test data.
 * **Accepts:** `java.io.File`
 * **Default:** `jacocoDirectory / "jacoco-it.exec"`
 
@@ -124,11 +134,27 @@ JacocoReportSettings(
 
 #### jacocoAutoMerge
 
-* **Description:** whether to merge the unittest and integration test reports.
+* **Description:** Whether to merge the unit and integration test reports.
 * **Accepts:** `Boolean`
 * **Default:** `true`
 
 ## Types
+
+All types are automatically imported in an `.sbt` based build file and can be imported into `.scala` based builds using:
+
+```scala
+import com.github.sbt.jacoco.JacocoPlugin.autoImport._
+```
+
+Each type has `.withXXX` methods and default values defined for all parameters giving you a choice of ways to configure:
+
+```scala
+jacocoReportSettings := JacocoReportSettings(title = "Report Title", formats = Seq(JacocoReportFormats.HTML))
+// or
+jacocoReportSettings := JacocoReportSettings()
+  .withTitle("Report Title")
+  .withFormats(Seq(JacocoReportFormats.HTML))
+```
 
 ### JacocoSourceSettings
 

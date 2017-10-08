@@ -11,34 +11,14 @@ Once this has been added you can cover your integration tests using `it:jacoco`.
 cover your unit tests the two coverage reports will get merged into a single report showing you the full coverage.
 
 
-## Combining Unit and Integration Test Results
-
----
-
 @@@ warning
-
-_sbt-jacoco_ adds settings to the `IntegrationTest` configuration which get overwritten if
-
-If you have
+The `JacocoItPlugin` adds settings to the `IntegrationTest` configuration which get overwritten if you have the
+following in your build:
 
 ```scala
 configs(IntegrationTest)
 Defaults.itSettings
 ```
+
+These get added automatically by the `JacocoItPlugin` in a way that they don't overwrite the extra settings.
 @@@
-
-
-For integration testing enable the the plugin using:
-
-enablePlugins(JacocoItPlugin)
-You will also need to remove the following lines from your config if you have them:
-
-configs(IntegrationTest)
-Defaults.itSettings
-(this is due to a limitation in SBT where it's difficult for plugins to configure themselves for integration tests).
-
-Once you have enabled the integration test plugin you will be able to cover the integration tests using sbt it:jacoco. Unit and integration tests will get merged automatically leaving you with the following reports:
-
-target/scala-2.10/jacoco/report/test/html/index.html
-target/scala-2.10/jacoco/report/it/html/index.html
-target/scala-2.10/jacoco/report/merged/html/index.html
