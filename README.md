@@ -31,18 +31,4 @@ metrics:
 
 A detailed HTML report will also be generated in the directory shown that includes line level details of coverage.
 
-See [Wiki](https://github.com/sbt/sbt-jacoco/wiki) for details on configuration options.
-
-## Contributors
-
-Many thanks to the following for their awesome contributions:
-
-* [Alexey Pismenskiy](https://github.com/apismensky)
-* [Andreas Flierl](https://bitbucket.org/asflierl)
-* [Jacek Laskowski](https://github.com/jaceklaskowski)
-* [Jason Zaugg](https://github.com/retronym)
-* [Jerry Lin](https://github.com/linjer)
-* [Joost den Boer](https://bitbucket.org/diversit)
-* [Michael Schleichardt](https://github.com/schleichardt)
-* [Patrick Mahoney](https://bitbucket.org/paddymahoney)
-* [Wei Chen](https://github.com/wchen9911)
+See the [docs](http://scala-sbt.org/sbt-jacoco) for details on configuration options.
