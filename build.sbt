@@ -47,9 +47,7 @@ headerLicense := Some(HeaderLicense.Custom(
      |""".stripMargin
 ))
 
-lazy val docs = (project in file("docs"))
-  .enablePlugins(ParadoxPlugin)
-.settings(
-  name := "Hello Project",
-    paradoxNavigationDepth := 3
-)
+
+enablePlugins(ParadoxSitePlugin, GhpagesPlugin)
+paradoxNavigationDepth in Paradox  := 3
+git.remoteRepo := "git@github.com:sbt/sbt-jacoco.git"
