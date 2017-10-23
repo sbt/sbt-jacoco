@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/sbt/sbt-jacoco.svg?branch=master)](https://travis-ci.org/sbt/sbt-jacoco)
 [![Codacy Grade](https://img.shields.io/codacy/grade/2336303da07d41ba960ec769dfec0a74.svg?label=codacy)](https://www.codacy.com/app/stringbean/sbt-jacoco)
-[![SBT 0.13 version](https://img.shields.io/badge/sbt_0.13-3.0.2-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
-[![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.0.2-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
+[![SBT 0.13 version](https://img.shields.io/badge/sbt_0.13-3.0.3-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
+[![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.0.3-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
 
 This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
 
