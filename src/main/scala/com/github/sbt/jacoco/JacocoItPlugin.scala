@@ -68,7 +68,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
     Defaults.itSettings ++
       super.projectSettings ++
       // move the test reports to a subdirectory to disambiguate
-      Seq(jacocoReportDirectory in Test := (jacocoDirectory in Test).value / "report" / "test") ++
+      Seq(jacocoReportDirectory := (jacocoDirectory in Test).value / "report" / "test") ++
       inConfig(IntegrationTest) {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",

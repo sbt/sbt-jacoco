@@ -6,7 +6,7 @@ scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-lan
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 
-jacocoReportSettings := JacocoReportSettings()
+jacocoReportSettings in Test := JacocoReportSettings()
   .withThresholds(
     JacocoThresholds(
       instruction = 100,
