@@ -27,7 +27,9 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   protected def srcConfig: Configuration
 
   override def projectSettings: Seq[Setting[_]] =
-    dependencyValues ++ inConfig(srcConfig)(settingValues ++ taskValues)
+    dependencyValues ++
+      unscopedSettingValues ++
+      inConfig(srcConfig)(scopedSettingValues ++ taskValues)
 
   protected def dependencyValues: Seq[Setting[_]] = Seq(
     libraryDependencies ++= {
@@ -40,7 +42,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     }
   )
 
-  private def settingValues = Seq(
+  private def unscopedSettingValues = Seq(
     jacocoDirectory := crossTarget.value / "jacoco",
     jacocoReportDirectory := jacocoDirectory.value / "report",
     jacocoSourceSettings := JacocoSourceSettings(),
@@ -49,7 +51,10 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacocoIncludes := Seq("*"),
     jacocoExcludes := Seq(),
     jacocoInstrumentedDirectory := jacocoDirectory.value / "instrumented-classes",
-    jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec",
+    jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec"
+  )
+
+  private def scopedSettingValues = Seq(
     javaOptions ++= {
       val dest = jacocoDataFile.value
 
