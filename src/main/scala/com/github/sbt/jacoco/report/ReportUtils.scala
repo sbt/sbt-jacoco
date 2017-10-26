@@ -23,7 +23,8 @@ object ReportUtils {
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
-      streams: TaskStreams): Unit = {
+      streams: TaskStreams,
+      checkCoverage: Boolean = true): Unit = {
 
     val report = new Report(
       reportDirectory = destinationDirectory,
@@ -32,7 +33,8 @@ object ReportUtils {
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
       reportSettings = reportSettings,
-      streams = streams
+      streams = streams,
+      checkCoverage = checkCoverage
     )
 
     report.generate()
@@ -45,7 +47,8 @@ object ReportUtils {
       sourceDirectories: Seq[File],
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
-      streams: TaskStreams): Unit = {
+      streams: TaskStreams,
+      checkCoverage: Boolean = true): Unit = {
 
     val report = new Report(
       reportDirectory = destinationDirectory,
@@ -54,7 +57,8 @@ object ReportUtils {
       sourceDirectories = sourceDirectories,
       sourceSettings = sourceSettings,
       reportSettings = reportSettings,
-      streams = streams
+      streams = streams,
+      checkCoverage = checkCoverage
     )
 
     report.generate()

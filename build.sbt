@@ -1,19 +1,23 @@
 name := "sbt-jacoco"
 organization := "com.github.sbt"
 
-version in ThisBuild := "3.0.3"
+version in ThisBuild := "3.1.0-M1"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.2")
 
 val jacocoVersion = "0.7.9"
+val circeVersion = "0.8.0"
 
 libraryDependencies ++= Seq(
-  "org.jacoco"    %  "org.jacoco.core"      % jacocoVersion,
-  "org.jacoco"    %  "org.jacoco.report"    % jacocoVersion,
-  "com.jsuereth"  %% "scala-arm"            % "2.0",
-  "org.scalatest" %% "scalatest"            % "3.0.4"         % Test,
-  "org.mockito"   %  "mockito-all"          % "1.10.19"       % Test
+  "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
+  "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
+  "com.jsuereth"                %% "scala-arm"            % "2.0",
+  "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.9.2",
+  "org.scalaj"                  %% "scalaj-http"          % "2.3.0",
+  "commons-codec"               % "commons-codec"         % "1.11",
+  "org.scalatest"               %% "scalatest"            % "3.0.4"         % Test,
+  "org.mockito"                 %  "mockito-all"          % "1.10.19"       % Test
 )
 
 scalacOptions ++= Seq(
@@ -51,3 +55,7 @@ headerLicense := Some(HeaderLicense.Custom(
 enablePlugins(ParadoxSitePlugin, GhpagesPlugin)
 paradoxNavigationDepth in Paradox  := 3
 git.remoteRepo := "git@github.com:sbt/sbt-jacoco.git"
+
+addCompilerPlugin(
+  "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full
+)
