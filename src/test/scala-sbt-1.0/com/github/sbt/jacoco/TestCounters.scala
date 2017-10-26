@@ -36,7 +36,8 @@ class TestCounters {
       reportDirectory = new File("."),
       executionDataFiles = Nil,
       classDirectories = Nil,
-      sourceDirectories = Nil
+      sourceDirectories = Nil,
+      checkCoverage = true
     )
 
   when[ManagedLogger](mockStreams.log).thenReturn(mockLog)
