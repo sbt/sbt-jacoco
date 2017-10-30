@@ -138,6 +138,44 @@ JacocoReportSettings(
 * **Accepts:** `Boolean`
 * **Default:** `true`
 
+### Coveralls
+
+These are only defined if the `JacocoCoverallsPlugin` is enabled.
+
+#### jacocoCoverallsServiceName
+
+* **Description:** Name of the CI service running this build.
+* **Accepts:** `String`
+* **Default:** `travis-ci`
+
+@@@ note
+If running on Travis Pro this should be set to `travis-pro`.
+@@@
+
+#### jacocoCoverallsJobId
+
+* **Description:** Unique build identifier for this build
+* **Accepts:** `String`
+* **Default:** `TRAVIS_JOB_ID` environment variable
+
+#### jacocoCoverallsBuildNumber
+
+* **Description:** Human readable build number
+* **Accepts:** `Option[String]`
+* **Default:** none (defaults to auto-incremented number)
+
+#### jacocoCoverallsPullRequest
+
+* **Description:** ID of the current pull request that triggered the build.
+* **Accepts:** `Option[String]`
+* **Default:** none
+
+#### jacocoCoverallsRepoToken
+
+* **Description:** Coveralls repo secret key.
+* **Accepts:** `Option[String]`
+* **Default:** none (auto detected for public repos)
+
 ## Types
 
 All types are automatically imported in an `.sbt` based build file and can be imported into `.scala` based builds using:

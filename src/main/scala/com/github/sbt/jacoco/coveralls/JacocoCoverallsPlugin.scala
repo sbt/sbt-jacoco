@@ -33,16 +33,14 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
     val jacocoCoverallsBuildNumber: SettingKey[Option[String]] = settingKey("Build number to send to Coveralls")
     val jacocoCoverallsJobId: SettingKey[String] = settingKey("Build job ID to send to Coveralls")
     val jacocoCoverallsPullRequest: SettingKey[Option[String]] = settingKey("Pull request number to send to Coveralls")
-    val jacocoCoverallsOutput: SettingKey[File] = settingKey("File to store Coveralls coverage")
     val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
   }
 
   import autoImport._ // scalastyle:ignore import.grouping
 
   override def projectSettings: Seq[Setting[_]] = Seq(
-    jacocoCoverallsOutput := jacocoReportDirectory.value,
     jacocoCoveralls := Def.task {
-      CoverallsClient.sendReport(jacocoCoverallsOutput.value / "coveralls.json", streams.value)
+      CoverallsClient.sendReport(jacocoReportDirectory.value / "coveralls.json", streams.value)
     }.value,
     jacocoCoverallsGenerateReport := Def.taskDyn {
       if (jacocoCoverallsJobId.value.isEmpty) {
@@ -61,7 +59,7 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
             )
 
           ReportUtils.generateReport(
-            jacocoCoverallsOutput.value,
+            jacocoReportDirectory.value,
             jacocoDataFile.value,
             jacocoReportSettings.value.withFormats(coverallsFormat),
             coveredSources.value,
