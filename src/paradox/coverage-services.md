@@ -5,7 +5,7 @@ example project: [stringbean/sbt-jacoco-example](https://github.com/stringbean/s
 
 ## Coveralls
 
-Enable the Coveralls plugin:
+If you have a public project built with Travis-CI you will just need to enable the Coveralls plugin:
 
 ```scala
 enablePlugins(JacocoCoverallsPlugin)
@@ -14,10 +14,19 @@ enablePlugins(JacocoCoverallsPlugin)
 Then run `sbt jacocoCoveralls` to upload the results to Coveralls:
 
 ```
+[info] Uploading coverage to coveralls.io...
 [info] Upload complete
 ```
 
-<!-- TODO extra config -->
+For private projects you will need to set a few more settings:
+
+```scala
+jacocoCoverallsServiceName := "jenkins"
+jacocoCoverallsJobId := sys.env("BUILD_ID")
+jacocoCoverallsRepoToken := "<repo token on coveralls.io>"
+```
+
+More settings can found at @ref:[Coveralls Plugin](settings.md#coveralls) settings.
 
 ## Codecov
 
@@ -32,8 +41,9 @@ jacocoReportSettings := JacocoReportSettings(
   "utf-8")
 ```
 
-With this enabled run the Codecov script:
+With this enabled run the Codecov script after JaCoCo:
 
 ```shell
+sbt jacoco
 bash <(curl -s https://codecov.io/bash)
 ```

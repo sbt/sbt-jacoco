@@ -22,6 +22,7 @@ object CoverallsClient {
   private val jobsUrl = "https://coveralls.io/api/v1/jobs"
 
   def sendReport(reportFile: File, streams: TaskStreams): Unit = {
+    streams.log.info("Uploading coverage to coveralls.io...")
     val response = Http(jobsUrl)
       .postMulti(
         MultiPart(
