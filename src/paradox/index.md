@@ -14,6 +14,7 @@ Key features of _sbt-jacoco_ include:
 * [Getting Started](getting-started.md)
 * [Integration Tests](integration-tests.md)
 * [Multi-Project Builds](multi-project.md)
+* [Coverage Services](coverage-services.md)
 * [Settings Reference](settings.md)
 * [Contributors](contributors.md)
 
