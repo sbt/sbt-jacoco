@@ -29,7 +29,7 @@ class CoverallsReportVisitor(
     sourceDirs: Seq[File],
     projectRootDir: File,
     serviceName: String,
-    jobId: Option[String],
+    jobId: String,
     buildNumber: Option[String],
     pullRequest: Option[String],
     repoToken: Option[String])
@@ -52,7 +52,6 @@ class CoverallsReportVisitor(
       pkg.getSourceFiles.asScala foreach { source: ISourceFileCoverage =>
         json.writeStartObject()
 
-        //noinspection ScalaStyle
         val (filename, md5) = findFile(pkg.getName, source.getName) match {
           case Some(file) =>
             (IO.relativize(projectRootDir, file).getOrElse(file.getName), digest.digestAsHex(file))
@@ -103,9 +102,7 @@ class CoverallsReportVisitor(
     }
 
     json.writeStringField("service_name", serviceName)
-    jobId foreach { id =>
-      json.writeStringField("service_job_id", id)
-    }
+    json.writeStringField("service_job_id", jobId)
     pullRequest foreach { pr =>
       json.writeStringField("service_pull_request", pr)
     }
@@ -119,7 +116,7 @@ class CoverallsReportVisitor(
   }
 
   private def writeGitInfo(): Unit = {
-    GitInfo(projectRootDir) foreach { info =>
+    GitInfo.extract(projectRootDir) foreach { info =>
       json.writeObjectFieldStart("git")
 
       json.writeStringField("branch", info.branch)

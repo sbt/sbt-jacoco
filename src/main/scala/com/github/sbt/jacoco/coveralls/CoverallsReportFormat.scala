@@ -22,7 +22,7 @@ class CoverallsReportFormat(
     sourceDirs: Seq[File],
     projectRootDir: File,
     serviceName: String,
-    jobId: Option[String],
+    jobId: String,
     buildNumber: Option[String],
     pullRequest: Option[String],
     repoToken: Option[String])

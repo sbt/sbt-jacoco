@@ -31,7 +31,7 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
 
     val jacocoCoverallsServiceName: SettingKey[String] = settingKey("CI service name")
     val jacocoCoverallsBuildNumber: SettingKey[Option[String]] = settingKey("Build number to send to Coveralls")
-    val jacocoCoverallsJobId: SettingKey[Option[String]] = settingKey("Build job ID to send to Coveralls")
+    val jacocoCoverallsJobId: SettingKey[String] = settingKey("Build job ID to send to Coveralls")
     val jacocoCoverallsPullRequest: SettingKey[Option[String]] = settingKey("Pull request number to send to Coveralls")
     val jacocoCoverallsOutput: SettingKey[File] = settingKey("File to store Coveralls coverage")
     val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
@@ -44,34 +44,38 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
     jacocoCoveralls := Def.task {
       CoverallsClient.sendReport(jacocoCoverallsOutput.value / "coveralls.json", streams.value)
     }.value,
-    jacocoCoverallsGenerateReport := Def.task {
-      val coverallsFormat =
-        new CoverallsReportFormat(
-          coveredSources.value,
-          baseDirectory.value,
-          jacocoCoverallsServiceName.value,
-          jacocoCoverallsJobId.value,
-          jacocoCoverallsBuildNumber.value,
-          jacocoCoverallsPullRequest.value,
-          jacocoCoverallsRepoToken.value
-        )
+    jacocoCoverallsGenerateReport := Def.taskDyn {
+      if (jacocoCoverallsJobId.value.isEmpty) {
+        sys.error("Could not auto-detect job id - please set jacocoCoverallsJobId")
+      } else {
+        Def.task {
+          val coverallsFormat =
+            new CoverallsReportFormat(
+              coveredSources.value,
+              baseDirectory.value,
+              jacocoCoverallsServiceName.value,
+              jacocoCoverallsJobId.value,
+              jacocoCoverallsBuildNumber.value,
+              jacocoCoverallsPullRequest.value,
+              jacocoCoverallsRepoToken.value
+            )
 
-      ReportUtils.generateReport(
-        jacocoCoverallsOutput.value,
-        jacocoDataFile.value,
-        jacocoReportSettings.value.withFormats(coverallsFormat),
-        coveredSources.value,
-        classesToCover.value,
-        jacocoSourceSettings.value,
-        streams.value,
-        checkCoverage = false
-      )
+          ReportUtils.generateReport(
+            jacocoCoverallsOutput.value,
+            jacocoDataFile.value,
+            jacocoReportSettings.value.withFormats(coverallsFormat),
+            coveredSources.value,
+            classesToCover.value,
+            jacocoSourceSettings.value,
+            streams.value,
+            checkCoverage = false
+          )
+        }
+      }
     }.value,
     jacocoCoveralls := (jacocoCoveralls dependsOn jacocoCoverallsGenerateReport).value,
-    // TODO fail if no job id
-    // TODO manual job id
     jacocoCoverallsServiceName := "travis-ci",
-    jacocoCoverallsJobId := sys.env.get("TRAVIS_JOB_ID"),
+    jacocoCoverallsJobId := sys.env.getOrElse("TRAVIS_JOB_ID", ""),
     jacocoCoverallsBuildNumber := sys.env.get("TRAVIS_JOB_NUMBER"),
     jacocoCoverallsPullRequest := {
       sys.env.get("TRAVIS_PULL_REQUEST") match {
