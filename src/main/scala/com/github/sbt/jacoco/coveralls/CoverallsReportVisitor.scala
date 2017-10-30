@@ -1,3 +1,15 @@
+/*
+ * This file is part of sbt-jacoco.
+ *
+ * Copyright (c) Joachim Hofer & contributors
+ * All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package com.github.sbt.jacoco.coveralls
 
 import java.io.File
@@ -29,24 +41,7 @@ class CoverallsReportVisitor(
   private val jsonFactory = new JsonFactory()
   private val json = jsonFactory.createGenerator(output, JsonEncoding.UTF8)
 
-  json.writeStartObject()
-
-  repoToken foreach { token =>
-    json.writeStringField("repo_token", token)
-  }
-
-  json.writeStringField("service_name", serviceName)
-  jobId foreach { id =>
-    json.writeStringField("service_job_id", id)
-  }
-  pullRequest foreach { pr =>
-    json.writeStringField("service_pull_request", pr)
-  }
-  buildNumber foreach { build =>
-    json.writeStringField("service_number", build)
-  }
-
-  json.writeArrayFieldStart("source_files")
+  writeBasicInfo()
 
   override def visitInfo(sessionInfos: ju.List[SessionInfo], executionData: ju.Collection[ExecutionData]): Unit = {}
 
@@ -98,5 +93,56 @@ class CoverallsReportVisitor(
   private def findFile(packageName: String, fileName: String): Option[File] = {
     // TODO make common with source file locator
     sourceDirs.map(d => d / packageName / fileName).find(_.exists())
+  }
+
+  private def writeBasicInfo(): Unit = {
+    json.writeStartObject()
+
+    repoToken foreach { token =>
+      json.writeStringField("repo_token", token)
+    }
+
+    json.writeStringField("service_name", serviceName)
+    jobId foreach { id =>
+      json.writeStringField("service_job_id", id)
+    }
+    pullRequest foreach { pr =>
+      json.writeStringField("service_pull_request", pr)
+    }
+    buildNumber foreach { build =>
+      json.writeStringField("service_number", build)
+    }
+
+    writeGitInfo()
+
+    json.writeArrayFieldStart("source_files")
+  }
+
+  private def writeGitInfo(): Unit = {
+    GitInfo(projectRootDir) foreach { info =>
+      json.writeObjectFieldStart("git")
+
+      json.writeStringField("branch", info.branch)
+
+      json.writeObjectFieldStart("head")
+      json.writeStringField("id", info.hash)
+      json.writeStringField("author_name", info.authorName)
+      json.writeStringField("author_email", info.authorEmail)
+      json.writeStringField("committer_name", info.committerName)
+      json.writeStringField("committer_email", info.committerEmail)
+      json.writeStringField("message", info.message)
+      json.writeEndObject()
+
+      json.writeArrayFieldStart("remotes")
+      info.remotes foreach { remote =>
+        json.writeStartObject()
+        json.writeStringField("name", remote.name)
+        json.writeStringField("url", remote.url)
+        json.writeEndObject()
+      }
+      json.writeEndArray()
+
+      json.writeEndObject()
+    }
   }
 }
