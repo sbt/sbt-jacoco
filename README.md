@@ -6,6 +6,7 @@
 [![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.0.3-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
 
 This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
+Supports uploading results to [Coveralls](https://coveralls.io) and [Codecov](https://codecov.io).
 
 Install the plugin by adding the following to `project/plugins.sbt`:
 
