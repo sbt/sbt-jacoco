@@ -16,7 +16,10 @@ class CoverallsReportVisitor(
     output: File,
     sourceDirs: Seq[File],
     projectRootDir: File,
-    jobId: String,
+    serviceName: String,
+    jobId: Option[String],
+    buildNumber: Option[String],
+    pullRequest: Option[String],
     repoToken: Option[String])
     extends IReportVisitor
     with IReportGroupVisitor {
@@ -32,8 +35,16 @@ class CoverallsReportVisitor(
     json.writeStringField("repo_token", token)
   }
 
-  json.writeStringField("service_job_id", jobId)
-  json.writeStringField("service_name", "travis-ci")
+  json.writeStringField("service_name", serviceName)
+  jobId foreach { id =>
+    json.writeStringField("service_job_id", id)
+  }
+  pullRequest foreach { pr =>
+    json.writeStringField("service_pull_request", pr)
+  }
+  buildNumber foreach { build =>
+    json.writeStringField("service_number", build)
+  }
 
   json.writeArrayFieldStart("source_files")
 
