@@ -41,9 +41,7 @@ class Report(
     reportSettings.formats.foreach(createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
     if (checkCoverage && !checkCoverage(bundleCoverage)) {
-      streams.log error "Required coverage is not met"
-      // is there a better way to fail build?
-      sys.exit(1)
+      sys.error("Required coverage is not met")
     }
   }
 

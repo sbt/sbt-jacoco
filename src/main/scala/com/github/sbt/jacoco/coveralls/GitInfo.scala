@@ -33,7 +33,7 @@ case class GitInfo(
 case class GitRemote(name: String, url: String)
 
 object GitInfo {
-  def apply(basedir: File): Option[GitInfo] = {
+  def extract(basedir: File): Option[GitInfo] = {
     try {
       val gitDir = new File(basedir, ".git")
 
