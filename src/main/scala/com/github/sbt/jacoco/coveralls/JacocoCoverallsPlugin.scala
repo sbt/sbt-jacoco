@@ -14,13 +14,15 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
   override protected def srcConfig = Test
 
   object autoImport {
-    val jacocoCoveralls: TaskKey[Unit] = taskKey("Upload JaCoCo reports to Coveralls")
+    val jacocoCoveralls: TaskKey[Unit] = taskKey("Generate and upload JaCoCo reports to Coveralls")
+    val jacocoCoverallsGenerateReport: TaskKey[Unit] = taskKey("Generate Coveralls report JSON")
 
-    val jacocoCoverallsJobId: SettingKey[String] = settingKey("todo")
-    val jacocoCoverallsGenerateReport: TaskKey[Unit] = taskKey("TODO")
+    val jacocoCoverallsServiceName: SettingKey[String] = settingKey("CI service name")
+    val jacocoCoverallsBuildNumber: SettingKey[Option[String]] = settingKey("Build number to send to Coveralls")
+    val jacocoCoverallsJobId: SettingKey[Option[String]] = settingKey("Build job ID to send to Coveralls")
+    val jacocoCoverallsPullRequest: SettingKey[Option[String]] = settingKey("Pull request number to send to Coveralls")
     val jacocoCoverallsOutput: SettingKey[File] = settingKey("File to store Coveralls coverage")
-
-    val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("todo")
+    val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
   }
 
   import autoImport._ // scalastyle:ignore import.grouping
@@ -35,7 +37,10 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
         new CoverallsReportFormat(
           coveredSources.value,
           baseDirectory.value,
+          jacocoCoverallsServiceName.value,
           jacocoCoverallsJobId.value,
+          jacocoCoverallsBuildNumber.value,
+          jacocoCoverallsPullRequest.value,
           jacocoCoverallsRepoToken.value)
 
       ReportUtils.generateReport(
@@ -52,7 +57,16 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
     jacocoCoveralls := (jacocoCoveralls dependsOn jacocoCoverallsGenerateReport).value,
     // TODO fail if no job id
     // TODO manual job id
-    jacocoCoverallsJobId := sys.env.getOrElse("TRAVIS_JOB_ID", "unknown"),
+    jacocoCoverallsServiceName := "travis-ci",
+    jacocoCoverallsJobId := sys.env.get("TRAVIS_JOB_ID"),
+    jacocoCoverallsBuildNumber := sys.env.get("TRAVIS_JOB_NUMBER"),
+    jacocoCoverallsPullRequest := {
+      sys.env.get("TRAVIS_PULL_REQUEST") match {
+        case Some("false") => None
+        case Some(pr) => Some(pr)
+        case _ => None
+      }
+    },
     jacocoCoverallsRepoToken := None
   )
 }
