@@ -51,6 +51,8 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacocoIncludes := Seq("*"),
     jacocoExcludes := Seq(),
     jacocoInstrumentedDirectory := jacocoDirectory.value / "instrumented-classes",
+    jacocoInstrumentationIncludes := Seq("*"),
+    jacocoInstrumentationExcludes := Seq(),
     jacocoDataFile := jacocoDataDirectory.value / "jacoco.exec"
   )
 
@@ -97,6 +99,10 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     clean := jacocoDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
     fullClasspath := InstrumentationUtils.instrumentClasses(
       (products in Compile).value,
+      filterClassesToInstrument(
+        (products in Compile).value,
+        (jacocoInstrumentationIncludes in srcConfig).value,
+        (jacocoInstrumentationExcludes in srcConfig).value),
       (fullClasspath in srcConfig).value,
       jacocoInstrumentedDirectory.value,
       update.value,
@@ -107,6 +113,23 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     definedTests := (definedTests in srcConfig).value,
     definedTestNames := (definedTestNames in srcConfig).value
   )
+
+  private def filterClassesToInstrument(products: Seq[File], incl: Seq[String], excl: Seq[String]) = {
+    val inclFilters = incl map GlobFilter.apply
+    val exclFilters = excl map GlobFilter.apply
+
+    products.flatten { product =>
+      (PathFinder(product) ** new FileFilter {
+        def accept(f: File): Boolean =
+          IO.relativize(product, f) match {
+            case Some(file) if !f.isDirectory && file.endsWith(".class") =>
+              val name = toClassName(file)
+              inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
+            case _ => false
+          }
+      }).get
+    }
+  }
 
   private def filterClassesToCover(classes: File, incl: Seq[String], excl: Seq[String]) = {
     val inclFilters = incl map GlobFilter.apply

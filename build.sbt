@@ -1,7 +1,7 @@
 name := "sbt-jacoco"
 organization := "com.github.sbt"
 
-version in ThisBuild := "3.0.3"
+version in ThisBuild := "3.0.4-SNAPSHOT"
 
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.16", "1.0.2")

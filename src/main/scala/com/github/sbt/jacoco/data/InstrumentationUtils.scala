@@ -23,6 +23,7 @@ import sbt._
 object InstrumentationUtils {
 
   def instrumentClasses(
+      products: Seq[File],
       classFiles: Seq[File],
       classpath: Classpath,
       destDirectory: File,
@@ -31,12 +32,8 @@ object InstrumentationUtils {
       projectData: ProjectData,
       streams: TaskStreams): Seq[Attributed[File]] = {
 
-    val classCount = classFiles.foldLeft(0) { (acc, p) =>
-      acc + (p ** "*.class").get.size
-    }
-
-    streams.log.info(s"Instrumenting $classCount classes to $destDirectory")
-    streams.log.debug(s"instrumenting products: ${classFiles.mkString(",")}")
+    streams.log.info(s"Instrumenting ${classFiles.size} classes to $destDirectory")
+    streams.log.debug(s"instrumenting products: ${products.mkString(",")}")
 
     val (jacocoAgent, instrumenter) = if (forked) {
       val agentJars = updateReport.select(module = moduleFilter(name = "org.jacoco.agent"))
@@ -54,10 +51,10 @@ object InstrumentationUtils {
       (Nil, new Instrumenter(projectData.runtime))
     }
 
-    val rebaseClassFiles = Path.rebase(classFiles, destDirectory)
+    val rebaseClassFiles = Path.rebase(products, destDirectory)
 
     for {
-      classFile <- (PathFinder(classFiles) ** "*.class").get
+      classFile <- classFiles
       classStream <- managed(new FileInputStream(classFile))
     } {
       streams.log.debug(s"instrumenting $classFile")

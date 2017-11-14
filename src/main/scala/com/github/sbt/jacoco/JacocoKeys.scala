@@ -52,6 +52,12 @@ trait JacocoKeys {
 
   val jacocoInstrumentedDirectory: SettingKey[File] =
     settingKey[File]("Directory containing the instrumented classes.")
+  val jacocoInstrumentationIncludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
+    "glob patterns specifying which classes to instrument; excludes override includes; default: all classes included"
+  )
+  val jacocoInstrumentationExcludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
+    "glob patterns specifying which classes not to instrument; excludes override includes; default: no classes excluded"
+  )
 
   // scalastyle:off field.name
   // type aliases for auto import
