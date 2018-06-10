@@ -123,7 +123,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   }
 
   private def toClassName(entry: String): String =
-    entry.stripSuffix(".class").replace('/', '.')
+    entry.stripSuffix(".class").replace(File.separatorChar, '.')
 
   private def projectData(project: ResolvedProject): ProjectData = {
     ProjectData(project.id)
