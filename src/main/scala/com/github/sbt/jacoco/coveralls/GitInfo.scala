@@ -40,7 +40,7 @@ object GitInfo {
       if (gitDir.isDirectory) {
         val repo = FileRepositoryBuilder.create(gitDir)
         val config = repo.getConfig
-        val head = repo.getRef(Constants.HEAD)
+        val head = repo.findRef(Constants.HEAD)
         val walk = new RevWalk(repo)
         val commit = walk.parseCommit(head.getObjectId)
 
