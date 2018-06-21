@@ -43,7 +43,7 @@ jacocoReportSettings := JacocoReportSettings(
 
 With this enabled run the Codecov script after JaCoCo:
 
-```shell
+```sh
 sbt jacoco
 bash <(curl -s https://codecov.io/bash)
 ```
