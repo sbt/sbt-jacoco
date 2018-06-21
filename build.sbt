@@ -13,11 +13,11 @@ libraryDependencies ++= Seq(
   "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
   "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
   "com.jsuereth"                %% "scala-arm"            % "2.0",
-  "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.9.2",
-  "org.scalaj"                  %% "scalaj-http"          % "2.3.0",
+  "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.9.6",
+  "org.scalaj"                  %% "scalaj-http"          % "2.4.0",
   "commons-codec"               %  "commons-codec"        % "1.11",
-  "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "3.7.1.201504261725-r",
-  "org.scalatest"               %% "scalatest"            % "3.0.4"         % Test,
+  "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "4.11.0.201803080745-r",
+  "org.scalatest"               %% "scalatest"            % "3.0.5"         % Test,
   "org.mockito"                 %  "mockito-all"          % "1.10.19"       % Test
 )
 
