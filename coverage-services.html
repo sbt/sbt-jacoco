@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>Integration Tests · sbt-jacoco</title>
+<title>Coverage Services · sbt-jacoco</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='sbt-jacoco'/>
@@ -36,9 +36,9 @@
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="integration-tests.html" class="active page">Integration Tests</a></li>
+  <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
   <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
-  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
+  <li><a href="coverage-services.html" class="active page">Coverage Services</a></li>
   <li><a href="settings.html" class="page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -78,9 +78,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="integration-tests.html" class="active page">Integration Tests</a></li>
+  <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
   <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
-  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
+  <li><a href="coverage-services.html" class="active page">Coverage Services</a></li>
   <li><a href="settings.html" class="page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="index.html">sbt-jacoco</a></li>
-  <li>Integration Tests</li>
+  <li>Coverage Services</li>
 </ul>
 </div>
 </div>
@@ -105,25 +105,58 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#integration-tests" name="integration-tests" class="anchor"><span class="anchor-link"></span></a>Integration Tests</h1>
-<p><em>sbt-jacoco</em> supports coverage of integration tests using an opt-in plugin which can be enabled by adding the following to your build config:</p>
-<pre class="prettyprint"><code class="language-scala">enablePlugins(JacocoItPlugin)
+<h1><a href="#coverage-services" name="coverage-services" class="anchor"><span class="anchor-link"></span></a>Coverage Services</h1>
+<p>Examples of uploading to <a href="https://coveralls.io/">Coveralls</a> and <a href="https://codecov.io/gh">Codecov</a> can be found in the example project: <a href="https://github.com/stringbean/sbt-jacoco-example">stringbean/sbt-jacoco-example</a></p>
+<h2><a href="#coveralls" name="coveralls" class="anchor"><span class="anchor-link"></span></a>Coveralls</h2>
+<p>If you have a public project built with Travis-CI you will just need to enable the Coveralls plugin:</p>
+<pre class="prettyprint"><code class="language-scala">enablePlugins(JacocoCoverallsPlugin)
 </code></pre>
-<p>Once this has been added you can cover your integration tests using <code>it:jacoco</code>. If you have previously run <code>jacoco</code> to cover your unit tests the two coverage reports will get merged into a single report showing you the full coverage.</p><div class="callout warning "><div class="callout-title">Warning</div>
-<p>The <code>JacocoItPlugin</code> adds settings to the <code>IntegrationTest</code> configuration which get overwritten if you have the following in your build:</p>
-<pre class="prettyprint"><code class="language-scala">configs(IntegrationTest)
-Defaults.itSettings
+<p>Then run <code>sbt jacocoCoveralls</code> to upload the results to Coveralls:</p>
+<pre><code>[info] Uploading coverage to coveralls.io...
+[info] Upload complete
 </code></pre>
-<p>These get added automatically by the <code>JacocoItPlugin</code> in a way that they don&rsquo;t overwrite the extra settings.</p></div>
+<p>For private projects you will need to set a few more settings:</p>
+<pre class="prettyprint"><code class="language-scala">jacocoCoverallsServiceName := &quot;jenkins&quot;
+jacocoCoverallsJobId := sys.env(&quot;BUILD_ID&quot;)
+jacocoCoverallsRepoToken := &quot;&lt;repo token on coveralls.io&gt;&quot;
+</code></pre>
+<p>More settings can found at <a href="settings.html#coveralls">Coveralls Plugin</a> settings.</p>
+<h2><a href="#codecov" name="codecov" class="anchor"><span class="anchor-link"></span></a>Codecov</h2>
+<p>The Codecov uploader script will upload coverage automatically if the XML formatter is enabled. For example:</p>
+<pre class="prettyprint"><code class="language-scala">jacocoReportSettings := JacocoReportSettings(
+  &quot;Jacoco Coverage Report&quot;,
+  None,
+  JacocoThresholds(),
+  Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
+  &quot;utf-8&quot;)
+</code></pre>
+<p>With this enabled run the Codecov script after JaCoCo:</p>
+<pre class="prettyprint"><code class="language-sh">sbt jacoco
+bash &lt;(curl -s https://codecov.io/bash)
+</code></pre>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/sbt/sbt-jacoco/tree/master/src/paradox/integration-tests.md">here</a>.
+The source code for this page can be found <a href="https://github.com/sbt/sbt-jacoco/tree/master/src/paradox/coverage-services.md">here</a>.
 </div>
 
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="multi-project.html">Multi-Project Builds</a></p>
+<p><strong>Next:</strong> <a href="settings.html">Settings Reference</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="coverage-services.html#coverage-services" class="header">Coverage Services</a>
+  <ul>
+    <li><a href="coverage-services.html#coveralls" class="header">Coveralls</a></li>
+    <li><a href="coverage-services.html#codecov" class="header">Codecov</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
 </div>
 </div>
 

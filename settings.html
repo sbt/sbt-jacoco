@@ -30,7 +30,7 @@
 <span class="home-icon">⌂</span>sbt-jacoco
 </a>
 <div class="version-number">
-3.0.3
+3.1.0
 </div>
 </div>
 <div class="nav-toc">
@@ -38,6 +38,7 @@
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
   <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
+  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
   <li><a href="settings.html" class="active page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -71,7 +72,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>sbt-jacoco
 </a>
 <div class="version-number">
-3.0.3
+3.1.0
 </div>
 </div>
 <div class="nav-toc">
@@ -79,6 +80,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
   <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
+  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
   <li><a href="settings.html" class="active page">Settings Reference</a></li>
   <li><a href="contributors.html" class="page">Contributors</a></li>
 </ul>
@@ -216,6 +218,39 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><strong>Accepts:</strong> <code>Boolean</code></li>
   <li><strong>Default:</strong> <code>true</code></li>
 </ul>
+<h3><a href="#coveralls" name="coveralls" class="anchor"><span class="anchor-link"></span></a>Coveralls</h3>
+<p>These are only defined if the <code>JacocoCoverallsPlugin</code> is enabled.</p>
+<h4><a href="#jacococoverallsservicename" name="jacococoverallsservicename" class="anchor"><span class="anchor-link"></span></a>jacocoCoverallsServiceName</h4>
+<ul>
+  <li><strong>Description:</strong> Name of the CI service running this build.</li>
+  <li><strong>Accepts:</strong> <code>String</code></li>
+  <li><strong>Default:</strong> <code>travis-ci</code></li>
+</ul><div class="callout note "><div class="callout-title">Note</div>
+<p>If running on Travis Pro this should be set to <code>travis-pro</code>.</p></div>
+<h4><a href="#jacococoverallsjobid" name="jacococoverallsjobid" class="anchor"><span class="anchor-link"></span></a>jacocoCoverallsJobId</h4>
+<ul>
+  <li><strong>Description:</strong> Unique build identifier for this build</li>
+  <li><strong>Accepts:</strong> <code>String</code></li>
+  <li><strong>Default:</strong> <code>TRAVIS_JOB_ID</code> environment variable</li>
+</ul>
+<h4><a href="#jacococoverallsbuildnumber" name="jacococoverallsbuildnumber" class="anchor"><span class="anchor-link"></span></a>jacocoCoverallsBuildNumber</h4>
+<ul>
+  <li><strong>Description:</strong> Human readable build number</li>
+  <li><strong>Accepts:</strong> <code>Option[String]</code></li>
+  <li><strong>Default:</strong> none (defaults to auto-incremented number)</li>
+</ul>
+<h4><a href="#jacococoverallspullrequest" name="jacococoverallspullrequest" class="anchor"><span class="anchor-link"></span></a>jacocoCoverallsPullRequest</h4>
+<ul>
+  <li><strong>Description:</strong> ID of the current pull request that triggered the build.</li>
+  <li><strong>Accepts:</strong> <code>Option[String]</code></li>
+  <li><strong>Default:</strong> none</li>
+</ul>
+<h4><a href="#jacococoverallsrepotoken" name="jacococoverallsrepotoken" class="anchor"><span class="anchor-link"></span></a>jacocoCoverallsRepoToken</h4>
+<ul>
+  <li><strong>Description:</strong> Coveralls repo secret key.</li>
+  <li><strong>Accepts:</strong> <code>Option[String]</code></li>
+  <li><strong>Default:</strong> none (auto detected for public repos)</li>
+</ul>
 <h2><a href="#types" name="types" class="anchor"><span class="anchor-link"></span></a>Types</h2>
 <p>All types are automatically imported in an <code>.sbt</code> based build file and can be imported into <code>.scala</code> based builds using:</p>
 <pre class="prettyprint"><code class="language-scala">import com.github.sbt.jacoco.JacocoPlugin.autoImport._
@@ -270,6 +305,7 @@ The source code for this page can be found <a href="https://github.com/sbt/sbt-j
       <li><a href="settings.html#common" class="header">Common</a></li>
       <li><a href="settings.html#multi-project-tests" class="header">Multi-Project Tests</a></li>
       <li><a href="settings.html#integration-tests" class="header">Integration Tests</a></li>
+      <li><a href="settings.html#coveralls" class="header">Coveralls</a></li>
     </ul></li>
     <li><a href="settings.html#types" class="header">Types</a>
     <ul>
@@ -319,7 +355,7 @@ The source code for this page can be found <a href="https://github.com/sbt/sbt-j
 
 <!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
+<span class="text">&copy; 2018</span>
 <a href="https://www.example.com" class="logo">logo</a>
 </div>
 -->
