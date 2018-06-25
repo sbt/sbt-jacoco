@@ -4,6 +4,7 @@ dist: trusty
 
 jdk:
   - openjdk8
+  - oraclejdk10
 
 cache:
   directories:
