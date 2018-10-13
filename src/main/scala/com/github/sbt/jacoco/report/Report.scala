@@ -29,7 +29,8 @@ class Report(
     sourceSettings: JacocoSourceSettings,
     reportSettings: JacocoReportSettings,
     reportDirectory: File,
-    streams: TaskStreams) {
+    streams: TaskStreams,
+    checkCoverage: Boolean) {
 
   private val percentageFormat = new DecimalFormat("#.##")
 
@@ -39,10 +40,8 @@ class Report(
 
     reportSettings.formats.foreach(createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
-    if (!checkCoverage(bundleCoverage)) {
-      streams.log error "Required coverage is not met"
-      // is there a better way to fail build?
-      sys.exit(1)
+    if (checkCoverage && !checkCoverage(bundleCoverage)) {
+      sys.error("Required coverage is not met")
     }
   }
 

@@ -146,11 +146,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   }
 
   private def toClassName(entry: String): String =
-    entry.stripSuffix(".class").replace('/', '.')
-
-  private def projectData(project: ResolvedProject): ProjectData = {
-    ProjectData(project.id)
-  }
+    entry.stripSuffix(".class").replace(File.separatorChar, '.')
 
   protected lazy val submoduleSettingsTask: Def.Initialize[Task[(Seq[File], Option[File], Option[File])]] = Def.task {
     (classesToCover.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)
