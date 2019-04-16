@@ -64,15 +64,7 @@ private final class FilteringClassAnalyzer(
     if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
       null // scalastyle:ignore null
     } else {
-      new MethodAnalyzer(stringPool.get(name), stringPool.get(desc), stringPool.get(signature), probes) {
-        override def visitEnd(): Unit = {
-          super.visitEnd()
-          val hasInstructions = getCoverage.getInstructionCounter.getTotalCount > 0
-          if (hasInstructions) {
-            coverages += getCoverage
-          }
-        }
-      }
+      super.visitMethod(access, name, desc, signature, exceptions)
     }
   }
 
@@ -117,7 +109,7 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor
   override def analyzeClass(reader: ClassReader): Unit = {
     val classNode = new ClassNode()
     reader.accept(classNode, 0)
-    val visitor = createFilteringVisitor(CRC64.checksum(reader.b), reader.getClassName, classNode)
+    val visitor = createFilteringVisitor(CRC64.classId(reader.b), reader.getClassName, classNode)
     reader.accept(visitor, 0)
   }
 
