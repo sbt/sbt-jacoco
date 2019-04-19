@@ -6,7 +6,7 @@ version in ThisBuild := "3.1.0"
 sbtPlugin := true
 crossSbtVersions := Seq("0.13.17", "1.1.6")
 
-val jacocoVersion = "0.7.9"
+val jacocoVersion = "0.8.2"
 val circeVersion = "0.8.0"
 
 libraryDependencies ++= Seq(
