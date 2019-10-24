@@ -29,8 +29,9 @@ class CoverallsReportVisitor(
     sourceDirs: Seq[File],
     projectRootDir: File,
     serviceName: String,
-    jobId: String,
+    jobId: Option[String],
     buildNumber: Option[String],
+    ciBranch: Option[String],
     pullRequest: Option[String],
     repoToken: Option[String])
     extends IReportVisitor
@@ -102,7 +103,9 @@ class CoverallsReportVisitor(
     }
 
     json.writeStringField("service_name", serviceName)
-    json.writeStringField("service_job_id", jobId)
+    jobId foreach { jId =>
+      json.writeStringField("service_job_id", jId)
+    }
     pullRequest foreach { pr =>
       json.writeStringField("service_pull_request", pr)
     }
@@ -116,7 +119,7 @@ class CoverallsReportVisitor(
   }
 
   private def writeGitInfo(): Unit = {
-    GitInfo.extract(projectRootDir) foreach { info =>
+    GitInfo.extract(projectRootDir, ciBranch) foreach { info =>
       json.writeObjectFieldStart("git")
 
       json.writeStringField("branch", info.branch)

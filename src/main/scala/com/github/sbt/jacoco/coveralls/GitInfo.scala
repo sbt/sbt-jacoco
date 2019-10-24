@@ -33,7 +33,7 @@ case class GitInfo(
 case class GitRemote(name: String, url: String)
 
 object GitInfo {
-  def extract(basedir: File): Option[GitInfo] = {
+  def extract(basedir: File, ciBranch: Option[String]): Option[GitInfo] = {
     try {
       val gitDir = new File(basedir, ".git")
 
@@ -55,7 +55,7 @@ object GitInfo {
           commit.getCommitterIdent.getName,
           commit.getCommitterIdent.getEmailAddress,
           commit.getShortMessage,
-          repo.getBranch,
+          ciBranch.getOrElse(repo.getBranch),
           remotes.toSeq
         )
 
