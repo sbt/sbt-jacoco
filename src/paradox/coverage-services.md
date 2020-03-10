@@ -47,3 +47,24 @@ With this enabled run the Codecov script after JaCoCo:
 sbt jacoco
 bash <(curl -s https://codecov.io/bash)
 ```
+
+## Codacy
+
+Similar to Codecov, the Codacy reporter script will upload coverage automatically if the XML formatter is enabled.
+Check the [documentation](https://support.codacy.com/hc/en-us/articles/207279819-Coverage) or the [GitHub repo](https://github.com/codacy/codacy-coverage-reporter#running-codacy-coverage-reporter) for more information. Example snippets:
+
+```scala
+jacocoReportSettings := JacocoReportSettings(
+  "Jacoco Coverage Report",
+  None,
+  JacocoThresholds(),
+  Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
+  "utf-8")
+```  
+
+With this enabled run the Codacy script after JaCoCo:
+
+```sh
+sbt jacoco
+bash <(curl -Ls https://coverage.codacy.com/get.sh)
+```
