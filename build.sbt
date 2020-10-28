@@ -4,7 +4,6 @@ organization := "com.github.sbt"
 version in ThisBuild := "3.2.0"
 
 sbtPlugin := true
-//crossSbtVersions := Seq("0.13.17", "1.1.6")
 
 val jacocoVersion = "0.8.6"
 val circeVersion = "0.8.0"

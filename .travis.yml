@@ -3,7 +3,7 @@ sudo: false
 dist: trusty
 
 jdk:
-  - openjdk8
+  - openjdk13
 
 cache:
   directories:
@@ -19,8 +19,5 @@ script:
 
 matrix:
   include:
-  - env: SBT_VERSION="0.13.17"
-    scala: 2.10.6
-
-  - env: SBT_VERSION="1.1.6"
-    scala: 2.12.6
+  - env: SBT_VERSION="1.3.4"
+    scala: 2.12.12
