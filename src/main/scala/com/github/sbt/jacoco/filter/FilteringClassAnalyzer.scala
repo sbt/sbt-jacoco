@@ -106,12 +106,36 @@ private final class FilteringClassAnalyzer(
 final class FilteringAnalyzer(executionData: ExecutionDataStore, coverageVisitor: ICoverageVisitor)
     extends Analyzer(executionData, coverageVisitor) {
 
-  override def analyzeClass(reader: ClassReader): Unit = {
-    val classNode = new ClassNode()
-    reader.accept(classNode, 0)
-    val visitor = createFilteringVisitor(CRC64.classId(reader.b), reader.getClassName, classNode)
-    reader.accept(visitor, 0)
+  private def analyzerError(location: String, cause: Exception): java.io.IOException = {
+    val ex = new java.io.IOException(String.format("Error while analyzing %s.", location))
+    ex.initCause(cause)
+    ex
   }
+
+  override def analyzeClass(buffer: Array[Byte], location: String): Unit = {
+    try {
+      val reader = InstrSupport.classReaderFor(buffer)
+      if ((reader.getAccess() & Opcodes.ACC_MODULE) != 0) {
+        return
+      }
+      if ((reader.getAccess() & Opcodes.ACC_SYNTHETIC) != 0) {
+        return
+      }
+      val classNode = new ClassNode()
+      reader.accept(classNode, 0)
+      val visitor = createFilteringVisitor(CRC64.classId(buffer), reader.getClassName, classNode)
+      reader.accept(visitor, 0)
+    } catch {
+      case cause: RuntimeException => throw analyzerError(location, cause)
+    }
+  }
+
+  // override def analyzeClass(reader: ClassReader): Unit = {
+  //   val classNode = new ClassNode()
+  //   reader.accept(classNode, 0)
+  //   val visitor = createFilteringVisitor(CRC64.classId(reader.b), reader.getClassName, classNode)
+  //   reader.accept(visitor, 0)
+  // }
 
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
     val data = Option(executionData.get(classid))
