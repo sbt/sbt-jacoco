@@ -154,8 +154,8 @@ If running on Travis Pro this should be set to `travis-pro`.
 
 #### jacocoCoverallsJobId
 
-* **Description:** Unique build identifier for this build
-* **Accepts:** `String`
+* **Description:** Unique build identifier for this build. If `None`, Coveralls sets its own job ID.
+* **Accepts:** `Option[String]`
 * **Default:** `TRAVIS_JOB_ID` environment variable
 
 #### jacocoCoverallsBuildNumber
@@ -163,6 +163,11 @@ If running on Travis Pro this should be set to `travis-pro`.
 * **Description:** Human readable build number
 * **Accepts:** `Option[String]`
 * **Default:** none (defaults to auto-incremented number)
+
+#### jacocoCoverallsBranch
+* **Description:** The current branch name set by CI. If `None`, it gets the git branch name from project's base directory.
+* **Accepts:** `Option[String]`
+* **Default:** `TRAVIS_BRANCH` environment variable
 
 #### jacocoCoverallsPullRequest
 

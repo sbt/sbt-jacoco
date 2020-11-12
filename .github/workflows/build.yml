@@ -1,0 +1,21 @@
+name: Build All
+
+on: [push]
+
+jobs:
+
+  build_scala2_10:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build for sbt 0.13.x and Scala 2.10
+        run: |
+          sbt "++2.10.4" "^^0.13.17" clean test scripted
+
+  build_scala2_12:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build for sbt 1.x and Scala 2.12
+        run: |
+          sbt "++2.12.10" "^^1.1.6" clean test scripted

@@ -1,12 +1,14 @@
 # sbt-jacoco - Code Coverage via JaCoCo in sbt
 
+[![Build Status](https://github.com/sbt/sbt-jacoco/workflows/Build%20All/badge.svg)](https://github.com/sbt/sbt-jacoco/actions?workflow=Build+All)
+[![Release Status](https://github.com/sbt/sbt-jacoco/workflows/Release/badge.svg)](https://github.com/sbt/sbt-jacoco/actions?workflow=Release)
 [![Build Status](https://travis-ci.org/sbt/sbt-jacoco.svg?branch=master)](https://travis-ci.org/sbt/sbt-jacoco)
 [![Codacy Grade](https://img.shields.io/codacy/grade/2336303da07d41ba960ec769dfec0a74.svg?label=codacy)](https://www.codacy.com/app/stringbean/sbt-jacoco)
-[![SBT 0.13 version](https://img.shields.io/badge/sbt_0.13-3.1.0-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
-[![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.1.0-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
+[![SBT 0.13 version](https://img.shields.io/badge/sbt_0.13-3.2.0-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
+[![SBT 1.0 version](https://img.shields.io/badge/sbt_1.0-3.2.0-blue.svg)](https://bintray.com/stringbean/sbt-plugins/sbt-jacoco)
 
 This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
-Supports uploading results to [Coveralls](https://coveralls.io) and [Codecov](https://codecov.io).
+Supports uploading results to [Coveralls](https://coveralls.io), [Codecov](https://codecov.io) and [Codacy](https://www.codacy.com/).
 
 Install the plugin by adding the following to `project/plugins.sbt`:
 
