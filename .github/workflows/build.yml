@@ -1,21 +1,24 @@
-name: Build All
-
-on: [push]
-
+name: CI
+on:
+  pull_request:
+  push:
 jobs:
-
-  build_scala2_10:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Build for sbt 0.13.x and Scala 2.10
-        run: |
-          sbt "++2.10.4" "^^0.13.17" clean test scripted
-
   build_scala2_12:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Build for sbt 1.x and Scala 2.12
-        run: |
-          sbt "++2.12.10" "^^1.1.6" clean test scripted
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Scala
+      uses: olafurpg/setup-scala@v10
+      with:
+        java-version: "adopt@1.8"
+    - name: Coursier cache
+      uses: coursier/cache-action@v5
+    - name: Build and test
+      run: |
+        sbt -v -Dfile.encoding=UTF-8 clean test scripted
+        rm -rf "$HOME/.ivy2/local" || true
+        find $HOME/Library/Caches/Coursier/v1        -name "ivydata-*.properties" -delete || true
+        find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
+        find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
+        find $HOME/.sbt  
