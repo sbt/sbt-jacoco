@@ -22,8 +22,9 @@ class CoverallsReportFormat(
     sourceDirs: Seq[File],
     projectRootDir: File,
     serviceName: String,
-    jobId: String,
+    jobId: Option[String],
     buildNumber: Option[String],
+    ciBranch: Option[String],
     pullRequest: Option[String],
     repoToken: Option[String])
     extends JacocoReportFormat {
@@ -38,6 +39,7 @@ class CoverallsReportFormat(
       serviceName,
       jobId,
       buildNumber,
+      ciBranch,
       pullRequest,
       repoToken)
   }

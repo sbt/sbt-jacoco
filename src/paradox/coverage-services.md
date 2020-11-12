@@ -22,11 +22,44 @@ For private projects you will need to set a few more settings:
 
 ```scala
 jacocoCoverallsServiceName := "jenkins"
-jacocoCoverallsJobId := sys.env("BUILD_ID")
+jacocoCoverallsJobId := sys.env.get("BUILD_ID") // If None, Coveralls sets its own job ID.
 jacocoCoverallsRepoToken := "<repo token on coveralls.io>"
 ```
 
 More settings can found at @ref:[Coveralls Plugin](settings.md#coveralls) settings.
+
+### GitHub Actions + Coveralls
+Add `COVERALLS_REPO_TOKEN`  to `Secrets` in your GitHub project at `https://github.com/<organization>/<project>/settings`
+
+Your GitHub Actions workflow yaml (e.g. `.github/workflows/build.yml`) should look like
+```yaml
+name: Build
+
+on: [push]
+
+jobs:
+  build_java_project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build Project
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          export CI_BRANCH="${GITHUB_REF#refs/heads/}"
+          sbt clean jacoco jacocoCoveralls
+``` 
+Add the following `jacocoCoveralls*` settings to `build.sbt`
+
+```sbt
+lazy val root = (project in file("."))
+  .settings(
+    jacocoCoverallsServiceName := "github-actions", 
+    jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
+    jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
+    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
+  )
+```
 
 ## Codecov
 

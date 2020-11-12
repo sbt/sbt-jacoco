@@ -31,7 +31,8 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
 
     val jacocoCoverallsServiceName: SettingKey[String] = settingKey("CI service name")
     val jacocoCoverallsBuildNumber: SettingKey[Option[String]] = settingKey("Build number to send to Coveralls")
-    val jacocoCoverallsJobId: SettingKey[String] = settingKey("Build job ID to send to Coveralls")
+    val jacocoCoverallsJobId: SettingKey[Option[String]] = settingKey("Build job ID to send to Coveralls")
+    val jacocoCoverallsBranch: SettingKey[Option[String]] = settingKey("The current branch name to send to Coveralls. If not provided, it gets the branch from the project base dir. (default: The value of environment variable named \"TRAVIS_BRANCH\")")
     val jacocoCoverallsPullRequest: SettingKey[Option[String]] = settingKey("Pull request number to send to Coveralls")
     val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
   }
@@ -43,38 +44,36 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
       CoverallsClient.sendReport(jacocoReportDirectory.value / "coveralls.json", streams.value)
     }.value,
     jacocoCoverallsGenerateReport := Def.taskDyn {
-      if (jacocoCoverallsJobId.value.isEmpty) {
-        sys.error("Could not auto-detect job id - please set jacocoCoverallsJobId")
-      } else {
-        Def.task {
-          val coverallsFormat =
-            new CoverallsReportFormat(
-              coveredSources.value,
-              baseDirectory.value,
-              jacocoCoverallsServiceName.value,
-              jacocoCoverallsJobId.value,
-              jacocoCoverallsBuildNumber.value,
-              jacocoCoverallsPullRequest.value,
-              jacocoCoverallsRepoToken.value
-            )
-
-          ReportUtils.generateReport(
-            jacocoReportDirectory.value,
-            jacocoDataFile.value,
-            jacocoReportSettings.value.withFormats(coverallsFormat),
+      Def.task {
+        val coverallsFormat =
+          new CoverallsReportFormat(
             coveredSources.value,
-            classesToCover.value,
-            jacocoSourceSettings.value,
-            streams.value,
-            checkCoverage = false
+            baseDirectory.value,
+            jacocoCoverallsServiceName.value,
+            jacocoCoverallsJobId.value,
+            jacocoCoverallsBuildNumber.value,
+            jacocoCoverallsBranch.value,
+            jacocoCoverallsPullRequest.value,
+            jacocoCoverallsRepoToken.value
           )
-        }
+
+        ReportUtils.generateReport(
+          jacocoReportDirectory.value,
+          jacocoDataFile.value,
+          jacocoReportSettings.value.withFormats(coverallsFormat),
+          coveredSources.value,
+          classesToCover.value,
+          jacocoSourceSettings.value,
+          streams.value,
+          checkCoverage = false
+        )
       }
     }.value,
     jacocoCoveralls := (jacocoCoveralls dependsOn jacocoCoverallsGenerateReport).value,
     jacocoCoverallsServiceName := "travis-ci",
-    jacocoCoverallsJobId := sys.env.getOrElse("TRAVIS_JOB_ID", ""),
+    jacocoCoverallsJobId := sys.env.get("TRAVIS_JOB_ID"),
     jacocoCoverallsBuildNumber := sys.env.get("TRAVIS_JOB_NUMBER"),
+    jacocoCoverallsBranch := sys.env.get("TRAVIS_BRANCH"),
     jacocoCoverallsPullRequest := {
       sys.env.get("TRAVIS_PULL_REQUEST") match {
         case Some("false") => None
