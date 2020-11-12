@@ -1,7 +1,8 @@
 name := "sbt-jacoco"
 organization := "com.github.sbt"
 
-version in ThisBuild := "3.2.0"
+version in ThisBuild := "3.2.0-SNAPSHOT"
+
 
 sbtPlugin := true
 
