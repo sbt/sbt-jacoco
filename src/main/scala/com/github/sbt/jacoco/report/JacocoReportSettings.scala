@@ -19,7 +19,8 @@ case class JacocoReportSettings(
     subDirectory: Option[String] = None,
     thresholds: JacocoThresholds = JacocoThresholds(),
     formats: Seq[JacocoReportFormat] = Seq(JacocoReportFormats.ScalaHTML),
-    fileEncoding: String = "utf-8") {
+    fileEncoding: String = "utf-8"
+) {
 
   def withTitle(title: String): JacocoReportSettings = {
     copy(title = title)

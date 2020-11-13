@@ -26,7 +26,8 @@ trait JacocoKeys {
     taskKey[Unit]("Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 
   val jacocoAggregate: TaskKey[Unit] = taskKey[Unit](
-    "Executes the tests and creates a JaCoCo coverage report as well as an aggregated report which merges all sub-projects.")
+    "Executes the tests and creates a JaCoCo coverage report as well as an aggregated report which merges all sub-projects."
+  )
 
   val jacocoAggregateReport: TaskKey[Unit] = taskKey[Unit]("Generates an aggregated JaCoCo report.")
 
@@ -46,9 +47,11 @@ trait JacocoKeys {
     settingKey[JacocoReportSettings]("Settings for aggregate JaCoCo report (format, title etc)")
 
   val jacocoIncludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
-    "glob patterns specifying which classes to cover; excludes override includes; default: all classes included")
+    "glob patterns specifying which classes to cover; excludes override includes; default: all classes included"
+  )
   val jacocoExcludes: SettingKey[Seq[String]] = settingKey[Seq[String]](
-    "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded")
+    "glob patterns specifying which classes not to cover; excludes override includes; default: no classes excluded"
+  )
 
   val jacocoInstrumentedDirectory: SettingKey[File] =
     settingKey[File]("Directory containing the instrumented classes.")

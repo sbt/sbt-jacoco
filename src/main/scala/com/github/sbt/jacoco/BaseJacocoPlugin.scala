@@ -74,8 +74,10 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     jacoco := (jacocoReport dependsOn jacocoCheck).value,
     jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
     jacocoCheck := Def
-      .task(ExecutionDataUtils
-        .saveRuntimeData(projectData(thisProject.value), jacocoDataFile.value, fork.value, streams.value))
+      .task(
+        ExecutionDataUtils
+          .saveRuntimeData(projectData(thisProject.value), jacocoDataFile.value, fork.value, streams.value)
+      )
       .dependsOn(test)
       .value,
     jacocoReport := ReportUtils.generateReport(
@@ -102,7 +104,8 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       filterClassesToInstrument(
         (products in Compile).value,
         (jacocoInstrumentationIncludes in srcConfig).value,
-        (jacocoInstrumentationExcludes in srcConfig).value),
+        (jacocoInstrumentationExcludes in srcConfig).value
+      ),
       (fullClasspath in srcConfig).value,
       jacocoInstrumentedDirectory.value,
       update.value,
@@ -163,7 +166,8 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     filterClassesToCover(
       (classDirectory in Compile).value,
       (jacocoIncludes in srcConfig).value,
-      (jacocoExcludes in srcConfig).value)
+      (jacocoExcludes in srcConfig).value
+    )
   }
 
   protected lazy val aggregateClassesToCover: Def.Initialize[Task[Seq[File]]] = Def.task {

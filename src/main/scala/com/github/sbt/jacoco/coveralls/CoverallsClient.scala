@@ -31,7 +31,8 @@ object CoverallsClient {
           "application/json",
           new FileInputStream(reportFile),
           reportFile.length(),
-          _ => ())
+          _ => ()
+        )
       )
       .asString
 

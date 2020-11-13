@@ -30,7 +30,8 @@ object InstrumentationUtils {
       updateReport: UpdateReport,
       forked: Boolean,
       projectData: ProjectData,
-      streams: TaskStreams): Seq[Attributed[File]] = {
+      streams: TaskStreams
+  ): Seq[Attributed[File]] = {
 
     streams.log.info(s"Instrumenting ${classFiles.size} classes to $destDirectory")
     streams.log.debug(s"instrumenting products: ${products.mkString(",")}")
