@@ -30,7 +30,7 @@
 <span class="home-icon">⌂</span>sbt-jacoco
 </a>
 <div class="version-number">
-3.1.0
+3.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -72,7 +72,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>sbt-jacoco
 </a>
 <div class="version-number">
-3.1.0
+3.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -117,10 +117,38 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </code></pre>
 <p>For private projects you will need to set a few more settings:</p>
 <pre class="prettyprint"><code class="language-scala">jacocoCoverallsServiceName := &quot;jenkins&quot;
-jacocoCoverallsJobId := sys.env(&quot;BUILD_ID&quot;)
+jacocoCoverallsJobId := sys.env.get(&quot;BUILD_ID&quot;) // If None, Coveralls sets its own job ID.
 jacocoCoverallsRepoToken := &quot;&lt;repo token on coveralls.io&gt;&quot;
 </code></pre>
 <p>More settings can found at <a href="settings.html#coveralls">Coveralls Plugin</a> settings.</p>
+<h3><a href="#github-actions-coveralls" name="github-actions-coveralls" class="anchor"><span class="anchor-link"></span></a>GitHub Actions + Coveralls</h3>
+<p>Add <code>COVERALLS_REPO_TOKEN</code> to <code>Secrets</code> in your GitHub project at <code>https://github.com/&lt;organization&gt;/&lt;project&gt;/settings</code></p>
+<p>Your GitHub Actions workflow yaml (e.g. <code>.github/workflows/build.yml</code>) should look like</p>
+<pre class="prettyprint"><code class="language-yaml">name: Build
+
+on: [push]
+
+jobs:
+  build_java_project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build Project
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          export CI_BRANCH=&quot;${GITHUB_REF#refs/heads/}&quot;
+          sbt clean jacoco jacocoCoveralls
+</code></pre>
+<p>Add the following <code>jacocoCoveralls*</code> settings to <code>build.sbt</code></p>
+<pre class="prettyprint"><code class="language-sbt">lazy val root = (project in file(&quot;.&quot;))
+  .settings(
+    jacocoCoverallsServiceName := &quot;github-actions&quot;, 
+    jacocoCoverallsBranch := sys.env.get(&quot;CI_BRANCH&quot;),
+    jacocoCoverallsPullRequest := sys.env.get(&quot;GITHUB_EVENT_NAME&quot;),
+    jacocoCoverallsRepoToken := sys.env.get(&quot;COVERALLS_REPO_TOKEN&quot;)
+  )
+</code></pre>
 <h2><a href="#codecov" name="codecov" class="anchor"><span class="anchor-link"></span></a>Codecov</h2>
 <p>The Codecov uploader script will upload coverage automatically if the XML formatter is enabled. For example:</p>
 <pre class="prettyprint"><code class="language-scala">jacocoReportSettings := JacocoReportSettings(
@@ -134,8 +162,21 @@ jacocoCoverallsRepoToken := &quot;&lt;repo token on coveralls.io&gt;&quot;
 <pre class="prettyprint"><code class="language-sh">sbt jacoco
 bash &lt;(curl -s https://codecov.io/bash)
 </code></pre>
+<h2><a href="#codacy" name="codacy" class="anchor"><span class="anchor-link"></span></a>Codacy</h2>
+<p>Similar to Codecov, the Codacy reporter script will upload coverage automatically if the XML formatter is enabled. Check the <a href="https://support.codacy.com/hc/en-us/articles/207279819-Coverage">documentation</a> or the <a href="https://github.com/codacy/codacy-coverage-reporter#running-codacy-coverage-reporter">GitHub repo</a> for more information. Example snippets:</p>
+<pre class="prettyprint"><code class="language-scala">jacocoReportSettings := JacocoReportSettings(
+  &quot;Jacoco Coverage Report&quot;,
+  None,
+  JacocoThresholds(),
+  Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
+  &quot;utf-8&quot;)
+</code></pre>
+<p>With this enabled run the Codacy script after JaCoCo:</p>
+<pre class="prettyprint"><code class="language-sh">sbt jacoco
+bash &lt;(curl -Ls https://coverage.codacy.com/get.sh)
+</code></pre>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/sbt/sbt-jacoco/tree/master/src/paradox/coverage-services.md">here</a>.
+The source code for this page can be found <a href="https://github.com/eed3si9n/sbt-jacoco/tree/master/src/paradox/coverage-services.md">here</a>.
 </div>
 
 <div class="nav-next">
@@ -150,8 +191,12 @@ The source code for this page can be found <a href="https://github.com/sbt/sbt-j
 <ul>
   <li><a href="coverage-services.html#coverage-services" class="header">Coverage Services</a>
   <ul>
-    <li><a href="coverage-services.html#coveralls" class="header">Coveralls</a></li>
+    <li><a href="coverage-services.html#coveralls" class="header">Coveralls</a>
+    <ul>
+      <li><a href="coverage-services.html#github-actions-coveralls" class="header">GitHub Actions + Coveralls</a></li>
+    </ul></li>
     <li><a href="coverage-services.html#codecov" class="header">Codecov</a></li>
+    <li><a href="coverage-services.html#codacy" class="header">Codacy</a></li>
   </ul></li>
 </ul>
 </div>
@@ -194,7 +239,7 @@ The source code for this page can be found <a href="https://github.com/sbt/sbt-j
 
 <!--
 <div class="copyright">
-<span class="text">&copy; 2018</span>
+<span class="text">&copy; 2020</span>
 <a href="https://www.example.com" class="logo">logo</a>
 </div>
 -->
