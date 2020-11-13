@@ -18,6 +18,9 @@ lazy val jacocoPlugin = (project in file("."))
   .settings(nocomma {
     name := "sbt-jacoco"
 
+    // compile this plugin against sbt 1.1.6
+    pluginCrossBuild / sbtVersion := "1.1.6"
+
     libraryDependencies ++= Seq(
       "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
       "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,

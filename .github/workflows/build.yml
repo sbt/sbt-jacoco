@@ -16,9 +16,9 @@ jobs:
       uses: coursier/cache-action@v5
     - name: Build and test
       run: |
-        sbt -v -Dfile.encoding=UTF-8 clean test scripted
+        sbt -v -Dfile.encoding=UTF-8 clean scalafmtCheckAll headerCheck test scripted
         rm -rf "$HOME/.ivy2/local" || true
         find $HOME/Library/Caches/Coursier/v1        -name "ivydata-*.properties" -delete || true
         find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
         find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
-        find $HOME/.sbt  
+        find $HOME/.sbt
