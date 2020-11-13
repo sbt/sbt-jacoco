@@ -26,8 +26,8 @@ class CoverallsReportFormat(
     buildNumber: Option[String],
     ciBranch: Option[String],
     pullRequest: Option[String],
-    repoToken: Option[String])
-    extends JacocoReportFormat {
+    repoToken: Option[String]
+) extends JacocoReportFormat {
 
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {
     IO.createDirectory(directory)
@@ -41,6 +41,7 @@ class CoverallsReportFormat(
       buildNumber,
       ciBranch,
       pullRequest,
-      repoToken)
+      repoToken
+    )
   }
 }

@@ -18,4 +18,5 @@ case class JacocoThresholds(
     branch: Double = 0,
     complexity: Double = 0,
     line: Double = 0,
-    clazz: Double = 0)
+    clazz: Double = 0
+)

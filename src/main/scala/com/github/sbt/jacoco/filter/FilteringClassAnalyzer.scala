@@ -49,8 +49,8 @@ private final class FilteringClassAnalyzer(
     classNode: ClassNode,
     probes: Array[Boolean],
     stringPool: StringPool,
-    coverageVisitor: ICoverageVisitor)
-    extends ClassAnalyzer(classCoverage, probes, stringPool) {
+    coverageVisitor: ICoverageVisitor
+) extends ClassAnalyzer(classCoverage, probes, stringPool) {
 
   private val coverages = mutable.Buffer[IMethodCoverage]()
 
@@ -59,7 +59,8 @@ private final class FilteringClassAnalyzer(
       name: String,
       desc: String,
       signature: String,
-      exceptions: Array[String]): MethodProbesVisitor = {
+      exceptions: Array[String]
+  ): MethodProbesVisitor = {
     InstrSupport.assertNotInstrumented(name, classCoverage.getName)
     if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
       null // scalastyle:ignore null

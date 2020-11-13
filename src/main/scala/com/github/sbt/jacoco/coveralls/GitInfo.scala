@@ -28,7 +28,8 @@ case class GitInfo(
     committerEmail: String,
     message: String,
     branch: String,
-    remotes: Seq[GitRemote])
+    remotes: Seq[GitRemote]
+)
 
 case class GitRemote(name: String, url: String)
 

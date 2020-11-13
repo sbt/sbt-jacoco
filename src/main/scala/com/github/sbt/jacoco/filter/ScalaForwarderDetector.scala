@@ -53,7 +53,8 @@ object ScalaForwarderDetector {
       calledMethodOwner: String,
       calledMethodName: String,
       desc: String,
-      hasJump: Boolean): Boolean = {
+      hasJump: Boolean
+  ): Boolean = {
     val callingCompanionModule = calledMethodOwner == (className + "$")
     val callingImplClass = calledMethodOwner.endsWith("$class")
     val callingImplicitClass = calledMethodOwner.endsWith("$" + methodName) || calledMethodOwner == methodName

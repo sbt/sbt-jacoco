@@ -30,7 +30,8 @@ class Report(
     reportSettings: JacocoReportSettings,
     reportDirectory: File,
     streams: TaskStreams,
-    checkCoverage: Boolean) {
+    checkCoverage: Boolean
+) {
 
   private val percentageFormat = new DecimalFormat("#.##")
 
@@ -72,7 +73,8 @@ class Report(
       unit: String,
       c: ICounter,
       required: Double,
-      summaryBuilder: StringBuilder): Boolean = {
+      summaryBuilder: StringBuilder
+  ): Boolean = {
 
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
@@ -124,7 +126,8 @@ class Report(
       reportFormat: JacocoReportFormat,
       bundleCoverage: IBundleCoverage,
       executionDataStore: ExecutionDataStore,
-      sessionInfoStore: SessionInfoStore): Unit = {
+      sessionInfoStore: SessionInfoStore
+  ): Unit = {
 
     val visitor = reportFormat.createVisitor(reportDirectory, reportSettings.fileEncoding)
 

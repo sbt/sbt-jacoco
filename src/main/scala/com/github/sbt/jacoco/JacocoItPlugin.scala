@@ -79,7 +79,8 @@ object JacocoItPlugin extends BaseJacocoPlugin {
               (jacocoDataFile in IntegrationTest).value
             ),
             (jacocoMergedDataFile in IntegrationTest).value,
-            streams.value),
+            streams.value
+          ),
           jacocoAutoMerge := true,
           jacocoMergedDataFile := jacocoDataDirectory.value / "jacoco-merged.exec",
           jacocoReportSettings := JacocoReportSettings("Jacoco Integration Test Coverage Report"),

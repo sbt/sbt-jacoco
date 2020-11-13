@@ -25,7 +25,8 @@ private[formats] class ScalaLanguageNames extends JavaNames {
       vmname: String,
       vmsignature: String,
       vmsuperclass: String,
-      vminterfaces: Array[String]): String = {
+      vminterfaces: Array[String]
+  ): String = {
     if (vmname.contains("anonfun$")) {
       vmname.split("""anonfun\$""").toList match {
         case List(pre, post) =>
@@ -50,7 +51,8 @@ private[formats] class ScalaLanguageNames extends JavaNames {
       vmclassname: String,
       vmmethodname: String,
       vmdesc: String,
-      vmsignature: String): String =
+      vmsignature: String
+  ): String =
     super.getQualifiedMethodName(vmclassname, getMethodName(vmmethodname), vmdesc, vmsignature)
 
   private def cleanClassName(name: String) = {

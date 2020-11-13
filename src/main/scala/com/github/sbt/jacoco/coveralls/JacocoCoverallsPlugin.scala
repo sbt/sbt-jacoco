@@ -32,7 +32,9 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
     val jacocoCoverallsServiceName: SettingKey[String] = settingKey("CI service name")
     val jacocoCoverallsBuildNumber: SettingKey[Option[String]] = settingKey("Build number to send to Coveralls")
     val jacocoCoverallsJobId: SettingKey[Option[String]] = settingKey("Build job ID to send to Coveralls")
-    val jacocoCoverallsBranch: SettingKey[Option[String]] = settingKey("The current branch name to send to Coveralls. If not provided, it gets the branch from the project base dir. (default: The value of environment variable named \"TRAVIS_BRANCH\")")
+    val jacocoCoverallsBranch: SettingKey[Option[String]] = settingKey(
+      "The current branch name to send to Coveralls. If not provided, it gets the branch from the project base dir. (default: The value of environment variable named \"TRAVIS_BRANCH\")"
+    )
     val jacocoCoverallsPullRequest: SettingKey[Option[String]] = settingKey("Pull request number to send to Coveralls")
     val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
   }

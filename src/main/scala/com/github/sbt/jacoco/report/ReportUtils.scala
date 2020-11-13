@@ -24,7 +24,8 @@ object ReportUtils {
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
       streams: TaskStreams,
-      checkCoverage: Boolean = true): Unit = {
+      checkCoverage: Boolean = true
+  ): Unit = {
 
     val report = new Report(
       reportDirectory = destinationDirectory,
@@ -48,7 +49,8 @@ object ReportUtils {
       classDirectories: Seq[File],
       sourceSettings: JacocoSourceSettings,
       streams: TaskStreams,
-      checkCoverage: Boolean = true): Unit = {
+      checkCoverage: Boolean = true
+  ): Unit = {
 
     val report = new Report(
       reportDirectory = destinationDirectory,

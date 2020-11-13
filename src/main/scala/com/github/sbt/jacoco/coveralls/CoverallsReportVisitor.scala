@@ -33,8 +33,8 @@ class CoverallsReportVisitor(
     buildNumber: Option[String],
     ciBranch: Option[String],
     pullRequest: Option[String],
-    repoToken: Option[String])
-    extends IReportVisitor
+    repoToken: Option[String]
+) extends IReportVisitor
     with IReportGroupVisitor {
 
   private val digest = new DigestUtils("MD5")
