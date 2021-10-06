@@ -3,7 +3,7 @@
 .target
 .classpath
 .project
-.bsp/
+.bsp
 bin/
 .settings
 target/
