@@ -1,4 +1,4 @@
-lazy val jacocoVersion = "0.8.6"
+lazy val jacocoVersion = "0.8.7"
 lazy val circeVersion = "0.8.0"
 
 ThisBuild / organization := "com.github.sbt"
@@ -6,7 +6,7 @@ ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) (ThisBuild / version).value + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.14"
 ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
 
