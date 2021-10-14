@@ -6,7 +6,7 @@ ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) (ThisBuild / version).value + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
-ThisBuild / scalaVersion := "2.12.14"
+ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
 
