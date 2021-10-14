@@ -1,4 +1,4 @@
-lazy val jacocoVersion = "0.8.6"
+lazy val jacocoVersion = "0.8.7"
 lazy val circeVersion = "0.8.0"
 
 ThisBuild / organization := "com.github.sbt"
@@ -6,7 +6,7 @@ ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) (ThisBuild / version).value + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
-ThisBuild / scalaVersion := "2.12.12"
+ThisBuild / scalaVersion := "2.12.14"
 ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
 
@@ -18,9 +18,6 @@ lazy val jacocoPlugin = (project in file("."))
   .settings(nocomma {
     name := "sbt-jacoco"
 
-    // compile this plugin against sbt 1.1.6
-    pluginCrossBuild / sbtVersion := "1.1.6"
-
     libraryDependencies ++= Seq(
       "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
       "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
@@ -30,7 +27,7 @@ lazy val jacocoPlugin = (project in file("."))
       "commons-codec"               %  "commons-codec"        % "1.15",
       "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "5.9.0.202009080501-r",
       "org.scalatest"               %% "scalatest"            % "3.0.5"         % Test,
-      "org.mockito"                 %  "mockito-all"          % "1.10.19"         % Test
+      "org.mockito"                 %  "mockito-core"          % "3.12.4"         % Test
     )
 
     scalacOptions ++= Seq(
@@ -43,10 +40,10 @@ lazy val jacocoPlugin = (project in file("."))
 
     buildInfoPackage := "com.github.sbt.jacoco.build"
     buildInfoKeys := Seq[BuildInfoKey](
-      resourceDirectory in Test,
+      Test / resourceDirectory,
       version,
       "jacocoVersion" -> jacocoVersion,
-      "sbtVersion" -> (sbtVersion in pluginCrossBuild).value
+      "sbtVersion" -> sbtVersion.value
     )
 
     Paradox / paradoxNavigationDepth := 3

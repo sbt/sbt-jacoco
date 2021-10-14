@@ -56,7 +56,7 @@ failed thresholds:
 [info] Complexity: 50% (< required 100.0%) covered, 2 of 4 missed, NOK
 [info] Class: 100% (>= required 100.0%) covered, 1 of 2 missed, OK
 [info]
-[info] Check /home/example/jacoco-test/scala-2.10/jacoco/report for detailed report
+[info] Check /home/example/jacoco-test/scala-2.12/jacoco/report for detailed report
 [info]
 [error] Required coverage is not met
 ```

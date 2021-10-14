@@ -55,7 +55,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
 
   override protected def dependencyValues: Seq[Setting[_]] = Seq(
     libraryDependencies ++= {
-      if ((fork in Test).value || (fork in IntegrationTest).value) {
+      if ((Test / fork).value || (IntegrationTest / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
         Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "test,it" classifier "runtime")
       } else {
@@ -68,17 +68,17 @@ object JacocoItPlugin extends BaseJacocoPlugin {
     Defaults.itSettings ++
       super.projectSettings ++
       // move the test reports to a subdirectory to disambiguate
-      Seq(jacocoReportDirectory := (jacocoDirectory in Test).value / "report" / "test") ++
+      Seq(jacocoReportDirectory := (Test / jacocoDirectory).value / "report" / "test") ++
       inConfig(IntegrationTest) {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
           jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
           jacocoMergeData := ExecutionDataUtils.mergeExecutionData(
             Seq(
-              (jacocoDataFile in Test).value,
-              (jacocoDataFile in IntegrationTest).value
+              (Test / jacocoDataFile).value,
+              (IntegrationTest / jacocoDataFile).value
             ),
-            (jacocoMergedDataFile in IntegrationTest).value,
+            (IntegrationTest / jacocoMergedDataFile).value,
             streams.value
           ),
           jacocoAutoMerge := true,

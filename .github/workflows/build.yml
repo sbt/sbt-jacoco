@@ -5,13 +5,16 @@ on:
 jobs:
   build_scala2_12:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 8, 17 ]
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Setup Scala
       uses: olafurpg/setup-scala@v10
       with:
-        java-version: "adopt@1.8"
+        java-version: ${{ matrix.java-version }}
     - name: Coursier cache
       uses: coursier/cache-action@v5
     - name: Build and test

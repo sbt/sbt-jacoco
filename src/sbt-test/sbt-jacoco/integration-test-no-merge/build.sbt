@@ -1,9 +1,9 @@
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.0" % "test,it"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test,it"
 
 val root = project.in(file(".")).configs(IntegrationTest)
-scalaVersion := "2.10.4"
+scalaVersion := "2.12.14"
 
 enablePlugins(JacocoItPlugin)
 
-jacocoAutoMerge in IntegrationTest := false
+IntegrationTest / jacocoAutoMerge := false
