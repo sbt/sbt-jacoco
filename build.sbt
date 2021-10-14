@@ -22,10 +22,10 @@ lazy val jacocoPlugin = (project in file("."))
       "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
       "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
       "com.jsuereth"                %% "scala-arm"            % "2.0",
-      "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.11.4",
+      "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.13.0",
       "org.scalaj"                  %% "scalaj-http"          % "2.4.2",
       "commons-codec"               %  "commons-codec"        % "1.15",
-      "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "5.9.0.202009080501-r",
+      "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "5.13.0.202109080827-r",
       "org.scalatest"               %% "scalatest"            % "3.0.9"         % Test,
       "org.mockito"                 %  "mockito-core"          % "4.0.0"         % Test
     )
