@@ -1,8 +1,8 @@
 package example
 
-import org.scalatest._
+import org.scalatest.funsuite._
 
-class UnitTest extends FunSuite {
+class UnitTest extends AnyFunSuite {
   test("forIntegrationTests") {
     assert(TestSubject.forIntegrationTests == 4)
   }
