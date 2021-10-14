@@ -12,9 +12,10 @@
 
 package com.github.sbt.jacoco
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ReportSpec extends FlatSpec with Matchers {
+class ReportSpec extends AnyFlatSpec with Matchers {
   val testCounters = new TestCounters()
 
   "Report.checkCounter" should "return false if coverage is less than required" in {
