@@ -40,7 +40,7 @@ lazy val jacocoPlugin = (project in file("."))
 
     buildInfoPackage := "com.github.sbt.jacoco.build"
     buildInfoKeys := Seq[BuildInfoKey](
-      resourceDirectory in Test,
+      Test / resourceDirectory,
       version,
       "jacocoVersion" -> jacocoVersion,
       "sbtVersion" -> sbtVersion.value

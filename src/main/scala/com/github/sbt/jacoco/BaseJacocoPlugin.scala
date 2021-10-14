@@ -33,7 +33,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
 
   protected def dependencyValues: Seq[Setting[_]] = Seq(
     libraryDependencies ++= {
-      if ((fork in Test).value) {
+      if ((Test / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
         Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test classifier "runtime")
       } else {
@@ -98,23 +98,23 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       jacocoSourceSettings.value,
       streams.value
     ),
-    clean := jacocoDirectory map (dir => if (dir.exists) IO delete dir.listFiles),
+    clean := jacocoDirectory.map(dir => if (dir.exists) IO delete dir.listFiles).value,
     fullClasspath := InstrumentationUtils.instrumentClasses(
-      (products in Compile).value,
+      (Compile / products).value,
       filterClassesToInstrument(
-        (products in Compile).value,
-        (jacocoInstrumentationIncludes in srcConfig).value,
-        (jacocoInstrumentationExcludes in srcConfig).value
+        (Compile / products).value,
+        (srcConfig / jacocoInstrumentationIncludes).value,
+        (srcConfig / jacocoInstrumentationExcludes).value
       ),
-      (fullClasspath in srcConfig).value,
+      (srcConfig / fullClasspath).value,
       jacocoInstrumentedDirectory.value,
       update.value,
       fork.value,
       projectData(thisProject.value),
       streams.value
     ),
-    definedTests := (definedTests in srcConfig).value,
-    definedTestNames := (definedTestNames in srcConfig).value
+    definedTests := (srcConfig / definedTests).value,
+    definedTestNames := (srcConfig / definedTestNames).value
   )
 
   private def filterClassesToInstrument(products: Seq[File], incl: Seq[String], excl: Seq[String]) = {
@@ -152,7 +152,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     entry.stripSuffix(".class").replace(File.separatorChar, '.')
 
   protected lazy val submoduleSettingsTask: Def.Initialize[Task[(Seq[File], Option[File], Option[File])]] = Def.task {
-    (classesToCover.value, (sourceDirectory in Compile).?.value, (jacocoDataFile in srcConfig).?.value)
+    (classesToCover.value, (Compile / sourceDirectory).?.value, (srcConfig / jacocoDataFile).?.value)
   }
 
   protected lazy val submoduleSettings: Def.Initialize[Task[Seq[(Seq[File], Option[File], Option[File])]]] =
@@ -164,9 +164,9 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
 
   protected lazy val classesToCover: Def.Initialize[Task[Seq[File]]] = Def.task {
     filterClassesToCover(
-      (classDirectory in Compile).value,
-      (jacocoIncludes in srcConfig).value,
-      (jacocoExcludes in srcConfig).value
+      (Compile / classDirectory).value,
+      (srcConfig / jacocoIncludes).value,
+      (srcConfig / jacocoExcludes).value
     )
   }
 
@@ -179,7 +179,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   }
 
   protected lazy val coveredSources: Def.Initialize[Task[Seq[File]]] = Def.task {
-    (sourceDirectories in Compile).value
+    (Compile / sourceDirectories).value
   }
 
   protected lazy val jacocoDataDirectory: Def.Initialize[File] = Def.setting {
@@ -187,6 +187,6 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   }
 
   protected lazy val submoduleCoverTasks: Def.Initialize[Task[Seq[Unit]]] = {
-    (jacoco in srcConfig).all(ScopeFilter(inAggregates(ThisProject)))
+    (srcConfig / jacoco).all(ScopeFilter(inAggregates(ThisProject)))
   }
 }

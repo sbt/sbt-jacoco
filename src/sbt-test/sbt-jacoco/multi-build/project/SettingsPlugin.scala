@@ -7,7 +7,7 @@ object SettingsPlugin extends AutoPlugin {
   override def requires: Plugins = JvmPlugin
 
   override def projectSettings: Seq[Setting[_]] = Seq(
-    scalaVersion := (scalaVersion in LocalRootProject).value,
-    libraryDependencies ++= (libraryDependencies in LocalRootProject).value
+    scalaVersion := (LocalRootProject / scalaVersion).value,
+    libraryDependencies ++= (LocalRootProject / libraryDependencies).value
   )
 }

@@ -1,9 +1,9 @@
 organization := "com.example"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.14"
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
 lazy val common = project
