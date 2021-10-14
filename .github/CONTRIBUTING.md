@@ -7,7 +7,7 @@ Effective bug reports are more likely to be fixed. These guidelines explain how 
 
 ## Before Reporting an Issue
 
-* Make sure that you are running the latest version of SBT (0.13.x or 1.x) and the jacoco4sbt plugin.
+* Make sure that you are running the latest version of SBT (1.x) and the jacoco4sbt plugin.
 * Check the open [issues](https://github.com/sbt/jacoco4sbt/issues) and
   [pull requests](https://github.com/sbt/jacoco4sbt/pulls) for anything similar. If there is already an open issue
   and you have additional information please add it (comments such as +1 aren't helpful).
@@ -33,7 +33,7 @@ It is important when opening a new issue to include as much information as possi
 We welcome code contributions to jacoco4sbt. To make it easier for us to include your contributions please ensure the
 following before creating a pull request:
 
-* Your branch is up to date with `master`.
+* Your branch is up to date with `main`.
 * All unit tests and integration tests pass.
 
 When opening a pull request please including any relevant information - such as _"fixes issue #x"_ or _"adds new feature y"_.
