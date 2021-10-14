@@ -1,8 +1,9 @@
 package jacocotest.common
 
-import org.scalatest._
+import org.scalatest.flatspec._
+import org.scalatest.matchers.should.Matchers
 
-class GreeterSpec extends FlatSpec with Matchers {
+class GreeterSpec extends AnyFlatSpec with Matchers {
   val greeter = new Greeter()
 
   "greet" should "greet bob" in {
