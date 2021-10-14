@@ -6,7 +6,7 @@ ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) (ThisBuild / version).value + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
-ThisBuild / scalaVersion := "2.12.14"
+ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
 
@@ -22,11 +22,11 @@ lazy val jacocoPlugin = (project in file("."))
       "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
       "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
       "com.jsuereth"                %% "scala-arm"            % "2.0",
-      "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.11.3",
+      "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.11.4",
       "org.scalaj"                  %% "scalaj-http"          % "2.4.2",
       "commons-codec"               %  "commons-codec"        % "1.15",
       "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "5.9.0.202009080501-r",
-      "org.scalatest"               %% "scalatest"            % "3.0.5"         % Test,
+      "org.scalatest"               %% "scalatest"            % "3.0.9"         % Test,
       "org.mockito"                 %  "mockito-core"          % "4.0.0"         % Test
     )
 
