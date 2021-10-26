@@ -32,7 +32,8 @@ class TestCounters {
       sourceSettings = JacocoSourceSettings(),
       reportSettings = JacocoReportSettings(
         thresholds =
-          JacocoThresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)),
+          JacocoThresholds(instruction = 35, method = 40, branch = 30, complexity = 35, line = 50, clazz = 40)
+      ),
       reportDirectory = new File("."),
       executionDataFiles = Nil,
       classDirectories = Nil,

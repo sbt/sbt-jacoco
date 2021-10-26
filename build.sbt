@@ -9,7 +9,6 @@ ThisBuild / version := {
 ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
-
 lazy val jacocoPlugin = (project in file("."))
   .enablePlugins(SbtPlugin)
   .enablePlugins(BuildInfoPlugin)
@@ -19,15 +18,15 @@ lazy val jacocoPlugin = (project in file("."))
     name := "sbt-jacoco"
 
     libraryDependencies ++= Seq(
-      "org.jacoco"                  %  "org.jacoco.core"      % jacocoVersion,
-      "org.jacoco"                  %  "org.jacoco.report"    % jacocoVersion,
-      "com.jsuereth"                %% "scala-arm"            % "2.0",
-      "com.fasterxml.jackson.core"  %  "jackson-core"         % "2.13.0",
-      "org.scalaj"                  %% "scalaj-http"          % "2.4.2",
-      "commons-codec"               %  "commons-codec"        % "1.15",
-      "org.eclipse.jgit"            %  "org.eclipse.jgit"     % "5.13.0.202109080827-r",
-      "org.scalatest"               %% "scalatest"            % "3.2.10"         % Test,
-      "org.mockito"                 %  "mockito-core"          % "4.0.0"         % Test
+      "org.jacoco" % "org.jacoco.core" % jacocoVersion,
+      "org.jacoco" % "org.jacoco.report" % jacocoVersion,
+      "com.jsuereth" %% "scala-arm" % "2.0",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.13.0",
+      "org.scalaj" %% "scalaj-http" % "2.4.2",
+      "commons-codec" % "commons-codec" % "1.15",
+      "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.0.202109080827-r",
+      "org.scalatest" %% "scalatest" % "3.2.10" % Test,
+      "org.mockito" % "mockito-core" % "4.0.0" % Test
     )
 
     scalacOptions ++= Seq(
@@ -36,7 +35,8 @@ lazy val jacocoPlugin = (project in file("."))
       "-feature",
       "-Xfuture",
       "-Ywarn-adapted-args",
-      "-Ywarn-dead-code")
+      "-Ywarn-dead-code"
+    )
 
     buildInfoPackage := "com.github.sbt.jacoco.build"
     buildInfoKeys := Seq[BuildInfoKey](
@@ -49,8 +49,9 @@ lazy val jacocoPlugin = (project in file("."))
     Paradox / paradoxNavigationDepth := 3
     git.remoteRepo := "git@github.com:sbt/sbt-jacoco.git"
 
-    headerLicense := Some(HeaderLicense.Custom(
-      """|This file is part of sbt-jacoco.
+    headerLicense := Some(
+      HeaderLicense.Custom(
+        """|This file is part of sbt-jacoco.
          |
          |Copyright (c) Joachim Hofer & contributors
          |All rights reserved.
@@ -60,5 +61,6 @@ lazy val jacocoPlugin = (project in file("."))
          |which accompanies this distribution, and is available at
          |http://www.eclipse.org/legal/epl-v10.html
          |""".stripMargin
-    ))
+      )
+    )
   })
