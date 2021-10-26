@@ -28,22 +28,22 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
-  * Filters coverage results from Scala synthetic methods:
-  * - trait forwarders
-  * - case class toString / equals / apply / unapply
-  *
-  * These are identified by the heuristic that they have the same line number as a constructor, or
-  * the same line as other one-line methods if we are in a module class.
-  *
-  * This filtering should really happen in Jacoco core, but the API for this is not available and
-  * scheduled for Q1 2014.
-  *
-  * See [[https://github.com/jacoco/jacoco/wiki/FilteringOptions]] and [[https://github.com/jacoco/jacoco/issues/139]]
-  * for more discussion of the JaCoCo roadmap.
-  *
-  * These filters are based on [[https://github.com/timezra/jacoco/commit/b6146ebed8b8e7507ec634ee565fe03f3e940fdd]],
-  * but extended to correctly exclude synthetics in module classes.
-  */
+ * Filters coverage results from Scala synthetic methods:
+ * - trait forwarders
+ * - case class toString / equals / apply / unapply
+ *
+ * These are identified by the heuristic that they have the same line number as a constructor, or
+ * the same line as other one-line methods if we are in a module class.
+ *
+ * This filtering should really happen in Jacoco core, but the API for this is not available and
+ * scheduled for Q1 2014.
+ *
+ * See [[https://github.com/jacoco/jacoco/wiki/FilteringOptions]] and [[https://github.com/jacoco/jacoco/issues/139]]
+ * for more discussion of the JaCoCo roadmap.
+ *
+ * These filters are based on [[https://github.com/timezra/jacoco/commit/b6146ebed8b8e7507ec634ee565fe03f3e940fdd]],
+ * but extended to correctly exclude synthetics in module classes.
+ */
 private final class FilteringClassAnalyzer(
     classCoverage: ClassCoverageImpl,
     classNode: ClassNode,

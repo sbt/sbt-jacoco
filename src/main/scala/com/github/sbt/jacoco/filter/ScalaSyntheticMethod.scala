@@ -18,7 +18,7 @@ object ScalaSyntheticMethod {
     val isOneLiner = firstLine == lastLine
     isOneLiner && (
       (isModuleClass && isSyntheticObjectMethodName(name))
-      || isSyntheticInstanceMethodName(name)
+        || isSyntheticInstanceMethodName(name)
     )
   }
 
