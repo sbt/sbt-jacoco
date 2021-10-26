@@ -19,21 +19,24 @@ object JacocoReportFormats {
   /** HTML report containing detailed metrics at instruction level and embedded source code. */
   val ScalaHTML = new ScalaHTMLReportFormat()
 
-  /** HTML report containing detailed metrics at instruction level and embedded source code.
-    *
-    * '''Note:''' does not support Scala language constructs.
-    */
+  /**
+   * HTML report containing detailed metrics at instruction level and embedded source code.
+   *
+   * '''Note:''' does not support Scala language constructs.
+   */
   val HTML = new HTMLReportFormat()
 
-  /** XML report containing detailed metrics at instruction level.
-    *
-    * '''Note:''' does not support Scala language constructs.
-    */
+  /**
+   * XML report containing detailed metrics at instruction level.
+   *
+   * '''Note:''' does not support Scala language constructs.
+   */
   val XML = new XMLReportFormat()
 
-  /** CSV report containing metrics at class level only.
-    *
-    * '''Note:''' does not support Scala language constructs.
-    */
+  /**
+   * CSV report containing metrics at class level only.
+   *
+   * '''Note:''' does not support Scala language constructs.
+   */
   val CSV = new CSVReportFormat()
 }
