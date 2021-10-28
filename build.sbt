@@ -1,13 +1,11 @@
 lazy val jacocoVersion = "0.8.7"
 lazy val circeVersion = "0.8.0"
 
-ThisBuild / organization := "com.github.sbt"
 ThisBuild / version := {
-  if ((ThisBuild / isSnapshot).value) (ThisBuild / version).value + "-SNAPSHOT"
+  if ((ThisBuild / isSnapshot).value) "3.4.0" + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
 ThisBuild / scalaVersion := "2.12.15"
-ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
 
 lazy val jacocoPlugin = (project in file("."))
   .enablePlugins(SbtPlugin)
@@ -63,4 +61,35 @@ lazy val jacocoPlugin = (project in file("."))
          |""".stripMargin
       )
     )
+
+    scriptedLaunchOpts := {
+      scriptedLaunchOpts.value ++
+        Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
+    }
+
+    scriptedBufferLog := false
   })
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
+ThisBuild / organization := "com.github.sbt"
+ThisBuild / description := "an sbt plugin for JaCoCo Code Coverage"
+ThisBuild / homepage := Some(url("https://www.scala-sbt.org/sbt-jacoco/"))
+ThisBuild / licenses += (("Eclipse Public License v1.0", url("http://www.eclipse.org/legal/epl-v10.html")))
+ThisBuild / developers := List(
+  Developer(
+    "jmhofer",
+    "Joachim Hofer",
+    "@jmhofer",
+    url("https://github.com/jmhofer")
+  )
+)
+ThisBuild / pomIncludeRepository := { _ =>
+  false
+}
+ThisBuild / publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+ThisBuild / publishMavenStyle := true
+ThisBuild / dynverSonatypeSnapshots := true
