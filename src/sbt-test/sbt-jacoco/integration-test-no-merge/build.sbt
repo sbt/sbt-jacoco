@@ -1,4 +1,3 @@
-
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test,it"
 
 val root = project.in(file(".")).configs(IntegrationTest)
