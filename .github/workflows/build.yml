@@ -24,4 +24,4 @@ jobs:
     - name: Coursier cache
       uses: coursier/cache-action@v6
     - name: Build and test
-      run: sbt -v -Dfile.encoding=UTF-8 clean scalafmtCheckAll headerCheck test scripted
+      run: sbt -v -Dfile.encoding=UTF-8 clean scalafmtCheckAll headerCheck test scripted makeSite
