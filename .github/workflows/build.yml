@@ -7,6 +7,10 @@ on:
 jobs:
   build_scala2_12:
     runs-on: ubuntu-latest
+    env:
+      # define Java options for both official sbt and sbt-extras
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss2M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS:  -Xms2048M -Xmx2048M -Xss2M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     strategy:
       fail-fast: false
       matrix:
@@ -24,4 +28,9 @@ jobs:
     - name: Coursier cache
       uses: coursier/cache-action@v6
     - name: Build and test
-      run: sbt -v -Dfile.encoding=UTF-8 clean scalafmtCheckAll headerCheck test scripted makeSite
+      shell: bash
+      run: sbt -v clean scalafmtCheckAll headerCheck test scripted
+    - name: Build site
+      if: ${{ matrix.java-version == 8 }}
+      shell: bash
+      run: sbt -v makeSite
