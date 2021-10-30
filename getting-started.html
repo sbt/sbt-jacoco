@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Getting Started · sbt-jacoco</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='an sbt plugin for JaCoCo Code Coverage'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>sbt-jacoco
+</a>
+<div class="version-number">
+3.4.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
+  <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
+  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
+  <li><a href="settings.html" class="page">Settings Reference</a></li>
+  <li><a href="contributors.html" class="page">Contributors</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">sbt-jacoco</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>sbt-jacoco
+</a>
+<div class="version-number">
+3.4.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="integration-tests.html" class="page">Integration Tests</a></li>
+  <li><a href="multi-project.html" class="page">Multi-Project Builds</a></li>
+  <li><a href="coverage-services.html" class="page">Coverage Services</a></li>
+  <li><a href="settings.html" class="page">Settings Reference</a></li>
+  <li><a href="contributors.html" class="page">Contributors</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">sbt-jacoco</a></li>
+  <li>Getting Started</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#getting-started" name="getting-started" class="anchor"><span class="anchor-link"></span></a>Getting Started</h1>
+<h2><a href="#setup" name="setup" class="anchor"><span class="anchor-link"></span></a>Setup</h2>
+<p>Install the plugin by adding the following to <code>project/plugins.sbt</code>:</p>
+<pre class="prettyprint"><code class="language-scala">addSbtPlugin(&quot;com.github.sbt&quot; % &quot;sbt-jacoco&quot; % &quot;&lt;version&gt;&quot;)
+</code></pre>
+<p>And then execute the plugin with <code>sbt jacoco</code>. This will instrument and run the unit tests and output the coverage metrics:</p>
+<pre><code>[info] ------- Jacoco Coverage Report --------
+[info]
+[info] Lines: 66.67% (&gt;= required 0.0%) covered, 2 of 6 missed, OK
+[info] Instructions: 83.54% (&gt;= required 0.0%) covered, 13 of 79 missed, OK
+[info] Branches: 0% (&gt;= required 0.0%) covered, 0 of 0 missed, OK
+[info] Methods: 57.14% (&gt;= required 0.0%) covered, 3 of 7 missed, OK
+[info] Complexity: 57.14% (&gt;= required 0.0%) covered, 3 of 7 missed, OK
+[info] Class: 50% (&gt;= required 0.0%) covered, 2 of 4 missed, OK
+[info]
+[info] Check /home/example/jacoco-test/target/scala-2.11/jacoco/report for detailed report
+</code></pre>
+<p>A detailed HTML report will also be generated in the directory shown that includes line level details of coverage.</p>
+<h2><a href="#setting-minimum-coverage-levels" name="setting-minimum-coverage-levels" class="anchor"><span class="anchor-link"></span></a>Setting Minimum Coverage Levels</h2>
+<p>Minimum code coverage levels can be defined so that the build will fail if the requirements are not met:</p>
+<pre class="prettyprint"><code class="language-scala">jacocoReportSettings := JacocoReportSettings()
+  .withThresholds(
+    JacocoThresholds(
+      instruction = 80,
+      method = 100,
+      branch = 100,
+      complexity = 100,
+      line = 90,
+      clazz = 100)
+  )
+</code></pre>
+<p>If the coverage does not meet the thresholds defined the build will fail and the coverge message will highlight the failed thresholds:</p>
+<pre><code>[info] ------- Jacoco Coverage Report -------
+[info]
+[info] Lines: 66.67% (&lt; required 90.0%) covered, 1 of 3 missed, NOK
+[info] Instructions: 56.52% (&lt; required 80.0%) covered, 10 of 23 missed, NOK
+[info] Branches: 0% (&lt; required 100.0%) covered, 0 of 0 missed, NOK
+[info] Methods: 50% (&lt; required 100.0%) covered, 2 of 4 missed, NOK
+[info] Complexity: 50% (&lt; required 100.0%) covered, 2 of 4 missed, NOK
+[info] Class: 100% (&gt;= required 100.0%) covered, 1 of 2 missed, OK
+[info]
+[info] Check /home/example/jacoco-test/scala-2.12/jacoco/report for detailed report
+[info]
+[error] Required coverage is not met
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p>By default the minimum coverage levels are set to 0%.</p></div>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/sbt/sbt-jacoco/tree/master/src/paradox/getting-started.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="integration-tests.html">Integration Tests</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html#getting-started" class="header">Getting Started</a>
+  <ul>
+    <li><a href="getting-started.html#setup" class="header">Setup</a></li>
+    <li><a href="getting-started.html#setting-minimum-coverage-levels" class="header">Setting Minimum Coverage Levels</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2021</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>
