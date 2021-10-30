@@ -63,7 +63,10 @@ lazy val root = (project in file("."))
 
 ## Codecov
 
-The Codecov uploader script will upload coverage automatically if the XML formatter is enabled. For example:
+The [Codecov uploader](https://docs.codecov.com/docs/codecov-uploader) will upload coverage automatically if the XML formatter is enabled.
+Note that the legacy [bash based uploader](https://docs.codecov.com/docs/about-the-codecov-bash-uploader) has been deprecated and service will begin to brown out in the latter part of 2021.
+
+For example:
 
 ```scala
 jacocoReportSettings := JacocoReportSettings(
@@ -78,7 +81,7 @@ With this enabled run the Codecov script after JaCoCo:
 
 ```sh
 sbt jacoco
-bash <(curl -s https://codecov.io/bash)
+./codecov
 ```
 
 ## Codacy
