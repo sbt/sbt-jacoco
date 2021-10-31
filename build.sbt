@@ -44,7 +44,7 @@ lazy val jacocoPlugin = (project in file("."))
       "sbtVersion" -> sbtVersion.value
     )
 
-    Paradox / paradoxNavigationDepth := 3
+    Compile / paradoxNavigationDepth := 3
     git.remoteRepo := "git@github.com:sbt/sbt-jacoco.git"
 
     headerLicense := Some(
