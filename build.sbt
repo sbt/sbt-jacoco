@@ -1,4 +1,4 @@
-lazy val jacocoVersion = "0.8.7"
+lazy val jacocoVersion = "0.8.8"
 lazy val circeVersion = "0.8.0"
 
 ThisBuild / version := {
