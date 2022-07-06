@@ -24,7 +24,7 @@ lazy val jacocoPlugin = (project in file("."))
       "commons-codec" % "commons-codec" % "1.15",
       "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.0.202109080827-r",
       "org.scalatest" %% "scalatest" % "3.2.12" % Test,
-      "org.mockito" % "mockito-core" % "4.5.1" % Test
+      "org.mockito" % "mockito-core" % "4.6.1" % Test
     )
 
     scalacOptions ++= Seq(
