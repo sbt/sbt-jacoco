@@ -1,5 +1,4 @@
 lazy val jacocoVersion = "0.8.8"
-lazy val circeVersion = "0.8.0"
 
 ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) "3.4.0" + "-SNAPSHOT"
