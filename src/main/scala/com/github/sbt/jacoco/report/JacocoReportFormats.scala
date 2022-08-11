@@ -12,7 +12,7 @@
 
 package com.github.sbt.jacoco.report
 
-import com.github.sbt.jacoco.report.formats.{CSVReportFormat, HTMLReportFormat, ScalaHTMLReportFormat, XMLReportFormat}
+import com.github.sbt.jacoco.report.formats.{CSVReportFormat, CoberturaReportFormat, HTMLReportFormat, ScalaHTMLReportFormat, XMLReportFormat}
 
 object JacocoReportFormats {
 
@@ -39,4 +39,11 @@ object JacocoReportFormats {
    * '''Note:''' does not support Scala language constructs.
    */
   val CSV = new CSVReportFormat()
+
+  /**
+   * COBERTURA report containing metrics at instruction level and embedded source code.
+   *
+   * '''Note:''' does not support Scala language constructs.
+   */
+  val COBERTURA = new CoberturaReportFormat()
 }
