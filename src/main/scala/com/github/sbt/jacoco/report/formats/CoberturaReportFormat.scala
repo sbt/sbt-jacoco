@@ -20,7 +20,6 @@ class CoberturaReportFormat extends JacocoReportFormat {
   }
 }
 
-
 class CoberturaRootVisitor(writer: Writer) extends IReportVisitor {
 
   private var indent = 0

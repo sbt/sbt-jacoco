@@ -12,7 +12,13 @@
 
 package com.github.sbt.jacoco.report
 
-import com.github.sbt.jacoco.report.formats.{CSVReportFormat, CoberturaReportFormat, HTMLReportFormat, ScalaHTMLReportFormat, XMLReportFormat}
+import com.github.sbt.jacoco.report.formats.{
+  CSVReportFormat,
+  CoberturaReportFormat,
+  HTMLReportFormat,
+  ScalaHTMLReportFormat,
+  XMLReportFormat
+}
 
 object JacocoReportFormats {
 
