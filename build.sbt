@@ -4,7 +4,7 @@ ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) "3.4.0" + "-SNAPSHOT"
   else (ThisBuild / version).value
 }
-ThisBuild / scalaVersion := "2.12.17"
+ThisBuild / scalaVersion := "2.13.10"
 
 lazy val jacocoPlugin = (project in file("."))
   .enablePlugins(SbtPlugin)

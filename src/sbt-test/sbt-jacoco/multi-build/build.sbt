@@ -1,6 +1,6 @@
 organization := "com.example"
 
-scalaVersion := "2.12.17"
+scalaVersion := "2.13.10"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.13" % "test"
