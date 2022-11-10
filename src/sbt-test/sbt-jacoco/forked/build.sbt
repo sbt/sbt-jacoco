@@ -1,9 +1,9 @@
 name := "jacocoTest"
 organization := "com.navetas"
 
-scalaVersion := "2.12.16"
+scalaVersion := "2.12.17"
 scalacOptions ++= Seq("-deprecation", "-optimize", "-unchecked", "-Xlint", "-language:_")
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.13" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
 
 Test / fork := true
