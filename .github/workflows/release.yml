@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
       # setup build environment
       - uses: coursier/cache-action@v6
-      - uses: olafurpg/setup-scala@v13
+      - uses: olafurpg/setup-scala@v14
       - name: sbt test and packagedArtifacts for sbt 1.x
         run: |
           sbt test packagedArtifacts
