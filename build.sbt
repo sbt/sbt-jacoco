@@ -21,7 +21,7 @@ lazy val jacocoPlugin = (project in file("."))
       "org.scalaj" %% "scalaj-http" % "2.4.2",
       "commons-codec" % "commons-codec" % "1.16.0",
       "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.2.202306221912-r",
-      "org.scalatest" %% "scalatest" % "3.2.16" % Test,
+      "org.scalatest" %% "scalatest" % "3.2.17" % Test,
       "org.mockito" % "mockito-core" % "4.11.0" % Test
     )
 
