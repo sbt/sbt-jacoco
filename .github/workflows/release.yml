@@ -9,12 +9,12 @@ jobs:
   build_sbt_1_0:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       # setup build environment
       - uses: coursier/cache-action@v6
-      - uses: olafurpg/setup-scala@v13
+      - uses: olafurpg/setup-scala@v14
       - name: sbt test and packagedArtifacts for sbt 1.x
         run: |
           sbt test packagedArtifacts

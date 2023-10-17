@@ -1,4 +1,4 @@
-lazy val jacocoVersion = "0.8.8"
+lazy val jacocoVersion = "0.8.10"
 
 ThisBuild / version := {
   if ((ThisBuild / isSnapshot).value) "3.4.0" + "-SNAPSHOT"
@@ -17,11 +17,11 @@ lazy val jacocoPlugin = (project in file("."))
       "org.jacoco" % "org.jacoco.core" % jacocoVersion,
       "org.jacoco" % "org.jacoco.report" % jacocoVersion,
       "com.jsuereth" %% "scala-arm" % "2.0",
-      "com.fasterxml.jackson.core" % "jackson-core" % "2.14.2",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.15.2",
       "org.scalaj" %% "scalaj-http" % "2.4.2",
-      "commons-codec" % "commons-codec" % "1.15",
-      "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.1.202206130422-r",
-      "org.scalatest" %% "scalatest" % "3.2.15" % Test,
+      "commons-codec" % "commons-codec" % "1.16.0",
+      "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.2.202306221912-r",
+      "org.scalatest" %% "scalatest" % "3.2.17" % Test,
       "org.mockito" % "mockito-core" % "4.11.0" % Test
     )
 
