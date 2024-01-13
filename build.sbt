@@ -17,7 +17,7 @@ lazy val jacocoPlugin = (project in file("."))
       "org.jacoco" % "org.jacoco.core" % jacocoVersion,
       "org.jacoco" % "org.jacoco.report" % jacocoVersion,
       "com.jsuereth" %% "scala-arm" % "2.0",
-      "com.fasterxml.jackson.core" % "jackson-core" % "2.16.0",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.16.1",
       "org.scalaj" %% "scalaj-http" % "2.4.2",
       "commons-codec" % "commons-codec" % "1.16.0",
       "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.2.202306221912-r",
