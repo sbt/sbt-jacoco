@@ -16,7 +16,7 @@ import java.io.{File, Reader}
 
 import org.jacoco.report.{DirectorySourceFileLocator, ISourceFileLocator}
 
-class DirectoriesSourceFileLocator(directories: Seq[File], sourceSettings: JacocoSourceSettings)
+class DirectoriesSourceFileLocator(private[report] val directories: Seq[File], sourceSettings: JacocoSourceSettings)
     extends ISourceFileLocator {
 
   override def getSourceFile(packageName: String, fileName: String): Reader = {
