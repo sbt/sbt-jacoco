@@ -16,9 +16,9 @@ import java.io.FileOutputStream
 
 import org.jacoco.core.data.ExecutionDataWriter
 import org.jacoco.core.tools.ExecFileLoader
-import resource._
 import sbt.Keys.TaskStreams
 import sbt._
+import scala.util.Using
 
 object ExecutionDataUtils {
   def saveRuntimeData(data: ProjectData, destination: File, forked: Boolean, streams: TaskStreams): Unit = {
@@ -26,9 +26,7 @@ object ExecutionDataUtils {
       streams.log.debug(s"writing execution data to $destination")
       IO.createDirectory(destination.getParentFile)
 
-      for {
-        os <- managed(new FileOutputStream(destination))
-      } {
+      Using.resource(new FileOutputStream(destination)) { os =>
         val executionDataWriter = new ExecutionDataWriter(os)
         data.data.collect(executionDataWriter, executionDataWriter, true)
       }
@@ -46,9 +44,7 @@ object ExecutionDataUtils {
 
     IO.createDirectory(destination.getParentFile)
 
-    for {
-      os <- managed(new FileOutputStream(destination))
-    } {
+    Using.resource(new FileOutputStream(destination)) { os =>
       val dataWriter = new ExecutionDataWriter(os)
       loader.getSessionInfoStore.accept(dataWriter)
       loader.getExecutionDataStore.accept(dataWriter)
