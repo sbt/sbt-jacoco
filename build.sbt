@@ -16,7 +16,6 @@ lazy val jacocoPlugin = (project in file("."))
     libraryDependencies ++= Seq(
       "org.jacoco" % "org.jacoco.core" % jacocoVersion,
       "org.jacoco" % "org.jacoco.report" % jacocoVersion,
-      "com.jsuereth" %% "scala-arm" % "2.0",
       "com.fasterxml.jackson.core" % "jackson-core" % "2.20.0",
       "org.scalaj" %% "scalaj-http" % "2.4.2",
       "commons-codec" % "commons-codec" % "1.19.0",
