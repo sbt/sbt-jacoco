@@ -16,9 +16,9 @@ import java.io.FileInputStream
 
 import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
-import resource._
 import sbt.Keys._
 import sbt._
+import scala.util.Using
 
 object InstrumentationUtils {
 
@@ -56,11 +56,12 @@ object InstrumentationUtils {
 
     for {
       classFile <- classFiles
-      classStream <- managed(new FileInputStream(classFile))
     } {
-      streams.log.debug(s"instrumenting $classFile")
-      val instrumentedClass = instrumenter.instrument(classStream, classFile.name)
-      IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+      Using.resource(new FileInputStream(classFile)) { classStream =>
+        streams.log.debug(s"instrumenting $classFile")
+        val instrumentedClass = instrumenter.instrument(classStream, classFile.name)
+        IO.write(rebaseClassFiles(classFile).get, instrumentedClass)
+      }
     }
 
     jacocoAgent ++ (Attributed.blank(destDirectory) +: classpath)
