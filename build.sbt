@@ -9,7 +9,6 @@ lazy val jacocoPlugin = (project in file("."))
   .enablePlugins(SbtPlugin)
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(ParadoxSitePlugin)
-  .enablePlugins(GhpagesPlugin)
   .settings(nocomma {
     name := "sbt-jacoco"
 
