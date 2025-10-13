@@ -32,6 +32,6 @@ jobs:
       shell: bash
       run: sbt -v clean scalafmtCheckAll headerCheck test scripted
     - name: Build site
-      if: ${{ matrix.java-version == 8 }}
+      if: ${{ matrix.java-version == 11 }}
       shell: bash
       run: sbt -v makeSite
