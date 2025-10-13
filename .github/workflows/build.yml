@@ -35,7 +35,7 @@ jobs:
       if: ${{ matrix.java-version == 11 }}
       shell: bash
       run: sbt -v makeSite
-    - if: ${{ github.repository_owner == 'sbt' && github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    - if: ${{ github.repository_owner == 'sbt' && github.ref == 'refs/heads/main' && github.event_name == 'push' && matrix.java-version == 11 }}
       uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4.7.3
       with:
         folder: target/site
