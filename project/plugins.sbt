@@ -1,7 +1,7 @@
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.11.2")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.5")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.6")
 addSbtPlugin("com.github.sbt" % "sbt-header" % "5.11.0")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("com.github.sbt" % "sbt-site-paradox" % "1.7.0")
