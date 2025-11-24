@@ -12,19 +12,19 @@
 
 package com.github.sbt.jacoco.filter
 
-import com.github.sbt.jacoco.filter.AccessorDetector._
-import com.github.sbt.jacoco.filter.ScalaForwarderDetector._
-import com.github.sbt.jacoco.filter.ScalaSyntheticMethod._
+import com.github.sbt.jacoco.filter.AccessorDetector.*
+import com.github.sbt.jacoco.filter.ScalaForwarderDetector.*
+import com.github.sbt.jacoco.filter.ScalaSyntheticMethod.*
 import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
 import org.jacoco.core.data.ExecutionDataStore
 import org.jacoco.core.internal.analysis.{ClassAnalyzer, ClassCoverageImpl, MethodAnalyzer, StringPool}
 import org.jacoco.core.internal.data.CRC64
 import org.jacoco.core.internal.flow.{ClassProbesAdapter, MethodProbesVisitor}
 import org.jacoco.core.internal.instr.InstrSupport
-import org.objectweb.asm._
+import org.objectweb.asm.*
 import org.objectweb.asm.tree.{ClassNode, MethodNode}
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 import scala.collection.mutable
 
 /**

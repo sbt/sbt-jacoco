@@ -16,8 +16,8 @@ import java.io.FileInputStream
 
 import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
 import scala.util.Using
 
 object InstrumentationUtils {

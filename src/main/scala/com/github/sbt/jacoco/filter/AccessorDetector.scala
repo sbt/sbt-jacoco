@@ -12,10 +12,10 @@
 
 package com.github.sbt.jacoco.filter
 
-import org.objectweb.asm.Opcodes._
-import org.objectweb.asm.tree._
+import org.objectweb.asm.Opcodes.*
+import org.objectweb.asm.tree.*
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 /** Detects accessor methods that do nothing other than load and return a field */
 object AccessorDetector {

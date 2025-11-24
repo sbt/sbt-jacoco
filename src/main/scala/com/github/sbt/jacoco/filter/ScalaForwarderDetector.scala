@@ -12,10 +12,10 @@
 
 package com.github.sbt.jacoco.filter
 
-import org.objectweb.asm.Opcodes._
+import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.tree.{JumpInsnNode, MethodInsnNode, MethodNode}
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 /**
  * Detects forwarder methods added by Scala

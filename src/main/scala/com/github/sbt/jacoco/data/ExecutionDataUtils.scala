@@ -17,7 +17,7 @@ import java.io.FileOutputStream
 import org.jacoco.core.data.ExecutionDataWriter
 import org.jacoco.core.tools.ExecFileLoader
 import sbt.Keys.TaskStreams
-import sbt._
+import sbt.*
 import scala.util.Using
 
 object ExecutionDataUtils {

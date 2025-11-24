@@ -12,7 +12,7 @@
 
 package com.github.sbt.jacoco
 
-import sbt._
+import sbt.*
 
 object JacocoPlugin extends BaseJacocoPlugin {
 

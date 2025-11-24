@@ -15,7 +15,7 @@ package com.github.sbt.jacoco.report.formats
 import org.jacoco.report.JavaNames
 import com.github.sbt.jacoco.filter.ScalaForwarderDetector
 
-import scala.reflect.NameTransformer._
+import scala.reflect.NameTransformer.*
 
 private[formats] class ScalaLanguageNames extends JavaNames {
   override def getPackageName(vmname: String): String =

@@ -14,10 +14,10 @@ package com.github.sbt.jacoco.coveralls
 
 import java.io.File
 
-import com.github.sbt.jacoco.{JacocoPlugin, _}
+import com.github.sbt.jacoco.*
 import com.github.sbt.jacoco.report.ReportUtils
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
 
 object JacocoCoverallsPlugin extends BaseJacocoPlugin {
   override def requires: Plugins = JacocoPlugin
@@ -39,9 +39,9 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
     val jacocoCoverallsRepoToken: SettingKey[Option[String]] = settingKey("Coveralls repo secret key")
   }
 
-  import autoImport._ // scalastyle:ignore import.grouping
+  import autoImport.* // scalastyle:ignore import.grouping
 
-  override def projectSettings: Seq[Setting[_]] = Seq(
+  override def projectSettings: Seq[Setting[?]] = Seq(
     jacocoCoveralls := Def.task {
       CoverallsClient.sendReport(jacocoReportDirectory.value / "coveralls.json", streams.value)
     }.value,

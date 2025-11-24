@@ -18,7 +18,7 @@ import org.eclipse.jgit.lib.{Constants, ObjectId}
 import org.eclipse.jgit.revwalk.RevWalk
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 case class GitInfo(
     hash: String,
