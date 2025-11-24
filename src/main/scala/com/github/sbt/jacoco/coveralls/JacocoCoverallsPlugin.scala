@@ -26,7 +26,9 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
   override protected def srcConfig = Test
 
   object autoImport {
+    @transient
     val jacocoCoveralls: TaskKey[Unit] = taskKey("Generate and upload JaCoCo reports to Coveralls")
+    @transient
     val jacocoCoverallsGenerateReport: TaskKey[Unit] = taskKey("Generate Coveralls report JSON")
 
     val jacocoCoverallsServiceName: SettingKey[String] = settingKey("CI service name")

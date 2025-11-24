@@ -14,6 +14,7 @@ package com.github.sbt.jacoco
 
 import java.io.File
 
+import com.github.sbt.jacoco.JacocoPluginCompat.*
 import com.github.sbt.jacoco.build.BuildInfo
 import com.github.sbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils, ProjectData}
 import com.github.sbt.jacoco.report.ReportUtils
@@ -78,7 +79,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
         ExecutionDataUtils
           .saveRuntimeData(projectData(thisProject.value), jacocoDataFile.value, fork.value, streams.value)
       )
-      .dependsOn(test)
+      .dependsOn(JacocoPluginCompat.testFull)
       .value,
     jacocoReport := ReportUtils.generateReport(
       jacocoReportDirectory.value,
@@ -99,19 +100,23 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
       streams.value
     ),
     clean := jacocoDirectory.map(dir => if (dir.exists) IO delete dir.listFiles).value,
-    fullClasspath := InstrumentationUtils.instrumentClasses(
-      (Compile / products).value,
-      filterClassesToInstrument(
-        (Compile / products).value,
-        (srcConfig / jacocoInstrumentationIncludes).value,
-        (srcConfig / jacocoInstrumentationExcludes).value
-      ),
-      (srcConfig / fullClasspath).value,
-      jacocoInstrumentedDirectory.value,
-      update.value,
-      fork.value,
-      projectData(thisProject.value),
-      streams.value
+    fullClasspath := Def.uncached(
+      JacocoPluginCompat.convertClasspath(
+        InstrumentationUtils.instrumentClasses(
+          (Compile / products).value,
+          filterClassesToInstrument(
+            (Compile / products).value,
+            (srcConfig / jacocoInstrumentationIncludes).value,
+            (srcConfig / jacocoInstrumentationExcludes).value
+          ),
+          JacocoPluginCompat.fromClasspath((srcConfig / fullClasspath).value),
+          jacocoInstrumentedDirectory.value,
+          update.value,
+          fork.value,
+          projectData(thisProject.value),
+          streams.value
+        )
+      )
     ),
     definedTests := (srcConfig / definedTests).value,
     definedTestNames := (srcConfig / definedTestNames).value

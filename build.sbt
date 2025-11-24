@@ -26,11 +26,21 @@ lazy val jacocoPlugin = (project in file("."))
     scalacOptions ++= Seq(
       "-unchecked",
       "-deprecation",
-      "-feature",
-      "-Xfuture",
-      "-Ywarn-adapted-args",
-      "-Ywarn-dead-code"
+      "-feature"
     )
+
+    scalacOptions ++= {
+      scalaBinaryVersion.value match {
+        case "2.12" =>
+          Seq(
+            "-Xfuture",
+            "-Ywarn-adapted-args",
+            "-Ywarn-dead-code"
+          )
+        case _ =>
+          Nil
+      }
+    }
 
     buildInfoPackage := "com.github.sbt.jacoco.build"
     buildInfoKeys := Seq[BuildInfoKey](
@@ -85,3 +95,13 @@ ThisBuild / pomIncludeRepository := { _ =>
 ThisBuild / publishTo := (if (isSnapshot.value) None else localStaging.value)
 ThisBuild / publishMavenStyle := true
 ThisBuild / dynverSonatypeSnapshots := true
+
+crossScalaVersions += "3.7.4"
+pluginCrossBuild / sbtVersion := {
+  scalaBinaryVersion.value match {
+    case "2.12" =>
+      sbtVersion.value
+    case _ =>
+      "2.0.0-RC6"
+  }
+}
