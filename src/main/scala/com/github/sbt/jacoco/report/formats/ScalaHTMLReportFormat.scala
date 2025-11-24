@@ -17,9 +17,9 @@ import java.io.File
 import org.jacoco.core.analysis.ICoverageNode
 import org.jacoco.report.html.HTMLFormatter
 import org.jacoco.report.internal.html.resources.Styles
-import org.jacoco.report.internal.html.table._
+import org.jacoco.report.internal.html.table.*
 import org.jacoco.report.{FileMultiReportOutput, IReportVisitor}
-import sbt._
+import sbt.*
 
 class ScalaHTMLReportFormat(withBranchCoverage: Boolean = true) extends JacocoReportFormat {
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {

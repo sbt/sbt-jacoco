@@ -16,7 +16,7 @@ import java.io.File
 
 import org.jacoco.report.html.HTMLFormatter
 import org.jacoco.report.{FileMultiReportOutput, IReportVisitor}
-import sbt._
+import sbt.*
 
 class HTMLReportFormat extends JacocoReportFormat {
   override def createVisitor(directory: File, encoding: String): IReportVisitor = {

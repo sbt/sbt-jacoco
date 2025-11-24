@@ -13,7 +13,7 @@
 package com.github.sbt.jacoco
 
 import com.github.sbt.jacoco.report.{JacocoReportSettings, JacocoSourceSettings}
-import sbt._
+import sbt.*
 
 // scalastyle:off line.size.limit
 object JacocoKeys extends JacocoKeys

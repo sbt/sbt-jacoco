@@ -12,8 +12,8 @@
 
 package com.github.sbt.jacoco.report
 
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
 
 object ReportUtils {
   def generateReport(

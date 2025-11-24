@@ -15,12 +15,12 @@ package com.github.sbt.jacoco.report
 import java.io.File
 import java.text.DecimalFormat
 
-import org.jacoco.core.analysis._
-import org.jacoco.core.data._
+import org.jacoco.core.analysis.*
+import org.jacoco.core.data.*
 import org.jacoco.core.tools.ExecFileLoader
 import com.github.sbt.jacoco.filter.FilteringAnalyzer
 import com.github.sbt.jacoco.report.formats.JacocoReportFormat
-import sbt.Keys._
+import sbt.Keys.*
 
 class Report(
     executionDataFiles: Seq[File],

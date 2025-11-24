@@ -17,21 +17,21 @@ import java.io.File
 import com.github.sbt.jacoco.build.BuildInfo
 import com.github.sbt.jacoco.data.{ExecutionDataUtils, InstrumentationUtils, ProjectData}
 import com.github.sbt.jacoco.report.ReportUtils
-import sbt.Keys._
+import sbt.Keys.*
 import sbt.plugins.JvmPlugin
-import sbt.{Def, _}
+import sbt.*
 
 private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKeys {
   override def requires: Plugins = JvmPlugin
 
   protected def srcConfig: Configuration
 
-  override def projectSettings: Seq[Setting[_]] =
+  override def projectSettings: Seq[Setting[?]] =
     dependencyValues ++
       unscopedSettingValues ++
       inConfig(srcConfig)(scopedSettingValues ++ taskValues)
 
-  protected def dependencyValues: Seq[Setting[_]] = Seq(
+  protected def dependencyValues: Seq[Setting[?]] = Seq(
     libraryDependencies ++= {
       if ((Test / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation

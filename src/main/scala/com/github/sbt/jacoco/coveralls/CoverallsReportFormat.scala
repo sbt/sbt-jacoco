@@ -16,7 +16,7 @@ import java.io.File
 
 import com.github.sbt.jacoco.report.formats.JacocoReportFormat
 import org.jacoco.report.IReportVisitor
-import sbt._
+import sbt.*
 
 class CoverallsReportFormat(
     sourceDirs: Seq[File],

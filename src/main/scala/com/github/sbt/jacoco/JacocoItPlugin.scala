@@ -15,9 +15,9 @@ package com.github.sbt.jacoco
 import com.github.sbt.jacoco.build.BuildInfo
 import com.github.sbt.jacoco.data.ExecutionDataUtils
 import com.github.sbt.jacoco.report.{JacocoReportSettings, ReportUtils}
-import sbt.Keys._
+import sbt.Keys.*
 import sbt.plugins.JvmPlugin
-import sbt.{Def, _}
+import sbt.*
 
 object JacocoItPlugin extends BaseJacocoPlugin {
 
@@ -37,7 +37,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
       taskKey[Unit]("generates a merged report")
   }
 
-  import autoImport._ // scalastyle:ignore import.grouping
+  import autoImport.* // scalastyle:ignore import.grouping
 
   override def requires: Plugins = JvmPlugin && JacocoPlugin
 
@@ -53,7 +53,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
     }
   }
 
-  override protected def dependencyValues: Seq[Setting[_]] = Seq(
+  override protected def dependencyValues: Seq[Setting[?]] = Seq(
     libraryDependencies ++= {
       if ((Test / fork).value || (IntegrationTest / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
@@ -64,7 +64,7 @@ object JacocoItPlugin extends BaseJacocoPlugin {
     }
   )
 
-  override def projectSettings: Seq[Setting[_]] =
+  override def projectSettings: Seq[Setting[?]] =
     Defaults.itSettings ++
       super.projectSettings ++
       // move the test reports to a subdirectory to disambiguate

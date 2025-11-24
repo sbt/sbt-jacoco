@@ -13,16 +13,16 @@
 package com.github.sbt.jacoco.coveralls
 
 import java.io.File
-import java.{util => ju}
+import java.util as ju
 
 import com.fasterxml.jackson.core.{JsonEncoding, JsonFactory}
 import org.apache.commons.codec.digest.DigestUtils
 import org.jacoco.core.analysis.{IBundleCoverage, ILine, IPackageCoverage, ISourceFileCoverage}
 import org.jacoco.core.data.{ExecutionData, SessionInfo}
 import org.jacoco.report.{IReportGroupVisitor, IReportVisitor, ISourceFileLocator}
-import sbt._
+import sbt.*
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 class CoverallsReportVisitor(
     output: File,
