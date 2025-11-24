@@ -30,7 +30,7 @@ jobs:
     - uses: sbt/setup-sbt@v1
     - name: Build and test
       shell: bash
-      run: sbt -v clean scalafmtCheckAll headerCheck test scripted
+      run: sbt -v clean "+ scalafmtCheckAll" "+ headerCheckAll" "+ test" scripted
     - name: Build site
       if: ${{ matrix.java-version == 11 }}
       shell: bash

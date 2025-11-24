@@ -25,7 +25,7 @@ object InstrumentationUtils {
   def instrumentClasses(
       products: Seq[File],
       classFiles: Seq[File],
-      classpath: Classpath,
+      classpath: Seq[Attributed[File]],
       destDirectory: File,
       updateReport: UpdateReport,
       forked: Boolean,

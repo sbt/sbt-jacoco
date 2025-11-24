@@ -19,16 +19,21 @@ import sbt.*
 object JacocoKeys extends JacocoKeys
 
 trait JacocoKeys {
+  @transient
   val jacoco: TaskKey[Unit] = taskKey[Unit]("Executes the tests and creates a JaCoCo coverage report.")
 
+  @transient
   val jacocoCheck: TaskKey[Unit] = taskKey[Unit]("Executes the tests and saves the execution data in 'jacoco.exec'.")
+  @transient
   val jacocoReport: TaskKey[Unit] =
     taskKey[Unit]("Generates a JaCoCo report. You can use the 'jacoco report' command alternatively.")
 
+  @transient
   val jacocoAggregate: TaskKey[Unit] = taskKey[Unit](
     "Executes the tests and creates a JaCoCo coverage report as well as an aggregated report which merges all sub-projects."
   )
 
+  @transient
   val jacocoAggregateReport: TaskKey[Unit] = taskKey[Unit]("Generates an aggregated JaCoCo report.")
 
   val jacocoDirectory: SettingKey[File] =
