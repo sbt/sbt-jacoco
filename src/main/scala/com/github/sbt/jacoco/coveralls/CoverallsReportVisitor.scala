@@ -49,8 +49,8 @@ class CoverallsReportVisitor(
   override def visitGroup(name: String): IReportGroupVisitor = this
 
   override def visitBundle(bundle: IBundleCoverage, locator: ISourceFileLocator): Unit = {
-    bundle.getPackages.asScala foreach { pkg: IPackageCoverage =>
-      pkg.getSourceFiles.asScala foreach { source: ISourceFileCoverage =>
+    bundle.getPackages.asScala.foreach { (pkg: IPackageCoverage) =>
+      pkg.getSourceFiles.asScala.foreach { (source: ISourceFileCoverage) =>
         json.writeStartObject()
 
         val (filename, md5) = findFile(pkg.getName, source.getName) match {

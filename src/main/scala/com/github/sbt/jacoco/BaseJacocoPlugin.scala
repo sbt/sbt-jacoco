@@ -121,7 +121,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     val inclFilters = incl map GlobFilter.apply
     val exclFilters = excl map GlobFilter.apply
 
-    products.flatten { product =>
+    products.flatMap { product =>
       (PathFinder(product) ** new FileFilter {
         def accept(f: File): Boolean =
           IO.relativize(product, f) match {
@@ -130,7 +130,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
               inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
             case _ => false
           }
-      }).get
+      }).get()
     }
   }
 
@@ -145,7 +145,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
           inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
         case _ => false
       }
-    }).get
+    }).get()
   }
 
   private def toClassName(entry: String): String =
