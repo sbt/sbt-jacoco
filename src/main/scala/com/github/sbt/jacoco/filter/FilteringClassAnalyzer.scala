@@ -78,7 +78,7 @@ private final class FilteringClassAnalyzer(
 
   private val isModuleClass = classCoverage.getName.endsWith("$")
 
-  private val methods: Seq[MethodNode] = classNode.methods.asScala
+  private val methods: Seq[MethodNode] = classNode.methods.asScala.toSeq
 
   private def visitFiltered(): Unit = {
     for {
