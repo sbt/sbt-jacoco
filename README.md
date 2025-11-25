@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/sbt/sbt-jacoco/workflows/CI/badge.svg)](https://github.com/sbt/sbt-jacoco/actions?workflow=CI)
 [![Release Status](https://github.com/sbt/sbt-jacoco/workflows/Release/badge.svg)](https://github.com/sbt/sbt-jacoco/actions?workflow=Release)
-[![SBT 1.0 version](https://maven-badges.herokuapp.com/maven-central/com.github.sbt/sbt-jacoco/badge.svg)](https://repo1.maven.org/maven2/com/github/sbt/sbt-jacoco_2.12_1.0/)
+[![SBT 1.0 version](https://img.shields.io/maven-central/v/com.github.sbt/sbt-jacoco_2.12_1.0)](https://repo1.maven.org/maven2/com/github/sbt/sbt-jacoco_2.12_1.0/)
 
 This is an [sbt](http://scala-sbt.org/) plugin for code coverage analysis via [JaCoCo](http://www.eclemma.org/jacoco/).
 Supports uploading results to [Coveralls](https://coveralls.io), [Codecov](https://codecov.io) and [Codacy](https://www.codacy.com/).
