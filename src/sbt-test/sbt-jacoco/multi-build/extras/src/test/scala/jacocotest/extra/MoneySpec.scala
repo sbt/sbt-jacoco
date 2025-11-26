@@ -1,7 +1,7 @@
 package jacocotest.extra
 
 import java.util.Currency
-import org.scalatest.flatspec._
+import org.scalatest.flatspec.*
 import org.scalatest.matchers.should.Matchers
 
 class MoneySpec extends AnyFlatSpec with Matchers {

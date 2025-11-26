@@ -1,6 +1,6 @@
 package jacocotest
 
-import java.{util => ju}
+import java.util as ju
 
 object PropertyUtils {
   private val props = new ju.Properties()

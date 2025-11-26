@@ -1,6 +1,6 @@
 package example
 
-import org.scalatest.funsuite._
+import org.scalatest.funsuite.*
 
 class UnitTest extends AnyFunSuite {
   test("forUnitTests") {

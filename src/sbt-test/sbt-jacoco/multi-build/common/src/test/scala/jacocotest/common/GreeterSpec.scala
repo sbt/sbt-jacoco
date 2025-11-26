@@ -1,6 +1,6 @@
 package jacocotest.common
 
-import org.scalatest.flatspec._
+import org.scalatest.flatspec.*
 import org.scalatest.matchers.should.Matchers
 
 class GreeterSpec extends AnyFlatSpec with Matchers {

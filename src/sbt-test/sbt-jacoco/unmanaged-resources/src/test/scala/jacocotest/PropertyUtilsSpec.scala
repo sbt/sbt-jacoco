@@ -1,6 +1,6 @@
 package jacocotest
 
-import org.scalatest.flatspec._
+import org.scalatest.flatspec.*
 import org.scalatest.matchers.should.Matchers
 
 class PropertyUtilsSpec extends AnyFlatSpec with Matchers {

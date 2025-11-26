@@ -1,6 +1,6 @@
 package jacocotest
 
-import org.scalatest.flatspec._
+import org.scalatest.flatspec.*
 
 class TestClassTests extends AnyFlatSpec {
   "TestClass" should "double a number correctly" in {
