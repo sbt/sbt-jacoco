@@ -26,7 +26,7 @@ jobs:
         distribution: temurin
         java-version: ${{matrix.java-version}}
     - name: Coursier cache
-      uses: coursier/cache-action@v7
+      uses: coursier/cache-action@v8
     - uses: sbt/setup-sbt@v1
     - name: Build and test
       shell: bash
