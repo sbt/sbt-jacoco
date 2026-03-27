@@ -4,7 +4,7 @@ organization := "com.navetas"
 scalaVersion := "2.12.21"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xlint", "-language:_")
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % "test"
 
 jacocoReportSettings := JacocoReportSettings()
   .withThresholds(
