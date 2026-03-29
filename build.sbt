@@ -103,6 +103,6 @@ pluginCrossBuild / sbtVersion := {
     case "2.12" =>
       sbtVersion.value
     case _ =>
-      "2.0.0-RC9"
+      "2.0.0-RC10"
   }
 }
