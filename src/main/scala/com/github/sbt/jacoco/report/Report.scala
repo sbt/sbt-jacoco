@@ -47,7 +47,7 @@ class Report(
   }
 
   def checkCoverage(bundle: IBundleCoverage): Boolean = {
-    val sb = StringBuilder.newBuilder
+    val sb = new StringBuilder
 
     sb ++= "\n------- "
     sb ++= reportSettings.title
