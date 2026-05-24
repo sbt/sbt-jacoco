@@ -68,7 +68,7 @@ class TestCounters {
   }
 
   def checkCounter(required: Double): Boolean = {
-    report.checkCounter("foo", mockICounter, required, StringBuilder.newBuilder)
+    report.checkCounter("foo", mockICounter, required, new StringBuilder)
   }
 
   def checkBundle(): Boolean = {
