@@ -97,12 +97,12 @@ ThisBuild / publishTo := (if (isSnapshot.value) None else localStaging.value)
 ThisBuild / publishMavenStyle := true
 ThisBuild / dynverSonatypeSnapshots := true
 
-crossScalaVersions += "3.8.3"
+crossScalaVersions += "3.8.4"
 pluginCrossBuild / sbtVersion := {
   scalaBinaryVersion.value match {
     case "2.12" =>
       sbtVersion.value
     case _ =>
-      "2.0.0-RC13"
+      "2.0.0"
   }
 }
