@@ -32,10 +32,10 @@ jobs:
       shell: bash
       run: sbt -v clean "+ scalafmtCheckAll" "+ headerCheckAll" "+ test" scripted
     - name: Build site
-      if: ${{ matrix.java-version == 11 }}
+      if: ${{ matrix.java-version == 17 }}
       shell: bash
       run: sbt -v makeSite
-    - if: ${{ github.repository_owner == 'sbt' && github.ref == 'refs/heads/main' && github.event_name == 'push' && matrix.java-version == 11 }}
+    - if: ${{ github.repository_owner == 'sbt' && github.ref == 'refs/heads/main' && github.event_name == 'push' && matrix.java-version == 17 }}
       uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
       with:
         folder: target/site
