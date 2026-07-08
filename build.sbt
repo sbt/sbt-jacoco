@@ -52,7 +52,6 @@ lazy val jacocoPlugin = (project in file("."))
     )
 
     Compile / paradoxNavigationDepth := 3
-    git.remoteRepo := "git@github.com:sbt/sbt-jacoco.git"
 
     headerLicense := Some(
       HeaderLicense.Custom(
