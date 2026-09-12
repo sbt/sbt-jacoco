@@ -28,13 +28,13 @@ object ScalaSyntheticMethod {
 
   private def isCaseInstanceMethod(name: String) = name match {
     case "canEqual" | "copy" | "equals" | "hashCode" | "productPrefix" | "productArity" | "productElement" |
-        "productIterator" | "toString" =>
+        "productElementName" | "productElementNames" | "productIterator" | "toString" =>
       true
     case _ if name.startsWith("copy$default") => true
     case _ => false
   }
   private def isCaseCompanionMethod(name: String) = name match {
-    case "apply" | "unapply" | "unapplySeq" | "readResolve" => true
+    case "apply" | "unapply" | "unapplySeq" | "readResolve" | "writeReplace" => true
     case _ => false
   }
   private def isAnyValCompanionMethod(name: String) = name match {
