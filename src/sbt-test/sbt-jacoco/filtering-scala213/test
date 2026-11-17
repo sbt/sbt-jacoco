@@ -5,11 +5,11 @@
 > jacoco
 
 # instrumented classes
-$ exists target/scala-2.13/jacoco/instrumented-classes
+$ exists target/**/jacoco/instrumented-classes
 
 # results
-$ exists target/scala-2.13/jacoco/data/jacoco.exec
+$ exists target/**/jacoco/data/jacoco.exec
 
 # report formats
-$ exists target/scala-2.13/jacoco/report/html/index.html
-$ exists target/scala-2.13/jacoco/report/jacoco.xml
+$ exists target/**/jacoco/report/html/index.html
+$ exists target/**/jacoco/report/jacoco.xml

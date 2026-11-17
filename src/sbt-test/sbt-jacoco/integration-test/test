@@ -2,19 +2,19 @@
 
 # coverage should pass
 > jacoco
-> it:jacoco
+> JacocoIntegrationTest / jacoco
 
 # instrumented classes - common to both tests
-$ exists target/scala-2.12/jacoco/instrumented-classes
+$ exists target/**/jacoco/instrumented-classes
 
 # unit tests
-$ exists target/scala-2.12/jacoco/data/jacoco.exec
-$ exists target/scala-2.12/jacoco/report/test/html/index.html
+$ exists target/**/jacoco/data/jacoco.exec
+$ exists target/**/jacoco/report/test/html/index.html
 
 # integration tests
-$ exists target/scala-2.12/jacoco/data/jacoco-it.exec
-$ exists target/scala-2.12/jacoco/data/jacoco-merged.exec
-$ exists target/scala-2.12/jacoco/report/it/html/index.html
+$ exists target/**/jacoco/data/jacoco-it.exec
+$ exists target/**/jacoco/data/jacoco-merged.exec
+$ exists target/**/jacoco/report/it/html/index.html
 
 # combined html report
-$ exists target/scala-2.12/jacoco/report/merged/html/index.html
+$ exists target/**/jacoco/report/merged/html/index.html

@@ -12,6 +12,7 @@
 
 package com.github.sbt.jacoco
 
+import com.github.sbt.jacoco.JacocoPluginCompat.*
 import com.github.sbt.jacoco.build.BuildInfo
 import com.github.sbt.jacoco.data.ExecutionDataUtils
 import com.github.sbt.jacoco.report.{JacocoReportSettings, ReportUtils}
@@ -22,6 +23,8 @@ import sbt.*
 object JacocoItPlugin extends BaseJacocoPlugin {
 
   object autoImport {
+    lazy val JacocoIntegrationTest: Configuration = config("it") `extend` Runtime
+
     lazy val jacocoMergeData: TaskKey[Unit] = taskKey[Unit]("Merges all '*.exec' files into a single data file.")
 
     lazy val jacocoMergedDataFile: SettingKey[File] =
@@ -41,7 +44,9 @@ object JacocoItPlugin extends BaseJacocoPlugin {
 
   override def requires: Plugins = JvmPlugin && JacocoPlugin
 
-  protected lazy val srcConfig: Configuration = IntegrationTest
+  override lazy val projectConfigurations: Seq[Configuration] = Seq(JacocoIntegrationTest)
+
+  protected lazy val srcConfig: Configuration = JacocoIntegrationTest
 
   private val autoMerge: Def.Initialize[Task[Unit]] = Def.taskDyn {
     if (jacocoAutoMerge.value) {
@@ -55,9 +60,9 @@ object JacocoItPlugin extends BaseJacocoPlugin {
 
   override protected def dependencyValues: Seq[Setting[?]] = Seq(
     libraryDependencies ++= {
-      if ((Test / fork).value || (IntegrationTest / fork).value) {
+      if ((Test / fork).value || (JacocoIntegrationTest / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
-        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "test,it" classifier "runtime")
+        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % "test,it" `classifier` "runtime")
       } else {
         Nil
       }
@@ -65,21 +70,23 @@ object JacocoItPlugin extends BaseJacocoPlugin {
   )
 
   override def projectSettings: Seq[Setting[?]] =
-    Defaults.itSettings ++
+    inConfig(JacocoIntegrationTest)(Defaults.testSettings) ++
       super.projectSettings ++
       // move the test reports to a subdirectory to disambiguate
       Seq(jacocoReportDirectory := (Test / jacocoDirectory).value / "report" / "test") ++
-      inConfig(IntegrationTest) {
+      inConfig(JacocoIntegrationTest) {
         Seq(
           jacocoReportDirectory := jacocoDirectory.value / "report" / "it",
           jacocoDataFile := jacocoDataDirectory.value / "jacoco-it.exec",
-          jacocoMergeData := ExecutionDataUtils.mergeExecutionData(
-            Seq(
-              (Test / jacocoDataFile).value,
-              (IntegrationTest / jacocoDataFile).value
-            ),
-            (IntegrationTest / jacocoMergedDataFile).value,
-            streams.value
+          jacocoMergeData := Def.uncached(
+            ExecutionDataUtils.mergeExecutionData(
+              Seq(
+                (Test / jacocoDataFile).value,
+                (JacocoIntegrationTest / jacocoDataFile).value
+              ),
+              (JacocoIntegrationTest / jacocoMergedDataFile).value,
+              streams.value
+            )
           ),
           jacocoAutoMerge := true,
           jacocoMergedDataFile := jacocoDataDirectory.value / "jacoco-merged.exec",
