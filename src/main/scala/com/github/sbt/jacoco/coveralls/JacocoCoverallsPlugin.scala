@@ -73,7 +73,7 @@ object JacocoCoverallsPlugin extends BaseJacocoPlugin {
         )
       }
     }.value,
-    jacocoCoveralls := (jacocoCoveralls dependsOn jacocoCoverallsGenerateReport).value,
+    jacocoCoveralls := (jacocoCoveralls `dependsOn` jacocoCoverallsGenerateReport).value,
     jacocoCoverallsServiceName := "travis-ci",
     jacocoCoverallsJobId := sys.env.get("TRAVIS_JOB_ID"),
     jacocoCoverallsBuildNumber := sys.env.get("TRAVIS_JOB_NUMBER"),

@@ -36,7 +36,7 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
     libraryDependencies ++= {
       if ((Test / fork).value) {
         // config is set to fork - need to add the jacoco agent to the classpath so it can process instrumentation
-        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test classifier "runtime")
+        Seq("org.jacoco" % "org.jacoco.agent" % BuildInfo.jacocoVersion % Test `classifier` "runtime")
       } else {
         Nil
       }
@@ -72,8 +72,8 @@ private[jacoco] abstract class BaseJacocoPlugin extends AutoPlugin with JacocoKe
   )
 
   private def taskValues = Seq(
-    jacoco := (jacocoReport dependsOn jacocoCheck).value,
-    jacocoAggregate := (jacocoAggregateReport dependsOn submoduleCoverTasks).value,
+    jacoco := (jacocoReport `dependsOn` jacocoCheck).value,
+    jacocoAggregate := (jacocoAggregateReport `dependsOn` submoduleCoverTasks).value,
     jacocoCheck := Def
       .task(
         ExecutionDataUtils

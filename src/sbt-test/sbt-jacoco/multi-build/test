@@ -4,19 +4,12 @@
 > jacoco
 
 # project results
-$ exists common/target/scala-2.12/jacoco/data/jacoco.exec
-$ exists common/target/scala-2.12/jacoco/report/html/index.html
-$ exists extras/target/scala-2.12/jacoco/data/jacoco.exec
-$ exists extras/target/scala-2.12/jacoco/report/html/index.html
+> checkProjectReports
 
-$ absent target/scala-2.12/jacoco/report/aggregate
+> checkNoAggregateReport
 
 > clean
 > jacocoAggregate
 
-# project results
-$ exists common/target/scala-2.12/jacoco/data/jacoco.exec
-$ exists extras/target/scala-2.12/jacoco/data/jacoco.exec
-
-# aggregated results
-$ exists target/scala-2.12/jacoco/report/aggregate/html/index.html
+# project and aggregated results
+> checkAggregateReport
